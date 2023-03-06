@@ -90,13 +90,14 @@
 												</span>
 										</p>
 									</div>
-									<div id="block-819acd285f104eea85aa04216fa3af83" class="notion-text">
-										<p class="notion-text__content"><span class="notion-semantic-string">
-											Anyways, I've a burning passion for all of the above mentioned, 
-											but I also enjoy teaching, music, keyboards, basketball, running, Cowboy Bebop, and long walks on the beach.
-										</span></p>
-										{{ partial "bolded.html"}}
-									</div>
+									
+										<p class="notion-text__content">
+											<b>
+												{{ block "boldedsection" . }}
+												{{ end }}
+											</b>
+										</p>
+									
 								</div>
 							</div>
 							{{ partial "connects.html"}}

@@ -7,4 +7,5 @@ picsmall: "/images/ringringring-300x278.png"
 picsnorm: "/images/ringringring.png"
 mainheader: "Murph's"
 mh2: '..Blog?'
+boldedheading: "Below is my CV, socials, contact information, etc..."
 ---

@@ -7,5 +7,6 @@ picsmall: "/images/einasleep-300x278.png"
 picsnorm: "/images/einasleep.png"
 mainheader: "Murphy"
 mh2: 'Malcolm'
+boldedheading: "Below is my CV, socials, contact information, etc..."
 ---
 MORE

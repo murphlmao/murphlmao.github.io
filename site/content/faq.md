@@ -7,5 +7,6 @@ picsmall: "/images/einasleep-300x278.png"
 picsnorm: "/images/einasleep.png"
 mainheader: "Murph's"
 mh2: 'Archive'
+boldedheading: "Below is my CV, socials, contact information, etc..."
 ---
 FAQQQ
