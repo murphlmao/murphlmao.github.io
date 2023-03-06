@@ -1,0 +1,28 @@
+{{ define "welcomeheader" }}
+{{ .Params.welcomeheader }}
+{{ end }}
+
+{{ define "mainheader" }}
+{{ .Params.mainheader }} <br> {{ .Params.mh2 }}
+{{ end }}
+
+{{ define "picsmall"}}
+
+<img width="734" height="681" 
+	src="{{ .Params.picsmall | relURL }}"
+	class="attachment-full size-full" alt="" loading="lazy"
+	sizes="(max-width: 734px) 100vw, 734px">
+{{ end }}
+
+{{ define "picsnorm"}}
+
+<img width="734" height="681" 
+	src="{{ .Params.picsnorm | relURL }}"
+	class="attachment-full size-full" alt="" loading="lazy"
+	sizes="(max-width: 734px) 100vw, 734px">
+{{ end }}
+
+
+{{ define "belowheader" }}
+{{ .Content }}
+{{ end }}

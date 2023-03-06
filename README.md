@@ -1,2 +1,2 @@
-# hugoapp
-app that will soon become my site
+# start with:
+hugo server 
