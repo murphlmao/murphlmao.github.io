@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>homepage on My New Hugo Site</title>
+    <link>http://example.org/</link>
+    <description>Recent content in homepage on My New Hugo Site</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 05 Mar 2023 17:58:52 -0500</lastBuildDate><atom:link href="http://example.org/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>about</title>
+      <link>http://example.org/about/</link>
+      <pubDate>Sun, 05 Mar 2023 17:58:52 -0500</pubDate>
+      
+      <guid>http://example.org/about/</guid>
+      <description>ABOUT</description>
+    </item>
+    
+    <item>
+      <title>blog</title>
+      <link>http://example.org/blog/</link>
+      <pubDate>Sun, 05 Mar 2023 17:58:52 -0500</pubDate>
+      
+      <guid>http://example.org/blog/</guid>
+      <description>I don&amp;rsquo;t blog yet&amp;hellip; so there&amp;rsquo;s nothing here.. awkward..</description>
+    </item>
+    
+    <item>
+      <title>cv</title>
+      <link>http://example.org/cv/</link>
+      <pubDate>Sun, 05 Mar 2023 17:58:52 -0500</pubDate>
+      
+      <guid>http://example.org/cv/</guid>
+      <description>LinkedIn | Github
+Professional Experience Prism Controls June 2022 - Present Software Engineer, IT &amp;amp; DevOps ‎ ‎ ‎ • Full-Stack Development ‎ ‎ ‎ • Networking ‎ ‎ ‎ • HelpDesk ‎ ‎ ‎ • Automation (Ansible, FOG, Shell) ‎ ‎ ‎ • Embedded Linux management ⠀⠀⠀ Kent Career Technical Center August 2022 - Present Information Technology Help Desk⠀⠀⠀ ⠀⠀ ‎ ‎ ‎ • HelpDesk ‎ ‎ ‎ • Mentor (CompTIA exams) ⠀⠀⠀ Self Employment IT Consultant, Development March 2015 - June 2021 ‎ ‎ ‎ • PC building ‎ ‎ ‎ • Network configuration ‎ ‎ ‎ • Light application development ‎ ‎ ‎ • Hardware &amp;amp; software troubleshooting ‎ ‎ ‎ • Communication ⠀⠀⠀ Education Kent Career Technical Center August 2022 Advanced IT ⠀⠀⠀ Grand Rapids Community College Computer Support Specialist A.</description>
+    </item>
+    
+    <item>
+      <title>cv</title>
+      <link>http://example.org/faq/</link>
+      <pubDate>Sun, 05 Mar 2023 17:58:52 -0500</pubDate>
+      
+      <guid>http://example.org/faq/</guid>
+      <description>FAQQQ</description>
+    </item>
+    
+    <item>
+      <title>More</title>
+      <link>http://example.org/more/</link>
+      <pubDate>Sun, 05 Mar 2023 17:58:52 -0500</pubDate>
+      
+      <guid>http://example.org/more/</guid>
+      <description>MORE</description>
+    </item>
+    
+  </channel>
+</rss>
