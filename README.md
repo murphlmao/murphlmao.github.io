@@ -8,7 +8,7 @@
 2. Host the site locally:
 ```sh
 $ hugo server
-``` 
+```  
 
 # Todo:
 home // completed      
