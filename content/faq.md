@@ -19,22 +19,21 @@ This website is really just a testament to that.
 A: This is my 3rd revision of my site hosted on GitHub Pages. This time around, 
 I used Hugo and a CI/CD pipeline that builds & deploys my app. 
 I mostly do this for fun, but it was also time I stepped away from just HTML & CSS 
-and moved to proper front-end development & generation tools/frameworks. 
+and moved to proper front-end development tools/frameworks.   
 
 Hugo is just a static site generator, future revisions of my site might include proper 
-Front-End frameworks like React, Svelte, Angular, etc...
+Front-End frameworks like React, Next.JS, Svelte, Angular, etc...
 ```
 ```
 
 ##### Q: What topics do you cover on your website/blog?     
-A: This site just contains my CV, some links to learn more about me The blog is 
+A: This site just contains my CV, some links to learn more about me, and not much else.
 ```
 ```
 
 ##### Q: How frequently do you update your website/blog?     
 A: Tough to say. During the summer, it's entirely possible I'll have more 
-time to shell out for this, 
-but I'm often kept fairly busy by my work, school, and living the dream
+time to shell out for this, but I'm often kept fairly busy by my work, school, and living the dream
 ```
 ```
 
@@ -66,12 +65,13 @@ In terms in monetary support, that's on a roadmap for the future.
 ```
 
 ##### Q: Do you have any disclaimers or disclosures for sponsored content or affiliate links?     
-A: No, I'm too boring unfortunately.
+A: No. I'm too boring, unfortunately.
 ```
 ```
 
 ##### Q: Do you have any upcoming events or projects related to your website/blog?     
 A: I have some cool development projects in mind (some that I can share, others that I can't), 
-but it's hard to find the time to get that kind of stuff done. Developing applications is hard & very time consuming,
+but it's hard to find the time to get that kind of stuff done. Developing applications can be hard & very time consuming,
 even on relatively small scales, take this website for example, which in total has taken about 15ish hours of work to get done,
-but has been spanned over the course of about a month.
+but has been spanned over the course of about a month just due to workload I face from working a full-time job & going to school
+full-time as well. It can be quite hard to find some time to squeeze in for my own personal projects :).

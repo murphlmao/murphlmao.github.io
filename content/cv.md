@@ -18,7 +18,7 @@ boldedheading: "Below is my socials, contact information, blog, etc..."
 |  ‎ ‎  ‎  • Full-Stack Development 
    ‎ ‎  ‎  • Networking 
 |  ‎ ‎  ‎  • HelpDesk 
-   ‎ ‎  ‎  • Automation (Ansible, FOG, Shell)
+   ‎ ‎  ‎  • Automation (Ansible, iPXE, Shell)
    ‎ ‎  ‎  • Embedded Linux management                |                        |
 | ⠀⠀⠀                                   |                        |
 | **Kent Career Technical Center**      | August 2022 - Present  |
@@ -27,11 +27,11 @@ boldedheading: "Below is my socials, contact information, blog, etc..."
    ‎ ‎  ‎  • Mentor (CompTIA exams)
 | ⠀⠀⠀                                   |                        |
 | **Self Employment**                   |
-| *IT Consultant, Development*          | March 2015 - June 2021 |
-‎ ‎  ‎  • PC building
-‎ ‎  ‎  • Network configuration
-‎ ‎  ‎  • Light application development
-‎ ‎  ‎  • Hardware & software troubleshooting
+| *Devlopment & IT Consultant*          | March 2015 - Present |
+‎ ‎  ‎  • PC / Hardware Assembly
+‎ ‎  ‎  • Network Configuration (SOHO)
+‎ ‎  ‎  • Application & Web Development
+‎ ‎  ‎  • Hardware & Software Troubleshooting
 ‎ ‎  ‎  • Communication
 | ⠀⠀⠀                                   |                        |
 
@@ -57,17 +57,17 @@ boldedheading: "Below is my socials, contact information, blog, etc..."
    
 
 ## <span style="font-size:1.5em; padding: px;">Skills</span>  
-**Software Development:** Python, C++, Rust, Go, Bash, SQL*, OOP, FOSD
+**Software Development:** Python, C++, C# (.NET), Rust, Go, Bash, SQL*, OOP, FOSD
 
-**Front-End Development:** Markup, CSS/SASS/PostCSS, JavaScript, TypeScript, Hugo, Jinja2, React, Angular, Svelte, Vue       
+**Front-End Development:** JavaScript/TypeScript, Hugo (SSG), React, Next.JS, Angular, Svelte, Vue, SSR       
 
 **Back-End Development:** Flask, Django, NodeJS, Ruby On Rails, APIs      
 
-**Systems Administration:** Networking tools, hardware, & protocols (SSH, SNMP, DHCP, ...), Linux (Debian, Arch, CentOS, Kali, Fedora), 
-scripting, automation, Ansible, device imaging & deployment (IPXE/PXE), hardware management
+**Systems Administration:** Networking (SSH, FTP, Port Forwarding, NATting), Embedded Systems, Linux (Debian, Arch, CentOS, Kali, Fedora), 
+Scripting, Automation, Ansible, Device Imaging & Deployment (IPXE/PXE), Hardware Management
 
 **IT:** CyberSecurity, Infastructure Management, Subnetting, Embedded Linux
 
 **DevOps:** CI/CD, QA, Logging, Configuration Management, Kubernetes, Virtualization & Containerization (Docker)
 
-**Misc. Skills:** ChatGPT, Github Copilot, videography, color grading, professional communication 
+**Misc. Skills:** ChatGPT, Github Copilot, Videography, Color Grading, Professional Communication 
