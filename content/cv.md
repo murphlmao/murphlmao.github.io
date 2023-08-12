@@ -48,6 +48,7 @@ boldedheading: "Below is my socials, contact information, blog, etc..."
 | *Networking & CyberSecurity*             |                |
 | ⠀⠀⠀                                      |                |
 | **Addtional Courses & Certifications:**   |
+| IT Specialist - Python (Certiport)      | May 2023               |
 | CompTIA Network+ N10-008⠀⠀⠀              | March 2023               |
 | Microsoft Office Specialist: Associate⠀⠀ | May 2022       |
 | Microsoft Office Specialist: Expert      | May 2022       |
@@ -63,10 +64,10 @@ boldedheading: "Below is my socials, contact information, blog, etc..."
 
 **Back-End Development:** Flask, Django, NodeJS, Ruby On Rails, APIs      
 
-**Systems Administration:** Networking (SSH, FTP, Port Forwarding, NATting), Embedded Systems, Linux (Debian, Arch, CentOS, Kali, Fedora), 
-Scripting, Automation, Ansible, Device Imaging & Deployment (IPXE/PXE), Hardware Management
+**Systems Administration:** Networking (SSH, FTP, Port Forwarding, NATting), Embedded Systems, Linux (Debian, Arch), 
+Scripting, Automation, Ansible, Device Imaging & Deployment (iPXE/PXE), Hardware Management
 
-**IT:** CyberSecurity, Infastructure Management, Subnetting, Embedded Linux
+**IT:** CyberSecurity, Infastructure Management, Subnetting, Embedded Linux, AD/DS
 
 **DevOps:** CI/CD, QA, Logging, Configuration Management, Kubernetes, Virtualization & Containerization (Docker)
 
