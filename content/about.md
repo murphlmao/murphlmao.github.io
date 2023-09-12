@@ -52,8 +52,4 @@ have my A+ certification yet (I still don't), but was still quite qualified to t
 Those stories give you a little bit of a dive into how I got to the place where I am today. Obviously there's a ton of stuff that 
 sits in between those events & now, but none of THAT really demonstrates who I am. Those, hopefully, do. 
 
-We are about a year into the future now. I'm just taking it easy, taking it one day at a time. 
-
-I like to end things off with a bow wrapped around them, so I'd like to give you something that one of my best friends gave to me:
-
-"Take it easy man. No one ever got a key to the city by working really hard and being a people pleaser. They got a key because they're fucking capitalists."
+We are about a year into the future now. I'm just taking it easy, taking it one day at a time.

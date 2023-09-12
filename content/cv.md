@@ -17,11 +17,11 @@ boldedheading: "Below is my socials, contact information, blog, etc..."
 | *Software Engineer, IT & DevOps*                    |                        |
 |  ‎ ‎  ‎  • Full-Stack Development 
    ‎ ‎  ‎  • Networking 
-|  ‎ ‎  ‎  • HelpDesk 
+|  ‎ ‎  ‎  • IT HelpDesk 
    ‎ ‎  ‎  • Automation (Ansible, iPXE, Shell)
-   ‎ ‎  ‎  • Embedded Linux management                |                        |
+   ‎ ‎  ‎  • Embedded Linux Development                |                        |
 | ⠀⠀⠀                                   |                        |
-| **Kent Career Technical Center**      | August 2022 - Present  |
+| **Kent Career Technical Center**      | August 2022 - June 2023  |
 | *Information Technology Help Desk*⠀⠀⠀ | ⠀⠀                     |
    ‎ ‎  ‎  • HelpDesk
    ‎ ‎  ‎  • Mentor (CompTIA exams)
@@ -58,7 +58,7 @@ boldedheading: "Below is my socials, contact information, blog, etc..."
    
 
 ## <span style="font-size:1.5em; padding: px;">Skills</span>  
-**Software Development:** Python, C++, C# (.NET), Rust, Go, Bash, SQL*, OOP, FOSD
+**Software Development:** Python, C++, C# (.NET), Rust, Go, Bash, SQL*, OOP, FOSD, Embedded Linux
 
 **Front-End Development:** JavaScript/TypeScript, Hugo (SSG), React, Next.JS, Angular, Svelte, Vue, SSR       
 
@@ -67,7 +67,7 @@ boldedheading: "Below is my socials, contact information, blog, etc..."
 **Systems Administration:** Networking (SSH, FTP, Port Forwarding, NATting), Embedded Systems, Linux (Debian, Arch), 
 Scripting, Automation, Ansible, Device Imaging & Deployment (iPXE/PXE), Hardware Management
 
-**IT:** CyberSecurity, Infastructure Management, Subnetting, Embedded Linux, AD/DS
+**IT:** CyberSecurity, Infastructure Management, Subnetting, AD/DS
 
 **DevOps:** CI/CD, QA, Logging, Configuration Management, Kubernetes, Virtualization & Containerization (Docker)
 
