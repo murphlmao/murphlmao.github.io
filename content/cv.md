@@ -9,17 +9,22 @@ mainheader: "Murphy"
 mh2: 'Malcolm'
 boldedheading: "Below is my socials, contact information, blog, etc..."
 ---
-[LinkedIn](https://www.linkedin.com/in/murphymalcolm/)  | [Github](https://github.com/murphlmao)  
-## <span style="font-size:1.5em; padding: px;">Professional Experience</span>                  
+[LinkedIn](https://www.linkedin.com/in/murphymalcolm/)  | [Github](https://github.com/murphlmao)
+## <span style="font-size:1.5em; padding: px;">Professional Experience</span>
 |                                       |                        |
 | ------------------------------------- | ---------------------- |
 | **Prism Controls**                    | June 2022 - Present    |
 | *Software Engineer, IT & DevOps*                    |                        |
-|  ‎ ‎  ‎  • Full-Stack Development 
-   ‎ ‎  ‎  • Networking 
-|  ‎ ‎  ‎  • IT HelpDesk 
+|  ‎ ‎  ‎  • Full-Stack Development
+   ‎ ‎  ‎  • CI/CD (Gitlab Runners)
+   ‎ ‎  ‎  • Docker (Native, Compose)
+   ‎ ‎  ‎  • Networking
+   ‎ ‎  ‎  • Azure
+|  ‎ ‎  ‎  • IT HelpDesk
    ‎ ‎  ‎  • Automation (Ansible, iPXE, Shell)
-   ‎ ‎  ‎  • Embedded Linux Development                |                        |
+   ‎ ‎  ‎  • Embedded Linux Development
+   ‎ ‎  ‎  • Git
+                |                        |
 | ⠀⠀⠀                                   |                        |
 | **Kent Career Technical Center**      | August 2022 - June 2023  |
 | *Information Technology Help Desk*⠀⠀⠀ | ⠀⠀                     |
@@ -55,20 +60,20 @@ boldedheading: "Below is my socials, contact information, blog, etc..."
 | Communication Skills for Business        | November 2021  |
 | CompTIA IT Fundamentals (ITF+)           | November 2021  |
 | ⠀⠀⠀                                   |                        |
-   
 
-## <span style="font-size:1.5em; padding: px;">Skills</span>  
-**Software Development:** Python, C++, C# (.NET), Rust, Go, Bash, SQL*, OOP, FOSD, Embedded Linux
 
-**Front-End Development:** JavaScript/TypeScript, Hugo (SSG), React, Next.JS, Angular, Svelte, Vue, SSR       
+## <span style="font-size:1.5em; padding: px;">Skills</span>
+**Software Development:** Python, Rust, Go, C# (ASP.NET), Java, Bash, SQL*, OOP, REST, SOLID, KISS, DRY, C++, C, Embedded Linux
 
-**Back-End Development:** Flask, Django, NodeJS, Ruby On Rails, APIs      
+**Front-End Development:** HTML5, CSS3, HTMX, JavaScript/TypeScript, Hugo (SSG), React, Next.JS, Angular, Svelte, Vue, SSR
 
-**Systems Administration:** Networking (SSH, FTP, Port Forwarding, NATting), Embedded Systems, Linux (Debian, Arch), 
+**Back-End Development:** Flask, Django, NodeJS, Ruby On Rails, APIs
+
+**Systems Administration:** Networking (SSH, FTP, Port Forwarding, NATting), Embedded Systems, Linux (Debian, Arch),
 Scripting, Automation, Ansible, Device Imaging & Deployment (iPXE/PXE), Hardware Management
 
 **IT:** CyberSecurity, Infastructure Management, Subnetting, AD/DS
 
-**DevOps:** CI/CD, QA, Logging, Configuration Management, Kubernetes, Virtualization & Containerization (Docker)
+**DevOps:** CI/CD, QA, Logging, Configuration Management, Kubernetes, Virtualization, Docker, Git, Gitlab, Github, Azure, AWS, GCP
 
-**Misc. Skills:** ChatGPT, Github Copilot, Videography, Color Grading, Professional Communication 
+**Misc. Skills:** ChatGPT, Github Copilot, Videography, Color Grading, Professional Communication

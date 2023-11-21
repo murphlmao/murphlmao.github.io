@@ -10,6 +10,6 @@ mh2: 'Archive'
 boldedheading: "Below is my CV, socials, contact information, etc..."
 
 ---
-Yo! I'm a fairly laid back & easy going guy. I'm currently a student (middle college) studying IT, Systems Administration, DevOps, Networking, Cybersecurity, and Computer Science/Information Systems. However, my skillset lies specifically with Full-Stack Development, Networking, Automation and Linux Systems Administration.
+Yo! I'm a fairly laid back & easy going guy. I'm currently a college student studying IT, Systems Administration, DevOps, Networking, Cybersecurity, and Computer Science/Information Systems. However, my skillset lies specifically with Full-Stack Development, Networking, Automation and Linux Systems Administration and Development.
 
 Anyways, feel free to look around, and contact me (LinkedIn is the best place atm) if you have any questions at all!

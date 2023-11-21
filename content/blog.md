@@ -10,5 +10,3 @@ mh2: '..Blog?'
 boldedheading: "Below is my CV, socials, contact information, etc..."
 ---
 I don't blog yet... so there's nothing here.. awkward.
-
-It's entirely possible I'll just whip together a few paragraphs now & again, but we shall see!
