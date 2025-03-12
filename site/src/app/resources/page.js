@@ -8,10 +8,10 @@ export default function ResourcesPage() {
           <div className="mx-auto max-w-2xl lg:max-w-5xl">
             <header className="max-w-2xl">
               <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-                Resources for developers
+                Developer Resources
               </h1>
               <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-                A curated list of tools, platforms, and resources I use and recommend for web development.
+                A curated list of developer tools & resources I recommend.
               </p>
             </header>
 

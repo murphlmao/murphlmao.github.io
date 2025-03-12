@@ -12,7 +12,7 @@ $users = User::query()
     ->get();
 ```
 
-This approach:  
-- Prevents cluttered `if` statements  
-- Keeps queries flexible and dynamic  
-- Improves readability for complex queries  
+This approach:
+- Prevents cluttered `if` statements
+- Keeps queries flexible and dynamic
+- Improves readability for complex queries
