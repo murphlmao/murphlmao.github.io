@@ -3,6 +3,8 @@ import path from 'path';
 import Link from 'next/link';
 import '@/styles/markdown.css';
 import Script from 'next/script';
+import Image from 'next/image';
+
 
 export async function generateStaticParams() {
   const posts = getAllMarkdownFiles(path.join(process.cwd(), 'content/blog'));
@@ -17,9 +19,9 @@ export async function generateMetadata({ params }) {
   const slug = resolvedParams.slug;
   const filePath = path.join(process.cwd(), 'content/blog', `${slug}.md`);
   const { frontmatter } = getMarkdownContent(filePath);
-  
+
   const ogImage = frontmatter.image || '/images/blog-default.jpg';
-  
+
   return {
     title: frontmatter.title,
     description: frontmatter.description,
@@ -116,8 +118,8 @@ export default async function BlogPost({ params }) {
                   <article className="prose prose-zinc dark:prose-invert lg:prose-xl mx-auto px-4 prose-headings:font-medium prose-p:leading-relaxed">
                     <header className="mb-8">
                       {frontmatter.date && (
-                        <time 
-                          dateTime={frontmatter.date} 
+                        <time
+                          dateTime={frontmatter.date}
                           className="order-first flex items-center text-base text-zinc-400 dark:text-zinc-500"
                         >
                           <span className="h-4 w-0.5 rounded-full bg-zinc-200 dark:bg-zinc-500"></span>
@@ -133,7 +135,13 @@ export default async function BlogPost({ params }) {
                       <h1 className="mb-2 !mt-0">{frontmatter.title}</h1>
                     </header>
                     <div className="markdown-content">
-                      <MarkdownContent content={content} />
+                    <Image src="/just_a_chill_guy.jfif" alt="A chill guy" width={500} height={500} />
+                    <audio autoPlay>
+                      <source src="/chill_guy_man.mp3" type="audio/mpeg" />
+                      Your browser does not support the audio element.
+                    </audio>
+
+                    <MarkdownContent content={content} />
                     </div>
                   </article>
                 </div>
@@ -144,4 +152,4 @@ export default async function BlogPost({ params }) {
       </div>
     </>
   );
-} 
+}

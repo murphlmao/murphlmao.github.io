@@ -7,7 +7,7 @@ export default function Blog() {
   // This runs on the server
   const allArticles = getAllMarkdownFiles(path.join(process.cwd(), 'content/blog'))
     .sort((a, b) => new Date(b.date) - new Date(a.date));
-  
+
   return (
     <div className="sm:px-8 mt-16 sm:mt-18">
       <div className="mx-auto max-w-7xl lg:px-8">
@@ -30,4 +30,4 @@ export default function Blog() {
       </div>
     </div>
   );
-} 
+}

@@ -6,12 +6,23 @@ export default function ProfileHeader() {
     <div className=" mx-auto lg:max-w-5xl flex flex-col md:flex-row justify-between items-start md:space-x-14 w-full mb-10">
       <div className="flex md:w-3/4 flex-col mt-6">
         <h1 className="font-bold text-3xl md:text-5xl tracking-tight mb-2 text-black dark:text-white">
-       Murphy Malcolm
+          Murphy Malcolm
         </h1>
-        <p className="text-zinc-600 dark:text-zinc-400 mb-4">
-        Full Stack Developer passionate about building web applications and exploring new technologies.
-        I love solving complex problems and sharing insights from my journey.
-        </p>
+        <div className="text-zinc-600 dark:text-zinc-400 mb-4">
+          <p>
+          Yo. I'm a Software Developer with hearing that you'd only see in a nursing home.
+          </p>
+          <br/>
+          <p>
+            I love Full-Stack Development, Linux (I use Arch btw), Networking, DevOps (sometimes),
+            Cybersecurity, and arguing (nicely though).
+          </p>
+          <br/>
+          <p>
+            I have a lot of strong opinions (all of which are right), but it always comes from a place of love, passion, and desire
+            to continuously learn. Feel free to reach out anytime on LinkedIn.
+          </p>
+        </div>
 
         {/* Social Icons */}
         <div className="flex space-x-4">

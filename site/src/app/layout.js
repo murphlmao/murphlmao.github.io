@@ -12,11 +12,11 @@ const inter = Inter({
 export const metadata = {
   metadataBase: new URL('https://murph.rip'),
   title: {
-    default: "Murphy Malcolm - Full Stack Developer",
+    default: "Murphy Malcolm",
     template: "%s | Murphy Malcolm"
   },
-  description: "Full Stack Developer passionate about building web applications and exploring new technologies. Blog about software development, engineering practices, and tech insights.",
-  keywords: ["Full Stack Developer", "Software Engineering", "Laravel", "Cursor Editor", "AI", "Web Development", "JavaScript", "React", "Node.js", "Tech Blog"],
+  description: "Full Stack Developer",
+  keywords: ["Full Stack Developer", "Software Engineering", "Python", "Software", "Rust", "Web Development", "JavaScript", "TypeScript", "Next.JS", "React", "Node.js", "Go", "C#"],
   authors: [{ name: "Murphy Malcolm", url: "https://murph.rip" }],
   creator: "Murphy Malcolm",
   openGraph: {
@@ -24,8 +24,8 @@ export const metadata = {
     locale: 'en_US',
     url: 'https://murph.rip',
     siteName: 'Murphy Malcolm',
-    title: 'Murphy Malcolm - Full Stack Developer',
-    description: 'Full Stack Developer passionate about building web applications and exploring new technologies. Blog about software development, engineering practices, and tech insights.',
+    title: 'Murphy Malcolm',
+    description: 'Full Stack Developer.',
     images: [
       {
         url: '/images/profile.jpg',

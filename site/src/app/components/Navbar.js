@@ -65,7 +65,7 @@ export default function Navbar() {
           <div className="flex justify-between items-center mx-auto lg:max-w-5xl">
             {/* Profile Photo */}
             <div className="flex items-center">
-              <Link 
+              {/* <Link 
                 href="/"
                 className="block overflow-hidden rounded-full w-8 h-8 ring-1 ring-zinc-900/5 dark:ring-white/10"
               >
@@ -76,7 +76,7 @@ export default function Navbar() {
                   height={32}
                   className="object-cover"
                 />
-              </Link>
+              </Link> */}
             </div>
 
             {/* Centered Desktop Menu */}

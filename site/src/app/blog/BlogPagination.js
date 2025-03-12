@@ -7,12 +7,12 @@ export default function BlogPagination({ articles, articlesPerPage }) {
   // Pagination settings
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(articles.length / articlesPerPage);
-  
+
   // Get current articles for the page
   const indexOfLastArticle = currentPage * articlesPerPage;
   const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
   const currentArticles = articles.slice(indexOfFirstArticle, indexOfLastArticle);
-  
+
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
   const goToNextPage = () => setCurrentPage(prev => Math.min(prev + 1, totalPages));
@@ -29,7 +29,7 @@ export default function BlogPagination({ articles, articlesPerPage }) {
             <div className="md:col-span-3 group relative flex flex-col items-start">
               <h2 className="text-base font-semibold tracking-tight text-zinc-800 dark:text-zinc-100">
               <div className="absolute -inset-y-6 -inset-x-4 z-0 scale-95 bg-zinc-50 opacity-0 transition group-hover:scale-100 group-hover:opacity-100 dark:bg-zinc-800/50 sm:-inset-x-6 sm:rounded-2xl"></div>
-          
+
                 <Link href={`/blog/${article.slug}`} className="hover:text-sky-500 dark:hover:text-sky-400">
                   <span className="absolute -inset-x-4 -inset-y-6 z-20 sm:-inset-x-6 sm:rounded-2xl" />
                   <span className="relative z-10">{article.title}</span>
@@ -84,7 +84,7 @@ export default function BlogPagination({ articles, articlesPerPage }) {
           </article>
         ))}
       </div>
-      
+
       {/* Pagination */}
       {totalPages > 1 && (
         <nav className="mt-12 flex items-center justify-between border-t border-zinc-200 dark:border-zinc-700/40 pt-6">
@@ -159,4 +159,4 @@ export default function BlogPagination({ articles, articlesPerPage }) {
       )}
     </div>
   );
-} 
+}

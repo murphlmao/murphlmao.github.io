@@ -2,41 +2,19 @@ import Image from 'next/image';
 
 const workHistory = [
   {
-    company: "Tech9",
-    role: "Senior Software Engineer",
-    logo: "/company/tech9.jpeg",
-    startDate: "June 2019",
+    company: "Prism Controls",
+    role: "Software & DevOps Engineer",
+    logo: "/company/prismcontrols.jpg",
+    startDate: "June 2022",
     endDate: "Present",
   },
   {
-    company: "RB group.aero",
-    role: "Software Engineer",
-    logo: "/company/rbgroup.jpeg",
-    startDate: "Aug 2018",
-    endDate: "June 2019",
+    company: "Self Employed",
+    role: "IT & Software Engineer / Consultant",
+    logo: "/company/selfemployed.jpg",
+    startDate: "March 2015",
+    endDate: "July 2023",
   },
-  {
-    company: "Freelancer",
-    role: "Software Engineer",
-    logo: "/company/freelancer.jpeg",
-    startDate: "May 2018",
-    endDate: "Aug 2018",
-  },
-  {
-    company: "Aloha Technology Pvt. Ltd.",
-    role: "Software Engineer",
-    logo: "/company/aloha.jpeg",
-    startDate: "Sept 2015",
-    endDate: "May 2018",
-  },
-  {
-    company: "Iintellisys Solutions",
-    role: "Web Developer",
-    logo: "/company/iintellisys.jpeg",
-    startDate: "Sept 2014",
-    endDate: "May 2015",
-  },
-  // Add more work history items...
 ];
 
 export default function WorkSection() {
@@ -90,7 +68,7 @@ export default function WorkSection() {
                   {role.role}
                 </dd>
                 <dt className="sr-only">Date</dt>
-                <dd 
+                <dd
                   className="ml-auto text-xs text-zinc-400 dark:text-zinc-500"
                   aria-label={`${role.startDate} until ${role.endDate}`}
                 >
@@ -106,8 +84,8 @@ export default function WorkSection() {
       <a
         className="inline-flex items-center gap-2 justify-center rounded-md py-2 px-3 text-sm outline-offset-2 transition active:transition-none bg-zinc-50 font-medium text-zinc-900 hover:bg-zinc-100 active:bg-zinc-100 active:text-zinc-900/60 dark:bg-zinc-800/50 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-50 dark:active:bg-zinc-800/50 dark:active:text-zinc-50/70 group mt-6 w-full"
         target="_blank"
-        href="https://drive.google.com/file/d/1pxjlDA7RZK6DSLCcH8ddxOV_jgmPdmi5/view?usp=drive_link"
-        download
+        rel="noopener noreferrer"
+        href="/Murphy%20Malcolm%20-%20Resume%20(Public).pdf"
       >
         Download CV
         <svg
@@ -126,4 +104,4 @@ export default function WorkSection() {
       </a>
     </div>
   );
-} 
+}
