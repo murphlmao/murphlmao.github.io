@@ -1,10 +1,6 @@
 ---
-title: "MEOW: MEOW MEOW MEOWMeowMeowMeowMeowMeowMeowMeowMeowMeow"
-date: '2025-03-07'
-description: "Meow"
-tags: ['cursor', 'ai', 'harvest', 'timesheet', 'git', 'development']
+title: "Welcome! Nothing's here yet. "
+date: '2025-02-28'
+description: "Eventually, this is where information that I want to share will live. Stay tuned."
+tags: ['cursor', 'ai', 'harvest', 'timesheet', 'git', 'chill guy']
 ---
-
-
-
-Meow
