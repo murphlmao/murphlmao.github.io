@@ -10,12 +10,12 @@ export default function ProfileHeader() {
         </h1>
         <div className="text-zinc-600 dark:text-zinc-400 mb-4">
           <p>
-          Yo. I'm a Software Developer with hearing that you'd only see in a nursing home.
+            Yo. I'm a Software Engineer.
           </p>
           <br/>
           <p>
-            I love Full-Stack Development, Linux (I use Arch btw), Networking, DevOps (sometimes),
-            Cybersecurity, and arguing (nicely though).
+            I love Full-Stack Development, Linux (I use Arch btw), DevOps, Networking,
+            Cybersecurity, & long walks on the beach.
           </p>
           <br/>
           <p>

@@ -5,18 +5,21 @@ import path from "path";
 
 // Icons mapping using devicon classes
 const icons = {
-  laravel: (
-    <i className="devicon-laravel-plain text-2xl text-sky-500 dark:text-sky-400 transition-transform group-hover:scale-110"></i>
+  clang: (
+    <i className="devicon-c-plain-wordmark colored text-2xl text-sky-500 dark:text-sky-400 transition-transform group-hover:scale-110"></i>
   ),
-  react: (
-    <i className="devicon-react-plain text-2xl text-sky-500 dark:text-sky-400 transition-transform group-hover:scale-110"></i>
-  ),
-  database: (
-    <i className="devicon-azuresqldatabase-plain text-2xl text-sky-500 dark:text-sky-400 transition-transform group-hover:scale-110"></i>
-  ),
-  javascript: (
-    <i className="devicon-javascript-plain text-2xl text-sky-500 dark:text-sky-400 transition-transform group-hover:scale-110"></i>
-  ),
+  // laravel: (
+  //   <i className="devicon-laravel-plain text-2xl text-sky-500 dark:text-sky-400 transition-transform group-hover:scale-110"></i>
+  // ),
+  // react: (
+  //   <i className="devicon-react-plain text-2xl text-sky-500 dark:text-sky-400 transition-transform group-hover:scale-110"></i>
+  // ),
+  // database: (
+  //   <i className="devicon-azuresqldatabase-plain text-2xl text-sky-500 dark:text-sky-400 transition-transform group-hover:scale-110"></i>
+  // ),
+  // javascript: (
+  //   <i className="devicon-javascript-plain text-2xl text-sky-500 dark:text-sky-400 transition-transform group-hover:scale-110"></i>
+  // ),
 };
 
 export default function SnippetsPage() {

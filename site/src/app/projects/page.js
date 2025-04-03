@@ -8,21 +8,19 @@ export default function ProjectsPage() {
           <div className="mx-auto max-w-2xl lg:max-w-5xl">
             <header className="max-w-2xl">
               <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-                Things I&apos;ve made trying to put my dent in the universe.
+                Tech Stack, Skills, & Projects
               </h1>
               <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-                I&apos;ve worked on tons of little projects over the years but these
-                are the ones that I&apos;m most proud of. Many of them are
-                open-source, so if you see something that piques your interest,
-                check out the code and contribute if you have ideas for how it
-                can be improved.
+                I&apos;ve worked on dozens of projects over the years, so here is a collection
+                of where <i>my</i> specific skill-set lies. Many of them are
+                open-source, so feel free to check them out.
               </p>
             </header>
 
-            {/* Technical Arsenal Section */}
+            {/* Technical Section */}
             <div className="mt-16 sm:mt-20 rounded-2xl border border-zinc-100 p-6 dark:border-zinc-700/40">
               <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                Technical Arsenal
+                Technical Skills & Specialties
               </h2>
 
               <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-7">
@@ -46,7 +44,7 @@ export default function ProjectsPage() {
                 ))}
               </div>
 
-              <p className="mt-8 text-sm text-zinc-600 dark:text-zinc-400">
+              {/* <p className="mt-8 text-sm text-zinc-600 dark:text-zinc-400">
                 This toolkit empowers me to design and develop solutions from
                 prototype to production, ensuring{" "}
                 <span className="text-sky-500 dark:text-sky-400">
@@ -57,7 +55,7 @@ export default function ProjectsPage() {
                   maintainability
                 </span>{" "}
                 at every stage.
-              </p>
+              </p> */}
             </div>
 
             {/* Projects Section */}
