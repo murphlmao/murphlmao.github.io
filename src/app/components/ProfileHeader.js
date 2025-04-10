@@ -10,16 +10,12 @@ export default function ProfileHeader() {
         </h1>
         <div className="text-zinc-600 dark:text-zinc-400 mb-4">
           <p>
-            Yo. I'm a Software Engineer.
+            My heart lies with Full-Stack Development, Linux (I use Arch btw), DevOps, Networking,
+            Cybersecurity, & going long walks on the beach so we can talk about our feelings.
           </p>
           <br/>
           <p>
-            I love Full-Stack Development, Linux (I use Arch btw), DevOps, Networking,
-            Cybersecurity, & long walks on the beach.
-          </p>
-          <br/>
-          <p>
-            I have a lot of strong opinions (all of which are right), but it always comes from a place of love, passion, and desire
+            I've a lot of strong opinions (all of which are right), but it always comes from a place of love, passion, and desire
             to continuously learn. Feel free to reach out anytime on LinkedIn.
           </p>
         </div>
