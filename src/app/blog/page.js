@@ -1,5 +1,4 @@
 import { getAllMarkdownFiles } from '@/utils/markdown';
-import Link from 'next/link';
 import path from 'path';
 import BlogPagination from './BlogPagination';
 
@@ -15,7 +14,7 @@ export default function Blog() {
           <div className="mx-auto max-w-2xl lg:max-w-5xl">
             <header className="max-w-full">
               <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-                Keyboard Warrior's Manifesto.
+                Keyboard Warrior&apos;s Manifesto.
               </h1>
               <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
                 This is here to enable me to share information that I find useful, or just complain about any range of issue(s) at all :).

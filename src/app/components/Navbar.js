@@ -1,7 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
 export default function Navbar() {
@@ -14,7 +13,7 @@ export default function Navbar() {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      
+
       if (currentScrollY < lastScrollY) {
         // Scrolling up
         setIsVisible(true);
@@ -22,7 +21,7 @@ export default function Navbar() {
         // Scrolling down and not at the top
         setIsVisible(false);
       }
-      
+
       setLastScrollY(currentScrollY);
     };
 
@@ -46,7 +45,7 @@ export default function Navbar() {
   const toggleDarkMode = () => {
     const newIsDark = !isDark;
     setIsDark(newIsDark);
-    
+
     if (newIsDark) {
       document.documentElement.classList.add('dark');
       localStorage.theme = 'dark';
@@ -65,7 +64,7 @@ export default function Navbar() {
           <div className="flex justify-between items-center mx-auto lg:max-w-5xl">
             {/* Profile Photo */}
             <div className="flex items-center">
-              {/* <Link 
+              {/* <Link
                 href="/"
                 className="block overflow-hidden rounded-full w-8 h-8 ring-1 ring-zinc-900/5 dark:ring-white/10"
               >
@@ -81,8 +80,8 @@ export default function Navbar() {
 
             {/* Centered Desktop Menu */}
             <div className="hidden sm:block rounded-full bg-white/90 px-3 text-sm font-medium text-zinc-800 shadow-lg shadow-zinc-800/5 ring-1 ring-zinc-900/5 backdrop-blur dark:bg-zinc-900/90 dark:text-zinc-200 dark:ring-white/10">
-              <Link 
-                href="/" 
+              <Link
+                href="/"
                 className="relative rounded-lg px-3 inline-block py-2 text-sm transition-all delay-150 cursor-pointer"
               >
                 <span className={`relative z-10 ${pathname === '/' ? 'text-sky-500 dark:text-sky-400' : 'text-gray-600 dark:text-gray-50'}`}>
@@ -92,8 +91,8 @@ export default function Navbar() {
                   <span className="absolute inset-x-1 -bottom-px h-px bg-gradient-to-r from-sky-500/0 via-sky-500/40 to-sky-500/0 dark:from-sky-400/0 dark:via-sky-400/40 dark:to-sky-400/0" />
                 )}
               </Link>
-              <Link 
-                href="/blog" 
+              <Link
+                href="/blog"
                 className="relative rounded-lg px-3 inline-block py-2 text-sm transition-all delay-150 cursor-pointer"
               >
                 <span className={`relative z-10 ${pathname === '/blog' ? 'text-sky-500 dark:text-sky-400' : 'text-gray-600 dark:text-gray-50'}`}>
@@ -103,8 +102,8 @@ export default function Navbar() {
                   <span className="absolute inset-x-1 -bottom-px h-px bg-gradient-to-r from-sky-500/0 via-sky-500/40 to-sky-500/0 dark:from-sky-400/0 dark:via-sky-400/40 dark:to-sky-400/0" />
                 )}
               </Link>
-              <Link 
-                href="/snippets" 
+              <Link
+                href="/snippets"
                 className="relative rounded-lg px-3 inline-block py-2 text-sm transition-all delay-150 cursor-pointer"
               >
                 <span className={`relative z-10 ${pathname === '/snippets' ? 'text-sky-500 dark:text-sky-400' : 'text-gray-600 dark:text-gray-50'}`}>
@@ -114,8 +113,8 @@ export default function Navbar() {
                   <span className="absolute inset-x-1 -bottom-px h-px bg-gradient-to-r from-sky-500/0 via-sky-500/40 to-sky-500/0 dark:from-sky-400/0 dark:via-sky-400/40 dark:to-sky-400/0" />
                 )}
               </Link>
-              <Link 
-                href="/resources" 
+              <Link
+                href="/resources"
                 className="relative rounded-lg px-3 inline-block py-2 text-sm transition-all delay-150 cursor-pointer"
               >
                 <span className={`relative z-10 ${pathname === '/resources' ? 'text-sky-500 dark:text-sky-400' : 'text-gray-600 dark:text-gray-50'}`}>
@@ -125,8 +124,8 @@ export default function Navbar() {
                   <span className="absolute inset-x-1 -bottom-px h-px bg-gradient-to-r from-sky-500/0 via-sky-500/40 to-sky-500/0 dark:from-sky-400/0 dark:via-sky-400/40 dark:to-sky-400/0" />
                 )}
               </Link>
-              <Link 
-                href="/projects" 
+              <Link
+                href="/projects"
                 className="relative rounded-lg px-3 inline-block py-2 text-sm transition-all delay-150 cursor-pointer"
               >
                 <span className={`relative z-10 ${pathname === '/projects' ? 'text-sky-500 dark:text-sky-400' : 'text-gray-600 dark:text-gray-50'}`}>
@@ -148,16 +147,16 @@ export default function Navbar() {
                   aria-expanded={isMenuOpen}
                 >
                   {isMenuOpen ? 'Close' : 'Menu'}
-                  <svg 
-                    viewBox="0 0 8 6" 
-                    aria-hidden="true" 
+                  <svg
+                    viewBox="0 0 8 6"
+                    aria-hidden="true"
                     className={`ml-3 h-auto w-2 stroke-zinc-500 group-hover:stroke-zinc-700 dark:group-hover:stroke-zinc-400 transition-transform duration-200 ${isMenuOpen ? 'rotate-180' : ''}`}
                   >
-                    <path 
-                      d="M1.75 1.75 4 4.25l2.25-2.5" 
-                      fill="none" 
-                      strokeWidth="1.5" 
-                      strokeLinecap="round" 
+                    <path
+                      d="M1.75 1.75 4 4.25l2.25-2.5"
+                      fill="none"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
                       strokeLinejoin="round"
                     />
                   </svg>
@@ -267,4 +266,4 @@ export default function Navbar() {
       </nav>
     </div>
   );
-} 
+}

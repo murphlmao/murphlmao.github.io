@@ -12,10 +12,9 @@ const ClientMarkdownContent = ({ content }) => {
     <div className="markdown-content">
       <ReactMarkdown
         components={{
-          code({ inline, className, children, ...props }) {
-            const match = /language-(\w+)/.exec(className || '');
+          code({ className, children, ...props }) {
             const isCodeBlock = String(children).includes('\n');
-            
+
             if (!isCodeBlock) {
               return (
                 <code className={className} {...props}>
@@ -38,4 +37,4 @@ const ClientMarkdownContent = ({ content }) => {
   );
 };
 
-export default ClientMarkdownContent; 
+export default ClientMarkdownContent;

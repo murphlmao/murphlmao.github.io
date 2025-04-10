@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { FaGithub, FaLinkedin, FaStackOverflow, FaTwitter } from 'react-icons/fa';
+import { FaGithub, FaLinkedin } from 'react-icons/fa';
 
 export default function ProfileHeader() {
   return (
@@ -15,7 +15,7 @@ export default function ProfileHeader() {
           </p>
           <br/>
           <p>
-            I've a lot of strong opinions (all of which are right), but it always comes from a place of love, passion, and desire
+            I&apos;ve a lot of strong opinions (all of which are right), but it always comes from a place of love, passion, and desire
             to continuously learn. Feel free to reach out anytime on LinkedIn.
           </p>
         </div>
