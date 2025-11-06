@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { FaGithub, FaLinkedin } from 'react-icons/fa';
+import { FaGithub, FaLinkedin, FaSpotify } from 'react-icons/fa';
 
 export default function ProfileHeader() {
   return (
@@ -10,13 +10,14 @@ export default function ProfileHeader() {
         </h1>
         <div className="text-zinc-600 dark:text-zinc-400 mb-4">
           <p>
-            My heart lies with Full-Stack Development, Linux (I use Arch btw), DevOps, Networking,
-            Cybersecurity, & going long walks on the beach so we can talk about our feelings.
-          </p>
-          <br/>
-          <p>
-            I&apos;ve a lot of strong opinions (all of which are right), but it always comes from a place of love, passion, and desire
-            to continuously learn. Feel free to reach out anytime on LinkedIn.
+            I'm a software & platform engineer at Prism Controls and a Computer Science student at the
+            University of Michigan, specializing in full-stack development, DevSecOps, and embedded systems.
+            I've a deep passion for all of the above, but also Linux (Arch btw), networking, cybersecurity, and cats!
+
+            <br/><br/>
+
+            I'm opinionated about technology—but those opinions come from a genuine love of the game and a
+            drive to continuously learn and improve. Always happy to connect and talk.
           </p>
         </div>
 
@@ -29,6 +30,14 @@ export default function ProfileHeader() {
             className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
           >
             <FaGithub className="h-5 w-5" />
+          </a>
+          <a
+            href="https://open.spotify.com/user/bigseeexyman"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+          >
+            <FaSpotify className="h-5 w-5" />
           </a>
           <a
             href="https://www.linkedin.com/in/murphymalcolm/"

@@ -40,6 +40,7 @@ export const techStack = {
     "Bash"
   ],
   "Frameworks / Libraries": [
+    "FastAPI",
     "React",
     "Next.js",
     "Remix",
