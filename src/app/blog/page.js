@@ -17,7 +17,7 @@ export default function Blog() {
                 Keyboard Warrior&apos;s Manifesto.
               </h1>
               <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-                This is here to enable me to share information that I find useful, or just complain about any range of issue(s) at all :).
+                This is where I share things I find useful and occasionally complain about various issues :).
               </p>
             </header>
 

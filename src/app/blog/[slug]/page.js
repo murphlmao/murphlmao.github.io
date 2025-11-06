@@ -135,13 +135,14 @@ export default async function BlogPost({ params }) {
                       <h1 className="mb-2 !mt-0">{frontmatter.title}</h1>
                     </header>
                     <div className="markdown-content">
-                    <Image src="/just_a_chill_guy.jfif" alt="A chill guy" width={500} height={500} />
+                    <MarkdownContent content={content} />
+
+                    {/* remove this later lol */}
+                    {/* <Image src="/just_a_chill_guy.jfif" alt="A chill guy" width={500} height={500} />
                     <audio autoPlay>
                       <source src="/chill_guy_man.mp3" type="audio/mpeg" />
                       Your browser does not support the audio element.
-                    </audio>
-
-                    <MarkdownContent content={content} />
+                    </audio> */}
                     </div>
                   </article>
                 </div>
