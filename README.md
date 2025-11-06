@@ -1,7 +1,4 @@
-# Dev
+# murphlmao.github.io
+New Site
 
-deno install
-deno task dev
-
-# Deploy
-
+https://murphlmao.github.io
