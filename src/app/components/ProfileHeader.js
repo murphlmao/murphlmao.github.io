@@ -10,13 +10,13 @@ export default function ProfileHeader() {
         </h1>
         <div className="text-zinc-600 dark:text-zinc-400 mb-4">
           <p>
-            I'm a software & platform engineer at Prism Controls and a Computer Science student at the
+            I&apos;m a software & platform engineer at Prism Controls and a Computer Science student at the
             University of Michigan, specializing in full-stack development, DevSecOps, and embedded systems.
-            I've a deep passion for all of the above, but also Linux (Arch btw), networking, cybersecurity, and cats!
+            I&apos;ve a deep passion for all of the above, but also Linux (Arch btw), networking, cybersecurity, and cats!
 
             <br/><br/>
 
-            I'm opinionated about technology—but those opinions come from a genuine love of the game and a
+            I&apos;m opinionated about technology—but those opinions come from a genuine love of the game and a
             drive to continuously learn and improve. Always happy to connect and talk.
           </p>
         </div>

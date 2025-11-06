@@ -37,7 +37,7 @@ export default function SnippetsPage() {
                 Code snippets for developers
               </h1>
               <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-                A collection of code snippets that I'm proud of.
+                A collection of code snippets that I&apos;m proud of.
               </p>
             </header>
 

@@ -3,7 +3,7 @@ import path from 'path';
 import Link from 'next/link';
 import '@/styles/markdown.css';
 import Script from 'next/script';
-import Image from 'next/image';
+// import Image from 'next/image';
 
 
 export async function generateStaticParams() {
