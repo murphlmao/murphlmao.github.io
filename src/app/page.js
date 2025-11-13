@@ -7,7 +7,12 @@ import WorkSection from "./components/WorkSection";
 export default function Home() {
   // Get all blog posts from the content/blog directory
   const blogPosts = getAllMarkdownFiles(path.join(process.cwd(), 'content/blog'))
-    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .sort((a, b) => {
+      const dateCompare = new Date(b.date) - new Date(a.date);
+      if (dateCompare !== 0) return dateCompare;
+      // If dates are equal, sort by order field (higher numbers first)
+      return (b.order || 0) - (a.order || 0);
+    })
     .slice(0, 3); // Get only the 3 most recent posts
 
   return (
