@@ -23,7 +23,7 @@
 .markdown-content pre {
   overflow-x: auto;
   padding: 0;
-  margin: 1.5rem 0;
+  margin: 0.75rem 0;
   border-radius: 0.5rem;
 }
 
@@ -48,6 +48,34 @@
   font-weight: 400;
 }
 
+/* Table styles */
+.markdown-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.875rem;
+  border: 1px solid rgb(228 228 231); /* zinc-200 */
+}
+
+.markdown-content th {
+  background-color: rgb(244 244 245); /* zinc-100 */
+  color: rgb(39 39 42); /* zinc-800 */
+  font-weight: 600;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgb(228 228 231); /* zinc-200 */
+}
+
+.markdown-content td {
+  color: rgb(82 82 91); /* zinc-600 */
+  padding: 0.75rem 1rem;
+  border: 1px solid rgb(228 228 231); /* zinc-200 */
+}
+
+.markdown-content tr:nth-child(even) {
+  background-color: rgb(250 250 250); /* zinc-50 */
+}
+
 /* Typography overrides */
 .prose h1 {
   font-size: 2.25rem; /* text-4xl */
@@ -68,8 +96,18 @@
 .prose h2 {
   font-size: 1.25rem; /* text-xl */
   line-height: 1.75rem;
-  margin-top: 3rem;
+  margin-top: 2rem;
   margin-bottom: 1.5rem;
+  font-weight: 600;
+  color: rgb(39 39 42); /* text-zinc-800 */
+}
+
+.prose h3 {
+  font-size: 1.125rem; /* text-lg */
+  line-height: 1.75rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
   color: rgb(39 39 42); /* text-zinc-800 */
 }
 
@@ -112,6 +150,10 @@
   color: rgb(244 244 245); /* dark:text-zinc-100 */
 }
 
+:is(.dark .prose h3) {
+  color: rgb(244 244 245); /* dark:text-zinc-100 */
+}
+
 :is(.dark .prose p) {
   color: rgb(161 161 170); /* dark:text-zinc-400 */
 }
@@ -131,4 +173,24 @@
 
 :is(.dark .markdown-content a:hover) {
   color: rgb(125 211 252); /* dark:text-sky-300 */
+}
+
+/* Dark mode table styles */
+:is(.dark .markdown-content table) {
+  border-color: rgb(63 63 70); /* dark:border-zinc-700 */
+}
+
+:is(.dark .markdown-content th) {
+  background-color: rgb(39 39 42); /* dark:bg-zinc-800 */
+  color: rgb(244 244 245); /* dark:text-zinc-100 */
+  border-color: rgb(63 63 70); /* dark:border-zinc-700 */
+}
+
+:is(.dark .markdown-content td) {
+  color: rgb(161 161 170); /* dark:text-zinc-400 */
+  border-color: rgb(63 63 70); /* dark:border-zinc-700 */
+}
+
+:is(.dark .markdown-content tr:nth-child(even)) {
+  background-color: rgb(24 24 27); /* dark:bg-zinc-900 */
 }
