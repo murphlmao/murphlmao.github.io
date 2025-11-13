@@ -1,6 +1,7 @@
 ---
 title: "What is the stack?"
-date: '2025-11-10'
+date: '2025-11-11'
+order: 1
 description: "The stack makes me want to reference my head against a wall repeatedly until I heap."
 tags: ['cpp', 'programming', 'pointers', 'references', 'aliases', 'C++']
 ---

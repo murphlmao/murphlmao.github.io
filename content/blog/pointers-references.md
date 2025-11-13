@@ -1,6 +1,7 @@
 ---
 title: "Intro to pointers & references."
 date: '2025-11-11'
+order: 2
 description: "Pointer? I barely even knew her! Can you allocate a pointer to my heart???"
 tags: ['cpp', 'programming', 'pointers', 'references', 'aliases', 'C++']
 ---

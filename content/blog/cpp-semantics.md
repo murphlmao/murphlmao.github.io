@@ -1,5 +1,5 @@
 ---
-title: "C++'s Dumbass Semantics"
+title: "C++'s Dumbass Semantics!"
 date: '2025-11-10'
 description: "The root of all evil is, in fact, not premature optimization. Instead, it's college students graduating and writing production C++ code."
 tags: ['cpp', 'programming', 'pointers', 'references', 'aliases', 'C++']
