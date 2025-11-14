@@ -13,7 +13,8 @@ memory. If you can do `x + 3`, you can do pointer arithmetic.
 
 I'm going to rip an example right from
 [Low Level Learning's video](https://www.youtube.com/watch?v=q24-QTbKQS8)
-on pointer arithmetic, but translating it to C++ and without all of the assembly stuff.
+on pointer arithmetic, but I've translated it to C++ & without all of the assembly
+stuff.
 
 I still recommend watching his video regardless.
 
@@ -40,7 +41,7 @@ I'll note later).
 
 ### Array on the stack
 An array in memory is just a contiguous (sharing a common border; touching) block
-where elements are stored back-to-back. Take the above array declaration, and
+where elements are stored back-to-back. Take the above array declaration and
 consider what that looks like in memory:
 ```
 ┌─────────┬─────────┬─────────┬─────────┬─────────┐
@@ -72,7 +73,7 @@ int main() {
 }
 ```
 
-All of these things point to same address in memory, but, confusingly, all
+All of these things point to the same address in memory, but, confusingly, all
 of them have different types. The `typeid` translates to types we're already familiar with:
 | **Type Name** | **C++ Type**          |
 |---------------|-----------------------|
@@ -87,7 +88,7 @@ converts to a pointer to its first element in most contexts. In other words, the
 compiler, because it hates you (and only because it hates you), secretly converts
 your array to a pointer to its first element.
 
-Why would someone do this to you? Well, pointer decay happens a good reason, I guess.
+Why would someone do this to you? Well, pointer decay happens for a good reason, I guess.
 Efficiency! Passing pointers is more optimal than copying entire arrays.
 
 A good rule of thumb: If you use the array name by itself
@@ -201,7 +202,7 @@ int main() {
 What would you expect `element3` to return? You would be forgiven for
 thinking that maybe it returns some address like `0x1002`, but that
 is not the case. The deal with pointer arithmetic is that the
-compiler already knows what you're talking about, and doesn't
+compiler already knows what you're talking about and doesn't
 literally try to add 2 to the address of the pointer. It instead
 recognizes that:
 
@@ -233,10 +234,10 @@ expressions:
 
 You could even write this (but please don't):
 ```c++
-2[c_array] // this is fucking *(2 + c_array)
+2[c_array] // this is just *(2 + c_array)
 ```
-Because addition is commutative, c_array + 2 is the same as 2 +
-c_array, so c_array[2] and 2[c_array] are equivalent. This is
+Because addition is commutative, `c_array + 2` is the same as `2 + c_array`,
+so `c_array[2]` and `2[c_array]` are equivalent. This is
 cursed knowledge that you should never use in production code.
 
 
@@ -272,7 +273,7 @@ In this case, `p_person` is a `Person*`, and `sizeof(Person)` is 68 bytes
 it moves forward by 68 bytes in memory, effectively pointing to the next `Person` in the array.
 
 In case you were wondering why this example is a little contrived, it's because there's
-actually a better way to do this with a range based for loop:
+actually a better way to do this with a range-based for loop:
 ```cpp
 #include <iostream>
 
@@ -319,7 +320,7 @@ ptr1 < ptr2;   // true  - ptr1 is at lower address
 *ptr1 < *ptr2; // true  - compares values (20 < 40)
 ```
 
-This is occasionally useful for bounds checking, otherwise it's not super common nor useful:
+This is occasionally useful for bounds checking; otherwise it's not super common or useful:
 ```cpp
 int* end = c_array + 5;
 int* current = c_array;
@@ -347,7 +348,7 @@ int main() {
 
   // c_array decays to a pointer to the first element
   // end points to one-past-the-end
-  // we don't dereference end, however, we just use it for comparison
+  // we don't dereference end, however; we just use it for comparison
   int* end = c_array + num_elements;
 
   for (int* ptr = c_array; ptr < end; ++ptr) {

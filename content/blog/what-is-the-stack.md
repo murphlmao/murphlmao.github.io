@@ -36,7 +36,7 @@ int main() {
 - **Values** (what's stored there) in the right column
 
 ## If only it were that easy.
-This is where it get's a little annoying. Let's use a slightly different representation
+This is where it gets a little annoying. Let's use a slightly different representation
 to illustrate how the stack works:
 
 | Type  | Variable Name | Address    | Value      |
@@ -59,7 +59,7 @@ the top. You cannot access or remove anything from the middle - only the top
 book is accessible at any given time.
 
 So, what does the corrected table look like in relation to the code snippet above?
-The newest item (ptr_x) should be at the top, with the **lowest** address:
+The newest item (`ptr_x`) should be at the top, with the **lowest** address:
 
 | Type  | Variable Name | Address    | Value      |
 |-------|---------------|------------|------------|
@@ -109,7 +109,7 @@ After `double_it()` returns, the stack looks like:
 | int           | num           | 0x7fff100  | 5          | main()      |
 
 Notice how the entire `double_it()` frame (x, result, NOT the return address) disappeared
-when the function returned. While `double_it()` was running, the first thing that gets
+when the function returned. While `double_it()` was running, the first thing that got
 added to the stack was the return address (the value is 0x400150 because it's pointing to the
 next instruction in main()). That stack location (0x7fff0fc) eventually becomes the address
 where `answer` is stored in `main()` after the function returns.

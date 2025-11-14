@@ -13,7 +13,7 @@ Quick Mapping:
 - `&` in front of a variable (e.g., `&x`): "Address of" operator - gets the memory address
 
 
-## Wtf is a pointer?
+## What is a pointer?
 A pointer, for all intents and purposes, is just another variable. Let's start with a very simple code example:
 ```c++
 int main() {
@@ -25,28 +25,44 @@ int main() {
     return 0;
 }
 ```
-Read out loud what is happening in each line of code here, it will help later:
+Read out loud what is happening in each line of code here, it will help later;
 - Declare a **variable** with the type of an `int` named `x` with the value of `10`
 - Declare a **variable** with the type of an `int*` named `ptr_to_x` with a value that is the `address of x`
 - Declare a **variable** with the type of an `int**` named `ptr_to_ptr_to_x` with a value that is the `address of ptr_to_x`
 - Declare a **reference** with the type of `int&` named `reference_to_x` and `bind it to x`
 
-This wording is very deliberate. Let's first break down the symbols, because they're stupid. C++, being a statically typed language, has a very specific syntax for declaring variables: `[type] [variable_name] = [value]`
+This wording is very deliberate. Let's first break down the symbols, because they're stupid
+ C++, being a statically typed language, has a very specific syntax for declaring variables:
+ `[type] [variable_name] = [value]`
 
-That means that, to break down each line, we understand that `int`, `int*`, `int**`, and `int&` are all types. `x`, `ptr_to_x`, `ptr_to_ptr_to_x`, and `reference_to_x` are all variable names. The stuff after the equals sign is the value assigned to each variable.
+That means that, to break down each line, we understand that `int`, `int*`, `int**`,
+and `int&` are all types. `x`, `ptr_to_x`, `ptr_to_ptr_to_x`, and `reference_to_x` are
+all variable names. The stuff after the equals sign is the value assigned to each variable.
 
-You will occasionally see some morons declare pointers and references using the wrong syntax, which usually consists of some variation of:
+You will occasionally see some people declare pointers & references using the 'politically incorrect' syntax,
+which usually consists of some variation of:
 ```c++
 int * ptr_to_x = &x;
-int* *ptr_to_ptr_to_x = &ptr_to_x;
+int *ptr_to_x = &x;
+int ** ptr_to_ptr_to_x = &ptr_to_x;
 int &reference_to_x = x;
 ```
-This is wrong. The `*` and `&` are part of the type, not the variable name. Don't do this. Please.
+**This is wrong**. The `*` and `&` are part of the type, not the variable name. Don't do this. Please. [Even Google agrees with me](https://google.github.io/styleguide/cppguide.html#Pointer_and_Reference_Expressions).
+
+> Ermmm actually ☝️🤓 what about multiple declarations on a single line???  Like `int *x, y`;
+
+Why the fuck are you doing this in the first place? That declares `x` as a pointer
+but `y` as just a regular int - which proves exactly why this syntax is terrible and
+you shouldn't do it. If it's not clear that they're supposed to be the same type
+**while you're including a type modifier**, like is the case with `int x, y` then
+you literally have no defendable position to argue from. You're risking code readability
+for the sake of getting back one extra line. Read Google's style guide & go take a shower.
+
 
 The reason it helps to understand pointers this way is for when we
 start actually doing things with pointers. For example, can we get the value of a pointer? Yes, we
 just need to do something called `dereferencing`. This literally just means we are getting the value
-of the thing the pointer is pointing to. Thats it.
+of the thing the pointer is pointing to. That's it.
 
 I, personally, treat the `*` symbol similarly to the mathematical concept of `cancelling out like terms`. What happens when we remove `*` from a type like `int*`? We are left with just an `int`. What about `*` from an `int**`? `int*`. And so on and so forth.
 ```c++
@@ -63,9 +79,9 @@ int main() {
 }
 ```
 
-## Wtf is a reference?
+## What is a reference?
 A reference is basically just an alias for another variable. When you create a reference, you are
-not creating a new variable, you are just creating a new name for an existing variable. This means
+not creating a new variable; you are just creating a new name for an existing variable. This means
 that any changes made to the reference will also affect the original variable, and vice versa.
 ```c++
 int main() {
