@@ -13,7 +13,7 @@ Quick Mapping:
 - `&` in front of a variable (e.g., `&x`): "Address of" operator - gets the memory address
 
 
-## Wtf is a pointer?
+## What is a pointer?
 A pointer, for all intents and purposes, is just another variable. Let's start with a very simple code example:
 ```c++
 int main() {
@@ -63,7 +63,7 @@ int main() {
 }
 ```
 
-## Wtf is a reference?
+## What is a reference?
 A reference is basically just an alias for another variable. When you create a reference, you are
 not creating a new variable; you are just creating a new name for an existing variable. This means
 that any changes made to the reference will also affect the original variable, and vice versa.
