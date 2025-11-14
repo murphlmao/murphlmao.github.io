@@ -25,7 +25,7 @@ int main() {
     return 0;
 }
 ```
-Read out loud what is happening in each line of code here, it will help later:
+Read out loud what is happening in each line of code here, it will help later;
 - Declare a **variable** with the type of an `int` named `x` with the value of `10`
 - Declare a **variable** with the type of an `int*` named `ptr_to_x` with a value that is the `address of x`
 - Declare a **variable** with the type of an `int**` named `ptr_to_ptr_to_x` with a value that is the `address of ptr_to_x`
@@ -46,7 +46,7 @@ This is wrong. The `*` and `&` are part of the type, not the variable name. Don'
 The reason it helps to understand pointers this way is for when we
 start actually doing things with pointers. For example, can we get the value of a pointer? Yes, we
 just need to do something called `dereferencing`. This literally just means we are getting the value
-of the thing the pointer is pointing to. Thats it.
+of the thing the pointer is pointing to. That's it.
 
 I, personally, treat the `*` symbol similarly to the mathematical concept of `cancelling out like terms`. What happens when we remove `*` from a type like `int*`? We are left with just an `int`. What about `*` from an `int**`? `int*`. And so on and so forth.
 ```c++
@@ -65,7 +65,7 @@ int main() {
 
 ## Wtf is a reference?
 A reference is basically just an alias for another variable. When you create a reference, you are
-not creating a new variable, you are just creating a new name for an existing variable. This means
+not creating a new variable; you are just creating a new name for an existing variable. This means
 that any changes made to the reference will also affect the original variable, and vice versa.
 ```c++
 int main() {
