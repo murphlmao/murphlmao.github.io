@@ -5,7 +5,7 @@ order: 1
 description: "The stack makes me want to reference my head against a wall repeatedly until I heap."
 tags: ['cpp', 'programming', 'pointers', 'references', 'aliases', 'C++']
 ---
-Definitionally, The stack is a region of memory that your program uses to store
+Definitionally, the stack is a region of memory that your program uses to store
 local variables - the variables you declare inside functions. When your operating
 system runs your program, it gives you a chunk of memory (usually a few megabytes)
 and says "here's your stack, use it for your function variables."
@@ -19,17 +19,17 @@ a function is running.
 Think of the stack like a simple two-column spreadsheet. When you write:
 ```c++
 int main() {
-  int x = 10; // Row gets added: [0x7fff001, 10]
-  int y = 20; // Row gets added: [0x7fff002, 20]
-  int* ptr_x = &x; // Row gets added: [0x7fff003, 0x7fff001]
+  int x = 10; // Row gets added: [0x7fff100, 10]
+  int y = 20; // Row gets added: [0x7fff0fc, 20]
+  int* ptr_x = &x; // Row gets added: [0x7fff0f8, 0x7fff100]
 }
 ```
 
 | **Address** | **Value** |
 |-------------|-----------|
-| 0x7fff001 | 10        |
-| 0x7fff002 | 20        |
-| 0x7fff003 | 0x7fff001 |
+| 0x7fff100 | 10        |
+| 0x7fff0fc | 20        |
+| 0x7fff0f8 | 0x7fff100 |
 
 **That's it.** The stack is just:
 - **Addresses** (memory locations) in the left column
@@ -41,23 +41,31 @@ to illustrate how the stack works:
 
 | Type  | Variable Name | Address    | Value      |
 |-------|---------------|------------|------------|
-| int   | x             | 0x7fff001  | 10         |
-| int   | y             | 0x7fff002  | 20         |
-| int*  | ptr           | 0x7fff003  | 0x7fff001  |
+| int   | x             | 0x7fff100  | 10         |
+| int   | y             | 0x7fff0fc  | 20         |
+| int*  | ptr_x         | 0x7fff0f8  | 0x7fff100  |
 
 
 Right now, this analogy of the stack is **not** technically correct when looking
-through the lens of a `call stack`. That's because the stack follows a principle
+through the lens of the `call stack`. That's because the stack follows a principle
 called **LIFO** (Last In, First Out). This means that the last item added to the
-stack is the first one to be removed.
+stack is the first one to be removed. Since the stack grows **downward in memory**,
+newer variables get **lower** addresses, but should appear at the **top** of our
+visualization.
+
+You can think of the stack (LIFO) like a stack of books; you add a book to the
+top of the stack, and when you need to remove a book, you can only take from
+the top. You cannot access or remove anything from the middle - only the top
+book is accessible at any given time.
 
 So, what does the corrected table look like in relation to the code snippet above?
+The newest item (ptr_x) should be at the top, with the **lowest** address:
 
 | Type  | Variable Name | Address    | Value      |
 |-------|---------------|------------|------------|
-| int*  | ptr_x         | 0x7fff003  | 0x7fff001  |
-| int   | y             | 0x7fff002  | 20         |
-| int   | x             | 0x7fff001  | 10         |
+| int*  | ptr_x         | 0x7fff0f8  | 0x7fff100  |
+| int   | y             | 0x7fff0fc  | 20         |
+| int   | x             | 0x7fff100  | 10         |
 
 ## Stack Frames
 
@@ -78,36 +86,42 @@ int main() {
 }
 ```
 
-**Before calling `double_it()`, the stack looks like:**
+Before calling `double_it()`, the stack looks like:
 
 | Type          | Variable Name | Address    | Value      | Stack Frame |
 |---------------|---------------|------------|------------|-------------|
-| int           | num           | 0x7fff001  | 5          | main()      |
+| int           | num           | 0x7fff100  | 5          | main()      |
 
-**While `double_it()` is running, the stack looks like:**
-
-| Type          | Variable Name | Address    | Value      | Stack Frame |
-|---------------|---------------|------------|------------|-------------|
-| int           | result        | 0x7fff004  | 10         | double_it() |
-| int           | x             | 0x7fff003  | 5          | double_it() |
-| return addr   | (hidden)      | 0x7fff002  | 0x7fff010  | double_it() |
-| int           | num           | 0x7fff001  | 5          | main()      |
-
-**After `double_it()` returns, the stack looks like:**
+While `double_it()` is running, the stack looks like:
 
 | Type          | Variable Name | Address    | Value      | Stack Frame |
 |---------------|---------------|------------|------------|-------------|
-| int           | answer        | 0x7fff002  | 10         | main()      |
-| int           | num           | 0x7fff001  | 5          | main()      |
+| int           | result        | 0x7fff0f4  | 10         | double_it() |
+| int           | x             | 0x7fff0f8  | 5          | double_it() |
+| return addr   | (hidden)      | **0x7fff0fc**  | 0x400150  | double_it() |
+| int           | num           | 0x7fff100  | 5          | main()      |
 
-Notice how the entire `double_it()` frame (return address, x, result) disappeared when the function returned. The running stack isn't hugely important in this context, but it becomes relevant when
-trying to understand recursion, stack overflows, memory errors, and
-other stuff I'll cover at a later point in time.
+After `double_it()` returns, the stack looks like:
 
+| Type          | Variable Name | Address    | Value      | Stack Frame |
+|---------------|---------------|------------|------------|-------------|
+| int           | answer        | **0x7fff0fc**  | 10         | main()      |
+| int           | num           | 0x7fff100  | 5          | main()      |
+
+Notice how the entire `double_it()` frame (x, result, NOT the return address) disappeared
+when the function returned. While `double_it()` was running, the first thing that gets
+added to the stack was the return address (the value is 0x400150 because it's pointing to the
+next instruction in main()). That stack location (0x7fff0fc) eventually becomes the address
+where `answer` is stored in `main()` after the function returns.
+
+The running stack isn't hugely important in this context, but it becomes relevant when
+trying to understand recursion, stack overflows, memory errors, and other stuff I'll
+cover some other time.
 
 ### Which function has the biggest stack frame?
 
-In this example, **`double_it()` has the biggest stack frame** with 3 items (return address, x, result), while `main()` has 2 variables (num, answer).
+In this example, **`double_it()` has the biggest stack frame** with 3 items
+(return address, x, result), while `main()` has 2 variables (num, answer).
 
 ### How can you identify a stack frame?
 
