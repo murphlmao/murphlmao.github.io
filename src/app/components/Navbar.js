@@ -95,10 +95,10 @@ export default function Navbar() {
                 href="/blog"
                 className="relative rounded-lg px-3 inline-block py-2 text-sm transition-all delay-150 cursor-pointer"
               >
-                <span className={`relative z-10 ${pathname === '/blog' ? 'text-sky-500 dark:text-sky-400' : 'text-gray-600 dark:text-gray-50'}`}>
+                <span className={`relative z-10 ${pathname.startsWith('/blog') ? 'text-sky-500 dark:text-sky-400' : 'text-gray-600 dark:text-gray-50'}`}>
                   Blog
                 </span>
-                {pathname === '/blog' && (
+                {pathname.startsWith('/blog') && (
                   <span className="absolute inset-x-1 -bottom-px h-px bg-gradient-to-r from-sky-500/0 via-sky-500/40 to-sky-500/0 dark:from-sky-400/0 dark:via-sky-400/40 dark:to-sky-400/0" />
                 )}
               </Link>
@@ -106,10 +106,10 @@ export default function Navbar() {
                 href="/snippets"
                 className="relative rounded-lg px-3 inline-block py-2 text-sm transition-all delay-150 cursor-pointer"
               >
-                <span className={`relative z-10 ${pathname === '/snippets' ? 'text-sky-500 dark:text-sky-400' : 'text-gray-600 dark:text-gray-50'}`}>
+                <span className={`relative z-10 ${pathname.startsWith('/snippets') ? 'text-sky-500 dark:text-sky-400' : 'text-gray-600 dark:text-gray-50'}`}>
                   Snippets
                 </span>
-                {pathname === '/snippets' && (
+                {pathname.startsWith('/snippets') && (
                   <span className="absolute inset-x-1 -bottom-px h-px bg-gradient-to-r from-sky-500/0 via-sky-500/40 to-sky-500/0 dark:from-sky-400/0 dark:via-sky-400/40 dark:to-sky-400/0" />
                 )}
               </Link>
@@ -117,10 +117,10 @@ export default function Navbar() {
                 href="/resources"
                 className="relative rounded-lg px-3 inline-block py-2 text-sm transition-all delay-150 cursor-pointer"
               >
-                <span className={`relative z-10 ${pathname === '/resources' ? 'text-sky-500 dark:text-sky-400' : 'text-gray-600 dark:text-gray-50'}`}>
+                <span className={`relative z-10 ${pathname.startsWith('/resources') ? 'text-sky-500 dark:text-sky-400' : 'text-gray-600 dark:text-gray-50'}`}>
                   Resources
                 </span>
-                {pathname === '/resources' && (
+                {pathname.startsWith('/resources') && (
                   <span className="absolute inset-x-1 -bottom-px h-px bg-gradient-to-r from-sky-500/0 via-sky-500/40 to-sky-500/0 dark:from-sky-400/0 dark:via-sky-400/40 dark:to-sky-400/0" />
                 )}
               </Link>
@@ -128,10 +128,10 @@ export default function Navbar() {
                 href="/projects"
                 className="relative rounded-lg px-3 inline-block py-2 text-sm transition-all delay-150 cursor-pointer"
               >
-                <span className={`relative z-10 ${pathname === '/projects' ? 'text-sky-500 dark:text-sky-400' : 'text-gray-600 dark:text-gray-50'}`}>
+                <span className={`relative z-10 ${pathname.startsWith('/projects') ? 'text-sky-500 dark:text-sky-400' : 'text-gray-600 dark:text-gray-50'}`}>
                   Projects
                 </span>
-                {pathname === '/projects' && (
+                {pathname.startsWith('/projects') && (
                   <span className="absolute inset-x-1 -bottom-px h-px bg-gradient-to-r from-sky-500/0 via-sky-500/40 to-sky-500/0 dark:from-sky-400/0 dark:via-sky-400/40 dark:to-sky-400/0" />
                 )}
               </Link>
@@ -216,7 +216,7 @@ export default function Navbar() {
                   href="/blog"
                   className="relative block px-3 py-2 text-sm transition-all delay-150 cursor-pointer"
                 >
-                  <span className={`relative z-10 ${pathname === '/blog' ? 'text-sky-500 dark:text-sky-400' : 'text-gray-600 dark:text-gray-50'}`}>
+                  <span className={`relative z-10 ${pathname.startsWith('/blog') ? 'text-sky-500 dark:text-sky-400' : 'text-gray-600 dark:text-gray-50'}`}>
                     Blog
                   </span>
                 </Link>
@@ -229,7 +229,7 @@ export default function Navbar() {
                   href="/snippets"
                   className="relative block px-3 py-2 text-sm transition-all delay-150 cursor-pointer"
                 >
-                  <span className={`relative z-10 ${pathname === '/snippets' ? 'text-sky-500 dark:text-sky-400' : 'text-gray-600 dark:text-gray-50'}`}>
+                  <span className={`relative z-10 ${pathname.startsWith('/snippets') ? 'text-sky-500 dark:text-sky-400' : 'text-gray-600 dark:text-gray-50'}`}>
                     Snippets
                   </span>
                 </Link>
@@ -242,7 +242,7 @@ export default function Navbar() {
                   href="/resources"
                   className="relative block px-3 py-2 text-sm transition-all delay-150 cursor-pointer"
                 >
-                  <span className={`relative z-10 ${pathname === '/resources' ? 'text-sky-500 dark:text-sky-400' : 'text-gray-600 dark:text-gray-50'}`}>
+                  <span className={`relative z-10 ${pathname.startsWith('/resources') ? 'text-sky-500 dark:text-sky-400' : 'text-gray-600 dark:text-gray-50'}`}>
                     Resources
                   </span>
                 </Link>
@@ -255,7 +255,7 @@ export default function Navbar() {
                   href="/projects"
                   className="relative block px-3 py-2 text-sm transition-all delay-150 cursor-pointer"
                 >
-                  <span className={`relative z-10 ${pathname === '/projects' ? 'text-sky-500 dark:text-sky-400' : 'text-gray-600 dark:text-gray-50'}`}>
+                  <span className={`relative z-10 ${pathname.startsWith('/projects') ? 'text-sky-500 dark:text-sky-400' : 'text-gray-600 dark:text-gray-50'}`}>
                     Projects
                   </span>
                 </Link>
