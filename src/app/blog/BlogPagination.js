@@ -46,6 +46,7 @@ export default function BlogPagination({ articles, articlesPerPage }) {
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric',
+                  timeZone: 'UTC',
                 })}
               </time>
               <p className="relative z-10 mt-2 text-sm text-zinc-600 dark:text-zinc-400">
@@ -79,6 +80,7 @@ export default function BlogPagination({ articles, articlesPerPage }) {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
+                timeZone: 'UTC',
               })}
             </time>
           </article>

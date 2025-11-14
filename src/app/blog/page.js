@@ -5,7 +5,12 @@ import BlogPagination from './BlogPagination';
 export default function Blog() {
   // This runs on the server
   const allArticles = getAllMarkdownFiles(path.join(process.cwd(), 'content/blog'))
-    .sort((a, b) => new Date(b.date) - new Date(a.date));
+    .sort((a, b) => {
+      const dateCompare = new Date(b.date) - new Date(a.date);
+      if (dateCompare !== 0) return dateCompare;
+      // If dates are equal, sort by order field (higher numbers first)
+      return (b.order || 0) - (a.order || 0);
+    });
 
   return (
     <div className="sm:px-8 mt-16 sm:mt-18">
