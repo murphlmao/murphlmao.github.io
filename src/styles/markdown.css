@@ -137,6 +137,24 @@
   color: rgb(161 161 170); /* text-zinc-400 for bullet points */
 }
 
+/* Blockquote styles */
+.prose blockquote {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding-left: 1.5rem;
+  border-left: 4px solid rgb(228 228 231); /* zinc-200 */
+  font-style: italic;
+  color: rgb(82 82 91); /* text-zinc-600 */
+  background-color: rgb(250 250 250); /* zinc-50 */
+  padding: 1rem 1.5rem;
+  border-radius: 0.375rem;
+}
+
+.prose blockquote p {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
 /* Dark mode styles */
 :is(.dark .markdown-content pre > div) {
   background-color: #090915 !important;
@@ -193,4 +211,11 @@
 
 :is(.dark .markdown-content tr:nth-child(even)) {
   background-color: rgb(24 24 27); /* dark:bg-zinc-900 */
+}
+
+/* Dark mode blockquote styles */
+:is(.dark .prose blockquote) {
+  border-left-color: rgb(63 63 70); /* dark:border-zinc-700 */
+  color: rgb(161 161 170); /* dark:text-zinc-400 */
+  background-color: rgb(39 39 42); /* dark:bg-zinc-800 */
 }
