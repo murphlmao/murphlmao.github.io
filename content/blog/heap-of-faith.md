@@ -157,8 +157,9 @@ What's the issue? We forgot to `delete ptr`. When we allocate memory with `new` 
 never free it with `delete`, we create a **memory leak**, a category of memory-related errors.
 The pointer `ptr` is destroyed when the function returns, but the heap object it pointed
 to still exists - we just lost the only way to access or delete it. That memory is
-now wasted for the lifetime of the program. The nerd-inology is calling `ptr` an
-`orphaned` object. All orphaned memory is inevitably leaked.
+now wasted for the lifetime of the program. The nerd-inology is calling `ptr`
+(TECHNICALLY the heap object, since the ptr is destroyed when it goes out of scope)
+an `orphaned` object. All orphaned memory is, inevitably, leaked.
 
 Let's take a look at a rapid fire list of other memory related errors:
 
@@ -256,3 +257,4 @@ Total virtual: 300 GB
 Total physical RAM used: 150 MB  ← this is what matters!
 ```
 
+**I am not responsible for the terrible code you produce because of this.**
