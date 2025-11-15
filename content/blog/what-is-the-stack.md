@@ -19,9 +19,9 @@ a function is running.
 Think of the stack like a simple two-column spreadsheet. When you write:
 ```c++
 int main() {
-  int x = 10; // Row gets added: [0x7fff100, 10]
-  int y = 20; // Row gets added: [0x7fff0fc, 20]
-  int* ptr_x = &x; // Row gets added: [0x7fff0f8, 0x7fff100]
+  int x = 10; // row gets added: [0x7fff100, 10]
+  int y = 20; // row gets added: [0x7fff0fc, 20]
+  int* ptr_x = &x; // row gets added: [0x7fff0f8, 0x7fff100]
 }
 ```
 

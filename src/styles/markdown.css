@@ -125,6 +125,13 @@
   padding-left: 1.625rem;
 }
 
+.prose ol {
+  list-style-type: decimal;
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+  padding-left: 1.625rem;
+}
+
 .prose li {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
@@ -135,6 +142,10 @@
 
 .prose ul > li::marker {
   color: rgb(161 161 170); /* text-zinc-400 for bullet points */
+}
+
+.prose ol > li::marker {
+  color: rgb(161 161 170); /* text-zinc-400 for numbers */
 }
 
 /* Blockquote styles */
@@ -181,6 +192,10 @@
 }
 
 :is(.dark .prose ul > li::marker) {
+  color: rgb(113 113 122); /* dark:text-zinc-500 */
+}
+
+:is(.dark .prose ol > li::marker) {
   color: rgb(113 113 122); /* dark:text-zinc-500 */
 }
 

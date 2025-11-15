@@ -172,10 +172,10 @@ int main() {
 - Required when you might want to reassign what you're pointing to
 ```c++
 void process(int& required, int* optional) {
-    required = 50;  // Always valid
+    required = 50;  // always valid
 
     if (optional != nullptr) {
-        *optional = 100;  // Only modify if provided
+        *optional = 100;  // only modify if provided
     }
 }
 
@@ -183,8 +183,8 @@ int main() {
     int x = 10;
     int y = 20;
 
-    process(x, &y);      // Both provided
-    process(x, nullptr); // Only x provided
+    process(x, &y);      // both provided
+    process(x, nullptr); // only x provided
 
     return 0;
 }
