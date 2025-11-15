@@ -301,7 +301,7 @@ int* ptr1 = &c_array[0];  // 0x1000
 int* ptr2 = &c_array[4];  // 0x1010
 ptr2 - ptr1;  // returns 4 (not 16!)
 
-// The compiler calculates:
+// the compiler calculates:
 // (0x1010 - 0x1000) / sizeof(int)
 // = 16 bytes / 4 bytes per int
 // = 4 elements

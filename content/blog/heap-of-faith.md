@@ -60,7 +60,7 @@ are some parts of applications where we can't predict how much memory we will
 need. This makes our programs more flexible when, for example, we need to take
 in a range of user input data that may vary in size.
 
-### Okay... but how do you know? Source???
+### Source???
 You may be already using the heap without realizing it. While it's true that, in C++,
 you often will use the `new` keyword to allocate memory on the heap, let's take an easier
 and more relevant example to introduce the concept of dynamic memory: `std::vector` & C-style arrays.
@@ -138,11 +138,11 @@ just a few entries in a `page table` (don't worry about what a page table is rig
 -  Physical RAM is only allocated when you actually write to that memory (called a page fault).
 
 ```cpp
-int* ptr = new int[1000000];  // OS: "Sure, here's a virtual address"
-                              // Physical RAM used: 0 bytes!
+int* ptr = new int[1000000];  // OS: "sure, here's a virtual address"
+                              // physical RAM used: 0 bytes!
 
-ptr[0] = 42;  // NOW the OS allocates a physical page
-              // Physical RAM used: 4 KB (one page)
+ptr[0] = 42;  // now the OS allocates a physical page
+              // physical RAM used: 4 KB (one page)
 ```
 
 But, this memory is managed in something called `pages` (typically 4 KB chunks),
@@ -161,7 +161,7 @@ Process B: 100 GB virtual space (using 30 MB physical RAM)
 Process C: 100 GB virtual space (using 70 MB physical RAM)
 ───────────────────────────────────────────────────────
 Total virtual: 300 GB
-Total physical RAM used: 150 MB  ← This is what matters!
+Total physical RAM used: 150 MB  ← this is what matters!
 ```
 
 ## Time to show you how to suffer.
@@ -176,7 +176,7 @@ and can be used throughout our program
 and free its memory
 
 For example, `new int x = 10;` is invalid because `new int` returns a pointer, but
-`x` would be a regular `int` variable. Keep in mind that The heap object is anonymous
+`x` would be a regular `int` variable. Keep in mind that the heap object is anonymous
 - it has no name, only an address that we access through our pointer. Here's the correct syntax:
 ```cpp
 int* ptr = new int(10); // correct: ptr stores the heap address
@@ -235,14 +235,14 @@ int* ptr; // points to garbage. This is NOT a nullptr
 Accessing memory outside allocated bounds:
 ```cpp
 int* arr = new int[5];
-arr[10] = 42;  // Writing past the end of the array
+arr[10] = 42;  // writing past the end of the array
 ```
 
 ### 5. Memory Corruption
 Writing to the wrong memory addresses, often due to pointer arithmetic errors:
 ```cpp
 int* ptr = new int(10);
-*(ptr + 1000) = 5;  // Corrupting random memory
+*(ptr + 1000) = 5;  // corrupting random memory
 ```
 
 ### 6. Mismatched New/Delete
