@@ -2,12 +2,9 @@
 title: "What is the heap? The hell that is dynamic memory."
 date: '2025-11-14'
 order: 1
-description: "It's easy bro. If you have use 'new' then just remember to 'delete'. Just don't code bugs bro."
+description: "1980s: yells down the hall: 'Hey everyone I’m using 0xE000, try not to clobber it, thanks!'"
 tags: ['C++', 'cpp', 'god died with the invention of C++', 'stack', 'memory models', 'heap']
 ---
-
-## Foreword
-I don't like the heap. I don't like memory management. That is all.
 
 ## Briefly revisiting the stack
 Like I noted earlier in my explanation of the stack, the primary benefit it provides
@@ -118,7 +115,7 @@ Anytime you want to do anything with a vector, like add or remove elements, the 
 around the heap-allocated array will handle all of that for you. This is one of the
 main reasons why vectors are preferred over raw arrays in C++.
 
-## Time to show you how to suffer.
+## How 2 footgun
 The general workflow for manual memory management is:
 
 - Use `new` to allocate an object on the heap and get back a pointer to it.
@@ -130,8 +127,8 @@ and can be used throughout our program
 and free its memory
 
 For example, `new int x = 10;` is invalid because `new int` returns a pointer, but
-`x` would be a regular `int` variable. Keep in mind that the heap object is anonymous
-- it has no name, only an address that we access through our pointer. Here's the correct syntax:
+`x` would be a regular `int` variable. Keep in mind that a heap object is anonymous.
+It has no name, only an address that we access through our pointer. Here's the correct syntax:
 ```cpp
 int* ptr = new int(10); // correct: ptr stores the heap address
 // stack:              heap:
@@ -168,7 +165,7 @@ Accessing memory after it's been deleted:
 ```cpp
 int* ptr = new int(10);
 delete ptr;
-std::cout << *ptr << std::endl;
+std::cout << *ptr << std::endl; // you killed her bro
 ```
 
 ### 2. Double Delete / Double Free
@@ -182,7 +179,7 @@ delete ptr; // memory already freed
 ### 3. Wild/Uninitialized Pointers
 Using a pointer that was never initialized:
 ```cpp
-int* ptr; // points to garbage. This is NOT a nullptr
+int* ptr;  // points to garbage. fyi, this is NOT a nullptr
 *ptr = 10; // writing to random memory
 ```
 
@@ -257,4 +254,14 @@ Total virtual: 300 GB
 Total physical RAM used: 150 MB  ← this is what matters!
 ```
 
-**I am not responsible for the terrible code you produce because of this.**
+## You've now been deflowered.
+Keep in mind that, conceptually, memory management is actually not that difficult
+to understand. The difficult part is implementing it correctly and safely. This is
+exactly why languages with garbage collectors (stuff in other languages that cleans
+up all of dynamically allocated memory for you) are often preferred for quick development.
+
+As a wise man on Reddit once said:
+
+> Yeah memory management is so simple and programmers in the 90s did it so
+> well that it surely didn't create overwhelming amount of security
+> vulnerabilities and bugs.
