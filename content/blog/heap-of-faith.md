@@ -118,7 +118,53 @@ Anytime you want to do anything with a vector, like add or remove elements, the 
 around the heap-allocated array will handle all of that for you. This is one of the
 main reasons why vectors are preferred over raw arrays in C++.
 
-## Okay, but what if we want to make it ourselves?
+## Detour: How does the OS distribute stack/heap space to you?
+Remember from my explanation of the stack where I said:
+> When your operating system runs your program, it gives you a chunk of
+> memory (usually a few megabytes) and says "here's your stack, use it for
+> your function variables."
+
+This sort of happens with the heap as well. The main difference is that the
+stack gives you this memory upfront while the heap is really just 'available'
+via the OS allocating `virtual address space` to your process. Let's quickly
+detour to explain that process in a little bit more depth.
+
+### Light intro to pages
+The specifics of what's happening when your process starts:
+- Your process gets a large virtual address space (on 64-bit systems, this is huge - terabytes)
+'reserved' by the OS. It's not allocating any physical RAM (because that's a limited resource).
+It's just saying "this range of addresses belongs to your process." This costs almost nothing -
+just a few entries in a `page table` (don't worry about what a page table is right now lol).
+-  Physical RAM is only allocated when you actually write to that memory (called a page fault).
+
+```cpp
+int* ptr = new int[1000000];  // OS: "Sure, here's a virtual address"
+                              // Physical RAM used: 0 bytes!
+
+ptr[0] = 42;  // NOW the OS allocates a physical page
+              // Physical RAM used: 4 KB (one page)
+```
+
+But, this memory is managed in something called `pages` (typically 4 KB chunks),
+not individual bytes, so the overhead of tracking virtual memory is minimal.
+```
+1 GB of virtual space = 262,144 pages
+Page table entry ≈ 8 bytes
+Total overhead ≈ 2 MB to track 1 GB of virtual space
+```
+
+Multiple processes can have HUGE virtual address spaces, but they all share the same
+limited physical RAM. **The OS only commits physical RAM as needed**.
+```
+Process A: 100 GB virtual space (using 50 MB physical RAM)
+Process B: 100 GB virtual space (using 30 MB physical RAM)
+Process C: 100 GB virtual space (using 70 MB physical RAM)
+───────────────────────────────────────────────────────
+Total virtual: 300 GB
+Total physical RAM used: 150 MB  ← This is what matters!
+```
+
+## Time to show you how to suffer.
 The general workflow for manual memory management is:
 
 - Use `new` to allocate an object on the heap and get back a pointer to it.
@@ -133,7 +179,7 @@ For example, `new int x = 10;` is invalid because `new int` returns a pointer, b
 `x` would be a regular `int` variable. Keep in mind that The heap object is anonymous
 - it has no name, only an address that we access through our pointer. Here's the correct syntax:
 ```cpp
-int* ptr = new int(10);  // correct: pointer variable stores the heap address
+int* ptr = new int(10); // correct: ptr stores the heap address
 // stack:              heap:
 // ptr (address) ───>  [10]
 
@@ -142,20 +188,70 @@ int* ptr = new int(10);  // correct: pointer variable stores the heap address
 // int x = new int(10); // x is an int, not a pointer (type mismatch)
 ```
 
-Now, we approach the reason that all of your games run horribly; the demon that is
-manual memory management: forgetting to free your object from memory. For example,
-this is perfectly valid code that will compile and run.
+Now, we approach the reason that all of your games run horribly: the demon that is
+manual memory management. Here is an example of code that compiles, but is fundamentally wrong.
 ```cpp
 #include <iostream>
-int main() {
+int function_that_is_not_main() {
   int* ptr = new int(3);
   std::cout << *ptr << std::endl;
   return 0;
 }
 ```
 
-What's the issue? Remember from my explanation of the stack where I said:
-> When your operating system runs your program, it gives you a chunk of
-> memory (usually a few megabytes) and says "here's your stack, use it for
-> your function variables."
+What's the issue? We forgot to `delete ptr`. When we allocate memory with `new` but
+never free it with `delete`, we create a **memory leak**, a category of memory-related errors.
+The pointer `ptr` is destroyed when the function returns, but the heap object it pointed
+to still exists - we just lost the only way to access or delete it. That memory is
+now wasted for the lifetime of the program. The nerd-inology is calling `ptr` an
+`orphaned` object. All orphaned memory is inevitably leaked.
 
+Let's take a look at a rapid fire list of other memory related errors:
+
+### 1. Dangling Pointers / Use-After-Free
+Accessing memory after it's been deleted:
+```cpp
+int* ptr = new int(10);
+delete ptr;
+std::cout << *ptr << std::endl;
+```
+
+### 2. Double Delete / Double Free
+Calling `delete` on the same pointer twice:
+```cpp
+int* ptr = new int(10);
+delete ptr;
+delete ptr; // memory already freed
+```
+
+### 3. Wild/Uninitialized Pointers
+Using a pointer that was never initialized:
+```cpp
+int* ptr; // points to garbage. This is NOT a nullptr
+*ptr = 10; // writing to random memory
+```
+
+### 4. Buffer Overflows/Out-of-Bounds Access
+Accessing memory outside allocated bounds:
+```cpp
+int* arr = new int[5];
+arr[10] = 42;  // Writing past the end of the array
+```
+
+### 5. Memory Corruption
+Writing to the wrong memory addresses, often due to pointer arithmetic errors:
+```cpp
+int* ptr = new int(10);
+*(ptr + 1000) = 5;  // Corrupting random memory
+```
+
+### 6. Mismatched New/Delete
+Using wrong deallocation for the allocation type:
+```cpp
+// pay attention to the brackets vs parenthesis
+int* arr = new int[10]; // array of 10 elements
+delete arr; // should be delete[]
+
+int* single = new int(5); // integer with a value of 5
+delete[] single; // should be delete
+```
