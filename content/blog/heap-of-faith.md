@@ -118,52 +118,6 @@ Anytime you want to do anything with a vector, like add or remove elements, the 
 around the heap-allocated array will handle all of that for you. This is one of the
 main reasons why vectors are preferred over raw arrays in C++.
 
-## Detour: How does the OS distribute stack/heap space to you?
-Remember from my explanation of the stack where I said:
-> When your operating system runs your program, it gives you a chunk of
-> memory (usually a few megabytes) and says "here's your stack, use it for
-> your function variables."
-
-This sort of happens with the heap as well. The main difference is that the
-stack gives you this memory upfront while the heap is really just 'available'
-via the OS allocating `virtual address space` to your process. Let's quickly
-detour to explain that process in a little bit more depth.
-
-### Light intro to pages
-The specifics of what's happening when your process starts:
-- Your process gets a large virtual address space (on 64-bit systems, this is huge - terabytes)
-'reserved' by the OS. It's not allocating any physical RAM (because that's a limited resource).
-It's just saying "this range of addresses belongs to your process." This costs almost nothing -
-just a few entries in a `page table` (don't worry about what a page table is right now lol).
--  Physical RAM is only allocated when you actually write to that memory (called a page fault).
-
-```cpp
-int* ptr = new int[1000000];  // OS: "sure, here's a virtual address"
-                              // physical RAM used: 0 bytes!
-
-ptr[0] = 42;  // now the OS allocates a physical page
-              // physical RAM used: 4 KB (one page)
-```
-
-But, this memory is managed in something called `pages` (typically 4 KB chunks),
-not individual bytes, so the overhead of tracking virtual memory is minimal.
-```
-1 GB of virtual space = 262,144 pages
-Page table entry ≈ 8 bytes
-Total overhead ≈ 2 MB to track 1 GB of virtual space
-```
-
-Multiple processes can have HUGE virtual address spaces, but they all share the same
-limited physical RAM. **The OS only commits physical RAM as needed**.
-```
-Process A: 100 GB virtual space (using 50 MB physical RAM)
-Process B: 100 GB virtual space (using 30 MB physical RAM)
-Process C: 100 GB virtual space (using 70 MB physical RAM)
-───────────────────────────────────────────────────────
-Total virtual: 300 GB
-Total physical RAM used: 150 MB  ← this is what matters!
-```
-
 ## Time to show you how to suffer.
 The general workflow for manual memory management is:
 
@@ -255,3 +209,50 @@ delete arr; // should be delete[]
 int* single = new int(5); // integer with a value of 5
 delete[] single; // should be delete
 ```
+
+## Detour: How does the OS distribute stack/heap space to you?
+Remember from my explanation of the stack where I said:
+> When your operating system runs your program, it gives you a chunk of
+> memory (usually a few megabytes) and says "here's your stack, use it for
+> your function variables."
+
+This sort of happens with the heap as well. The main difference is that the
+stack gives you this memory upfront while the heap is really just 'available'
+via the OS allocating `virtual address space` to your process. Let's quickly
+detour to explain that process in a little bit more depth.
+
+### Light intro to pages
+The specifics of what's happening when your process starts:
+- Your process gets a large virtual address space (on 64-bit systems, this is huge - terabytes)
+'reserved' by the OS. It's not allocating any physical RAM (because that's a limited resource).
+It's just saying "this range of addresses belongs to your process." This costs almost nothing -
+just a few entries in a `page table` (don't worry about what a page table is right now lol).
+-  Physical RAM is only allocated when you actually write to that memory (called a page fault).
+
+```cpp
+int* ptr = new int[1000000];  // OS: "sure, here's a virtual address"
+                              // physical RAM used: 0 bytes!
+
+ptr[0] = 42;  // now the OS allocates a physical page
+              // physical RAM used: 4 KB (one page)
+```
+
+But, this memory is managed in something called `pages` (typically 4 KB chunks),
+not individual bytes, so the overhead of tracking virtual memory is minimal.
+```
+1 GB of virtual space = 262,144 pages
+Page table entry ≈ 8 bytes
+Total overhead ≈ 2 MB to track 1 GB of virtual space
+```
+
+Multiple processes can have HUGE virtual address spaces, but they all share the same
+limited physical RAM. **The OS only commits physical RAM as needed**.
+```
+Process A: 100 GB virtual space (using 50 MB physical RAM)
+Process B: 100 GB virtual space (using 30 MB physical RAM)
+Process C: 100 GB virtual space (using 70 MB physical RAM)
+───────────────────────────────────────────────────────
+Total virtual: 300 GB
+Total physical RAM used: 150 MB  ← this is what matters!
+```
+
