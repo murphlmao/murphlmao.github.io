@@ -237,8 +237,7 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-So, like I said, really conceptually simple
-, the syntax is just annoying as fuck.
+So, like I said, really conceptually simple, the syntax is just annoying as fuck.
 
 ### istream, ostream, and stringstreams
 Lastly, there are two generic types of streams: `istream` and `ostream`.
