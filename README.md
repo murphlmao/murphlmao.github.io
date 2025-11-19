@@ -6,10 +6,9 @@ deno task dev
 # Deploy
 
 # TODO blogs:
-- const, Structs and C-Style strings & ADTs
- - Templates (?)
+- Structs and C-Style strings & ADTs
 - (ADTs) Classes, Polymorphism, & OOP in C++
-  - Overloading
+  - Templates & Operator Overloading
   - RAII
   - Deep copies & the big three
 - Error & exception handling & exit codes
@@ -26,3 +25,4 @@ deno task dev
 - heap
 - arrays & pointer arithmetic
 - streams and I/O
+- const

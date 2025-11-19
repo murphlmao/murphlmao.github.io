@@ -40,7 +40,7 @@ and we don't have to worry about all of the extra fluff that C++ gives us (with 
 I'll note later).
 
 ### Array on the stack
-An array in memory is just a contiguous (sharing a common border; touching) block
+An array in memory is just a contiguous (*sharing a common border; touching*) block
 where elements are stored back-to-back. Take the above array declaration and
 consider what that looks like in memory:
 ```

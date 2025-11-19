@@ -1,5 +1,5 @@
 ---
-title: "Intro to pointers & references."
+title: "Intro to Pointers & References."
 date: '2025-11-11'
 order: 2
 description: "Pointer? I barely even knew her! Can you allocate a pointer to my heart??? Do you know how long I've been single for????"

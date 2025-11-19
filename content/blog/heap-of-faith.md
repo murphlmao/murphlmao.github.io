@@ -1,5 +1,5 @@
 ---
-title: "What is the heap? The hell that is dynamic memory."
+title: "What is the Heap? The Hell That is Dynamic Memory."
 date: '2025-11-14'
 order: 1
 description: "1980s: yells down the hall: 'Hey everyone I’m using 0xE000, try not to clobber it, thanks!'"
