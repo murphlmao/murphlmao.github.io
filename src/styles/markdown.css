@@ -234,3 +234,75 @@
   color: rgb(161 161 170); /* dark:text-zinc-400 */
   background-color: rgb(39 39 42); /* dark:bg-zinc-800 */
 }
+
+/* Heading anchor link styles */
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  position: relative;
+  scroll-margin-top: 6rem;
+}
+
+.prose h1.group,
+.prose h2.group,
+.prose h3.group,
+.prose h4.group,
+.prose h5.group,
+.prose h6.group {
+  display: block;
+}
+
+.heading-link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-left: 0.5rem;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.1s ease;
+  vertical-align: middle;
+  display: inline-flex;
+  align-items: center;
+}
+
+.group:hover .heading-link-button,
+.heading-link-button.keep-visible {
+  opacity: 1;
+}
+
+.heading-link-button .copy-icon {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.875em;
+  color: rgb(161 161 170); /* zinc-400 */
+  transition: color 0.2s ease;
+}
+
+.heading-link-button:hover .copy-icon {
+  color: rgb(14 165 233); /* text-sky-500 */
+}
+
+.heading-link-button .copy-icon svg {
+  width: 1em;
+  height: 1em;
+}
+
+.heading-link-button .copy-icon.copied {
+  color: rgb(14 165 233); /* text-sky-500 */
+}
+
+/* Dark mode heading link styles */
+:is(.dark .heading-link-button .copy-icon) {
+  color: rgb(113 113 122); /* dark:zinc-500 */
+}
+
+:is(.dark .heading-link-button:hover .copy-icon) {
+  color: rgb(56 189 248); /* dark:text-sky-400 */
+}
+
+:is(.dark .heading-link-button .copy-icon.copied) {
+  color: rgb(56 189 248); /* dark:text-sky-400 */
+}
