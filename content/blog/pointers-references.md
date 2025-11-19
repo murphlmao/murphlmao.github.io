@@ -6,7 +6,7 @@ description: "Pointer? I barely even knew her! Can you allocate a pointer to my 
 tags: ['cpp', 'programming', 'pointers', 'references', 'aliases', 'C++']
 ---
 
-Quick Mapping:
+**Quick Mapping**:
 - `*` next to a type (e.g., `int*`): Makes it a pointer type
 - `*` in front of a pointer variable (e.g., `*ptr`): "Dereference" operator - gets the value at the address
 - `&` next to a type (e.g., `int&`): Makes it a reference type
