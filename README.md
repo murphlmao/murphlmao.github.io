@@ -7,9 +7,8 @@ deno task dev
 
 # TODO blogs:
 - Structs and C-Style strings & ADTs
- - Templates (?)
 - (ADTs) Classes, Polymorphism, & OOP in C++
-  - Overloading
+  - Templates & Operator Overloading
   - RAII
   - Deep copies & the big three
 - Error & exception handling & exit codes
