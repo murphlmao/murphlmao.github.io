@@ -6,12 +6,11 @@ deno task dev
 # Deploy
 
 # TODO blogs:
-- Structs and C-Style strings & ADTs
+- Error & exception handling & exit codes
 - (ADTs) Classes, Polymorphism, & OOP in C++
   - Templates & Operator Overloading
   - RAII
   - Deep copies & the big three
-- Error & exception handling & exit codes
 - Containers & iterators
  - Maps, vectors, sets
 - Functors & functional bros
@@ -26,3 +25,4 @@ deno task dev
 - arrays & pointer arithmetic
 - streams and I/O
 - const
+- Structs and C-Style strings & ADTs
