@@ -18,6 +18,7 @@ stuff.
 
 I still recommend watching his video regardless.
 
+
 ## First, a very long detour: what is an array?
 To understand pointer arithmetic, we *need* to understand arrays at a low level.
 An array is a data structure that has a fixed capacity of elements of the same type
@@ -39,6 +40,7 @@ provides some niceties in `std::array`, C-style arrays make these concepts a lot
 and we don't have to worry about all of the extra fluff that C++ gives us (with one exception
 I'll note later).
 
+
 ### Array on the stack
 An array in memory is just a contiguous (*sharing a common border; touching*) block
 where elements are stored back-to-back. Take the above array declaration and
@@ -51,8 +53,8 @@ consider what that looks like in memory:
   arr[0]    arr[1]    arr[2]    arr[3]    arr[4]
 ```
 
-### But, of course, that's not the entire story
 
+### But, of course, that's not the entire story
 Take this code here & observe the output:
 ```cpp
 #include <iostream>
@@ -111,6 +113,7 @@ sizeof(c_array) // returns 20 (bytes) (4 bytes/int * 5 ints)
 &c_array        // address of array
 c_array[0]      // using operator[]
 ```
+
 
 ### Why does this matter?
 The type matters for pointer arithmetic. Because of pointer decay, when we
@@ -186,10 +189,12 @@ int main() {
 }
 ```
 
+
 ## Hey, remember pointer arithmetic?
 Pointer arithmetic is weird. Take this code for example:
 ```cpp
 #include <iostream>
+
 int main() {
   // see the earlier "Array on the stack" diagram
   int c_array[5] = {1,2,3,4,5};
@@ -292,6 +297,7 @@ int main() {
   return 0;
 }
 ```
+
 
 ### Some other trivia
 When you subtract two pointers from each other, you get the number
