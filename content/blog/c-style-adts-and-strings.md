@@ -1,17 +1,14 @@
 ---
-title: "C-Style ADTs & Strings"
-date: '2025-11-18'
+title: "C-Style ADTs & Strings in C++"
+date: '2025-11-19'
 order: 1
 description: "Hey, finally, a topic that is much more interesting, subjective, and abstract! Literally!"
 tags: ['C++', 'cpp', 'C-lang', 'C', 'programming', 'c style adts', 'c strings']
 ---
 
-Here is 5 minutes of easy fun before we get into the real hell of OOP
-programming that is C++!
-
 ## What is an Abstract Data Type (ADT)?
-One of the thing that was super confusing when I started programming was
-"What does abstract mean in this context?" Well, the definition of *word*
+One of the things that was super confusing when I started programming was
+"What does abstract mean in this context?" Well, the definition of the *word*
 abstract is *"existing in thought or as an idea but not having a physical
 or concrete existence."* Okay, but what does that mean for code? How do
 you have code that doesn't have a 'concrete existence'? This is a great
@@ -19,20 +16,20 @@ question, but in order to answer that, let's first understand the definition
 of an Abstract Data Type (ADT), then show an example, at which point it
 all becomes a LOT clearer.
 
-An Abstract Data Type is a data type defined is basically an outline of
-what you want something to do. ADTs effectively serves as a blueprint for
-creating **structures** (that word is important for later) of data that
-encapsulate both data and the operations that can be performed on that data.
-There are varying levels of complexity to this, but with C, it's a *lot* more
-fun & very simple to understand.
+An Abstract Data Type defines **what** you can do with data without specifying
+**how** it's actually implemented. It's essentially a contract that describes
+the operations available on a data type, separate from the underlying implementation
+details. ADTs serve as a blueprint for creating **structures** (that word is
+important for later) that bundle together both data and the operations that can
+be performed on that data. There are varying levels of complexity to this, but
+with C, it's a *lot* more fun & very simple to understand.
 
 
 ## C-Style ADTS
 In C, we can create ADTs using the keyword `struct` (structures!). A `struct`
 is a user-defined data type that allows us to group related variables together
-under a single name. This is super useful for organizing data and creating more complex data types.
-
-Here's an example of a simple `struct` that represents a `Person`:
+under a single name. This is super useful for organizing data and creating more
+complex data types. Here's an example of a simple `struct` that represents a `Person`:
 
 ```cpp
 #include <iostream>
@@ -88,17 +85,118 @@ int main() {
 The syntax is painfully easy. A struct, for all intents & purposes, is literally
 a new type - so you declare it using the same syntax as you would other types:
 `[type] [variable] = [value]`. This is what makes it an ABSTRACT data type. You
-define, not a `Person`, but what a `Person` is -- you define what constitutes a
+define, not a `Person`, but what a `Person` is — you define what constitutes a
 a `Person`, aka... an abstract concept :).
+
 
 ### Syntax with pointers
 The syntax for using structs with pointers is slightly different, but still
 very easy to understand. When you have a pointer to a struct, you use the `->`
 operator to access its members instead of the dot `.` operator.
 
+For this next example, I'm going to show you some cleaner code by doing something called
+`respecting the interface`. This is a programming concept where you only interact
+with a data structure through its defined methods (functions) and not directly
+accessing its internal data.
 
+So, for example, if we have a `Person`, we COULD modify the object directly via
+`murphy.height += 0.2f;`, but that's not really smart for long term maintenance. What
+if we want to validate that height is between 0 and 9 feet? Sure, we could add an `if`
+statement right before that, but what if we need to modify it multiple times throughout
+our program? We'd have to duplicate that validation logic, which is tedious & error-prone.
 
+A better approach is to use dedicated functions: `set_height(murphy_ptr, 6.2f);` instead of
+`murphy.height = 6.2f;`. This way, our validation logic lives in one place. This idea of
+encapsulation—hiding implementation details and controlling access through functions—is a
+key principle in software design.
 
+Each function follows the **Single Responsibility Principle (SRP)**: `set_height()` validates
+and sets height, `set_nickname()` validates and sets nickname, etc. A core tenet of being a
+good programmer is being lazy in the right way—delegate responsibility whenever possible and
+avoid repeating yourself. This is formalized as the **Don't Repeat Yourself (DRY)** principle.
+
+```cpp
+#include <iostream>
+#include <string>
+
+struct Person {
+  std::string nickname;
+  std::string address;
+  int age;
+  float height; // feet.inches
+};
+
+void set_nickname(Person* person, const std::string& new_nickname) {
+  if (person == nullptr || new_nickname.empty() ||
+      person->nickname == new_nickname) {
+    return; // we return early if the input is invalid.
+  }
+  // if we reach here, it should be safe to set the nickname
+  person->nickname = new_nickname;
+}
+
+void set_address(Person* person, const std::string& new_address) {
+  if (person == nullptr || person->address == new_address) {
+    return;
+  }
+  person->address = new_address;
+}
+
+void set_age(Person* person, const int new_age) {
+  if (person == nullptr || new_age < 0 || new_age > 150 ||
+      person->age == new_age) {
+    return;
+  }
+  person->age = new_age;
+}
+
+void set_height(Person* person, const float new_height) {
+  if (person == nullptr || new_height <= 0 || new_height > 9.0 ||
+      person->height == new_height) {
+    return;
+  }
+  person->height = new_height;
+}
+
+int main() {
+  Person murphy = {
+    .nickname = "murphy",
+    .address = "6401 S King Dr",
+    .age = 20,
+    .height = 6.0
+  };
+
+  set_nickname(&murphy, "murph");
+  set_address(&murphy, "Queen St West");
+  set_age(&murphy, 21); // birthday!
+  set_height(&murphy, 6.2); // height boosting shoes ftw
+
+  std::cout << "Nickname: " << murphy.nickname << "\n";
+  std::cout << "Address: " << murphy.address << "\n";
+  std::cout << "Age: " << murphy.age << "\n";
+  std::cout << "Height: " << murphy.height << std::endl;
+
+  return 0;
+}
+```
+
+> You fucking liar.. "Don't repeat yourself", sure bro. What's with all of the
+> `if (person == nullptr)` checks??? Can we cancel this dude???
+
+I PROMISE, I suffered more writing that code than you did reading it. My brain itches
+when I see that code as well, and my first thought was to abstract / fix it.
+The reason this is done like this is because I couldn't think of a better example
+for illustrating the pointer syntax without making it more complex than necessary or
+introducing a new example that would detract from the main point of this post.
+
+In real-world code, you'd probably want to use references instead of pointers because
+references can't actually be null, they must always refer to a valid object.
+This eliminates the need for null checks.
+
+You could also have a validation function that checks all fields of the struct at once,
+but that would still violate the single responsibility principle. There is such a thing
+as over-abstraction / over-engineering. The key takeaway here is understanding how to use structs
+with pointers and the importance of encapsulation and single responsibility in function design.
 
 
 ## C-Style Strings
@@ -112,8 +210,8 @@ class that handles all the messy details for you. With C-style strings, you're
 working directly with raw memory. For example:
 
 ```cpp
-char name[] = "Murphy";
-// memory: ['M', 'u', 'r', 'p', 'h', 'y', '\0']
+char name[] = "murphy";
+// memory: ['m', 'u', 'r', 'p', 'h', 'y', '\0']
 ```
 
 That `'\0'` at the end is invisible when you print the string, but it's
@@ -153,7 +251,7 @@ strcat(dest, src); // concatenate strings
 strcmp(s1, s2);    // compare strings
 ```
 
-As you can see, The biggest issue with C-style strings is that they
+As you can see, the biggest issue with C-style strings is that they
 don't know their own size. These functions all rely on that null
 terminator to know when to stop. If you forget to include it, these
 functions will happily read past the end of your string into whatever
