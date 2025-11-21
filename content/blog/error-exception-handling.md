@@ -1,7 +1,7 @@
 ---
 title: "Exceptions, Error Handling, & Exit Codes"
-date: '2025-11-19'
-order: 2
+date: '2025-11-20'
+order: 1
 description: ""
 tags: ['C++', 'cpp', 'C', 'programming', 'error handling', 'exceptions', 'exit codes']
 ---
