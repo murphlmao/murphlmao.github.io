@@ -6,7 +6,6 @@ deno task dev
 # Deploy
 
 # TODO blogs:
-- Error & exception handling & exit codes
 - (ADTs) Classes, Polymorphism, & OOP in C++
   - Templates & Operator Overloading
   - RAII
@@ -26,3 +25,4 @@ deno task dev
 - streams and I/O
 - const
 - Structs and C-Style strings & ADTs
+- Error & exception handling & exit codes
