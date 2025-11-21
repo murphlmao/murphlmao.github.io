@@ -2,7 +2,7 @@
 title: "Exceptions, Error Handling, & Exit Codes"
 date: '2025-11-20'
 order: 1
-description: ""
+description: "Favorite error messages: 'Object reference not set to the instance of an object', 'Something went wrong', and 'Bailing out, you are on your own. Good luck."
 tags: ['C++', 'cpp', 'C', 'programming', 'error handling', 'exceptions', 'exit codes']
 ---
 
@@ -246,8 +246,8 @@ class DockerStartError(Exception):
       super().__init__(message)
 
 class DockerStopError(Exception):
-  """Exception raised when stopping and removing Docker containers fails."""
-  def __init__(self, message="Error stopping and removing Docker containers."):
+  """Exception raised when stopping Docker containers fails."""
+  def __init__(self, message="Error stopping Docker containers."):
       super().__init__(message)
 
 class ContainerRestartError(Exception):
@@ -281,7 +281,9 @@ template<typename F>
 long benchmark(const char* name, F func) {
   auto start = high_resolution_clock::now();
   func();
-  auto ms = duration_cast<milliseconds>(high_resolution_clock::now() - start).count();
+  auto ms = duration_cast<milliseconds>(
+    high_resolution_clock::now() - start
+  ).count();
   std::cout << name << ": " << ms << "ms\n";
   return ms;
 }
