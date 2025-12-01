@@ -2,7 +2,7 @@
 title: "Exceptions, Error Handling, & Exit Codes"
 date: '2025-11-20'
 order: 1
-description: "Favorite error messages: 'Object reference not set to the instance of an object', 'Something went wrong', and 'Bailing out, you are on your own. Good luck."
+description: "Favorite error messages: 'Object reference not set to the instance of an object', 'Something went wrong', and 'Bailing out, you are on your own. Good luck.'"
 tags: ['C++', 'cpp', 'C', 'programming', 'error handling', 'exceptions', 'exit codes']
 ---
 
@@ -82,8 +82,9 @@ values to the enum type, which means you won't be able to use
 `EX_OK` directly, but have to use `ExitCode::EX_OK`. You'll
 technically need to statically cast them to integers when returning
 them from `main()`, or you can do what I do and namespace them. I
-think namespacing them looks prettier, so that's what I do, but I'll
-show static casting as well for completeness:
+think namespacing them looks prettier, so that's what I do (only for small projects),
+but I'll show static casting as well for completeness and for what you should
+probably do in production code:
 
 ```cpp
 // exit_codes.hpp
@@ -103,7 +104,7 @@ namespace ExitCode {
   };
 };
 
-enum class UglyExitCode {
+enum class ClassExitCode {
   EX_OK = 0,
   EX_ERROR = 1,
   EX_MISUSE = 2,
@@ -128,8 +129,8 @@ int main() {
       return ExitCode::EX_ERROR;
   }
   // this does not work with enum class:
-  // return UglyExitCode::EX_OK;
-  return static_cast<int>(UglyExitCode::EX_OK);
+  // return ClassExitCode::EX_OK;
+  return static_cast<int>(ClassExitCode::EX_OK);
 }
 ```
 
