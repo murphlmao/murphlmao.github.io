@@ -3,7 +3,7 @@ import Image from 'next/image';
 const workHistory = [
   {
     company: "Prism Controls",
-    role: "Software & DevOps Engineer",
+    role: "Software & Platform Engineer",
     logo: "/company/prismcontrols.jpg",
     startDate: "June 2022",
     endDate: "Present",
