@@ -39,6 +39,7 @@ That means that, to break down each line, we understand that `int`, `int*`, `int
 and `int&` are all types. `x`, `ptr_to_x`, `ptr_to_ptr_to_x`, and `reference_to_x` are
 all variable names. The stuff after the equals sign is the value assigned to each variable.
 
+### A quick tangent on pointer formatting
 You will occasionally see some people declare pointers & references using the 'politically incorrect' syntax,
 which usually consists of some variation of:
 ```c++
@@ -47,7 +48,10 @@ int *ptr_to_x = &x;
 int ** ptr_to_ptr_to_x = &ptr_to_x;
 int &reference_to_x = x;
 ```
-**This is wrong**. The `*` and `&` are part of the type, not the variable name. Don't do this. Please. [Even Google agrees with me](https://google.github.io/styleguide/cppguide.html#Pointer_and_Reference_Expressions).
+**This is wrong**. The `*` and `&` are part of the type, not the variable name. Don't do this. Please.
+[Google](https://google.github.io/styleguide/cppguide.html#Pointer_and_Reference_Expressions),
+Pascal (a language that was actually created *before* C), and Rust all agree with me; they all
+understand that it's actually clearer to communicate to the user that the pointer is part of the type.
 
 > Ermmm actually ☝️🤓 what about multiple declarations on a single line???  Like `int *x, y`;
 
@@ -56,9 +60,44 @@ but `y` as just a regular int - which proves exactly why this syntax is terrible
 you shouldn't do it. If it's not clear that they're supposed to be the same type
 **while you're using the type declaration symbols (*, &)**, like is the case with `int x, y` then
 you literally have no defendable position to argue from. You're risking code readability
-for the sake of getting back one extra line. Read Google's style guide & go take a shower.
+for the sake of getting back one extra line.
 
+Again, let's not pretend like this is actually the 'politically correct' way to do this either.
+Like I mentioned earlier, Pascal & Rust both clearly understand this concept:
 
+```pascal
+{ pascal }
+program main;
+
+var
+  x: Integer;
+  ptr_to_x: ^Integer; { pointer to integer }
+  ptr_to_ptr_to_x: ^^Integer;
+
+begin
+  x := 42;
+  ptr_to_x := @x; { @ is the address-of operator }
+  ptr_to_ptr_to_x := @ptr_to_x;
+end.
+```
+
+```rust
+// rust
+fn main() {
+    let mut x: i32 = 42;
+    let reference_to_x: &i32 = &x;
+    let mut_reference: &mut i32 = &mut x;
+
+    // these are actual pointers (raw pointers)
+    let ptr_to_x: *const i32 = &x as *const i32;
+    let mut_ptr: *mut i32 = &mut x as *mut i32;
+}
+```
+
+If that's STILL not enough for you.. check to see what type `int*` compiles to in C & C++, and
+you'll feel silly when you see the compiler evaluates it to the type of `int *`, vindicating me.
+
+### Tangent over
 The reason it helps to understand pointers this way is for when we
 start actually doing things with pointers. For example, can we get the value of a pointer? Yes, we
 just need to do something called `dereferencing`. This literally just means we are getting the value
