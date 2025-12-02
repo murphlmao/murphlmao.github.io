@@ -111,6 +111,15 @@
   color: rgb(39 39 42); /* text-zinc-800 */
 }
 
+.prose h4 {
+  font-size: 1rem; /* text-base */
+  line-height: 1.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  color: rgb(39 39 42); /* text-zinc-800 */
+}
+
 .prose p {
   font-size: 1rem; /* text-base */
   line-height: 1.75;
@@ -180,6 +189,10 @@
 }
 
 :is(.dark .prose h3) {
+  color: rgb(244 244 245); /* dark:text-zinc-100 */
+}
+
+:is(.dark .prose h4) {
   color: rgb(244 244 245); /* dark:text-zinc-100 */
 }
 
