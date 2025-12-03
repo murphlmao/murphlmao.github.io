@@ -49,7 +49,7 @@ int ** ptr_to_ptr_to_x = &ptr_to_x;
 int &reference_to_x = x;
 ```
 **This is wrong**. The `*` and `&` are part of the type, not the variable name. Don't do this. Please.
-[Google](https://google.github.io/styleguide/cppguide.html#Pointer_and_Reference_Expressions),
+[Google](https://google.github.io/styleguide/cppguide.html#Pointer_and_Reference_Expressions "grr"),
 Pascal (a language that was actually created *before* C), and Rust all agree with me; they all
 understand that it's actually clearer to communicate to the user that the pointer is part of the type.
 
