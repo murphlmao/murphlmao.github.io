@@ -247,8 +247,15 @@ class Cat {
         std::cout << std::endl;
       }
 
-      if (show_adoption_sign && ADOPTION_SIGN.size() > current_ascii.size()) {
-        for (size_t i = current_ascii.size(); i < ADOPTION_SIGN.size(); i++) {
+      if (
+          show_adoption_sign && ADOPTION_SIGN.size() >
+          current_ascii.size()
+        ) {
+        for (
+          size_t i = current_ascii.size();
+          i < ADOPTION_SIGN.size();
+          i++
+        ) {
           std::cout
             << std::string(current_ascii[0].length(), ' ')
             << "  " << ADOPTION_SIGN[i]
@@ -312,17 +319,164 @@ int main() {
 
 Let me know when the nightmares stop.
 
+## Shallow Copies, Moves, & Deep Copies
+### What is a shallow copy?
+When you copy an object, you just copy the values directly.
+For pointers, this means copying the pointer value itself
+(the memory address), not the data it points to. So both
+objects end up pointing to the same memory location. It's
+can be a little counterintuitive.
 
-## The Big Three: Destructors, Copy Constructor, Copy Assignment Operator
-The story behind the Big Three is nightmarish. The "rule of three"
-goes something like this: If you need to define a custom destructor,
-copy constructor, or copy assignment operator, then you should probably
-define all three.
+If the object in the class is not a pointer, the objects just gets
+copied to a new address in memory. If it is a pointer, it SORT OF
+acts like a reference in that both objects now point to the same
+data, but without all of the safeties that references provide (like
+not being null, not being re-assignable, etc). To be clear, it is NOT
+a reference, it's just a pointer that both objects happen to share
+because we're making a copy of a pointer that's already been assigned to
+the object we're copying from.
 
-Simple enough? **Nope.** That's not actually the entire story.
+Here is a pretty complete example that shows shallow copying in action:
+```cpp
+#include <iostream>
+
+class Cat {
+  public:
+    std::string* color_of_cat;
+
+    Cat(std::string& cat_color)
+      : color_of_cat(&cat_color)
+    {}
+};
+
+int main() {
+  std::string color_of_cat = "black";
+
+  Cat cat1(color_of_cat);
+  Cat cat2_shallow_copy = cat1;
+
+  std::cout << "Cat 1 Address: " << &cat1 << "\n";
+  std::cout << "Cat 2 Address: " << &cat2_shallow_copy << "\n\n";
+
+  std::cout << "Cat 1 Color Pointer Address: " << cat1.color_of_cat << "\n";
+  std::cout << "Cat 2 Color Pointer Address: " << cat2_shallow_copy.color_of_cat << "\n\n";
+
+  std::cout << "Cat 1 color: " << *cat1.color_of_cat << "\n";
+  std::cout << "Cat 2 color: " << *cat2_shallow_copy.color_of_cat << "\n\n";
+
+  // change through cat1
+  *cat1.color_of_cat = "orange";
+
+  std::cout << "After changing cat1 to orange:\n";
+  std::cout << "Cat 1 color: " << *cat1.color_of_cat << "\n";
+  std::cout << "Cat 2 color: " << *cat2_shallow_copy.color_of_cat << "\n";
+  // both values are changed, they share the same string.
+
+  return 0;
+}
+```
+
+Why is this dangerous? Because if one of the objects is destroyed and frees
+the memory that the pointer points to, the other object is left with
+a dangling pointer/double free situation:
+
+```cpp
+#include <iostream>
+
+class DangerousCat {
+  public:
+    int* age;
+
+    DangerousCat(int a) {
+      age = new int(a);
+      std::cout << "constructor: allocated memory at " << age << "\n";
+    }
+
+    ~DangerousCat() {
+      std::cout << "destructor: deleting memory at " << age << "\n";
+      delete age;
+    }
+};
+
+int main() {
+  std::cout << "creating cat1:\n";
+  DangerousCat cat1(3);
+
+  std::cout << "\ncopying cat1 to cat2 (shallow copy):\n";
+  DangerousCat cat2 = cat1; // shallow copy
+
+  std::cout << "\ncat 1 object address: " << &cat1 << "\n";
+  std::cout << "cat 2 object address: " << &cat2 << "\n\n";
+
+  std::cout << "cat 1 age pointer: " << cat1.age << "\n";
+  std::cout << "cat 2 age pointer: " << cat2.age << "\n";
+  std::cout << "^ both point to the address in memory\n\n";
+
+  std::cout << "exiting main (destructors will run):\n";
+  // when main ends:
+  // cat2 destructor runs: deletes age
+  // cat1 destructor runs: deletes the same age again
+  // this is a double free.
+  return 0;
+}
+```
+
+### What is a move?
+Moving is about **transferring ownership** of resources instead of copying
+them. When you move an object, you steal its data (like pointers) and leave
+the original in a valid but empty state (usually nullptr). This is way more
+efficient than copying because you're just swapping pointers around instead
+of allocating new memory and copying data.
+
+Moves happen automatically with temporary objects, or you can explicitly
+request a move with `std::move()`:
+```cpp
+int main() {
+  Cat cat1(3);
+  Cat cat2 = std::move(cat1);
+  // cat1 is now empty (pointer is nullptr)
+  // cat2 owns the data
+
+  return 0;
+}
+```
+
+To properly support moves, you need to define a **move constructor** and
+**move assignment operator** in addition to the Big Three. This is called
+the **Rule of Five**. Without them, or if you have a copy constructor & a
+copy assignment constructor defined, the compiler falls back to copying (even
+when you use `std::move()`), which silently makes your code slower than it
+should be. You can enable a flag in some compilers to warn you about this, but
+by default, most of them won't.
+
+
+### What is a deep copy?
+When you make a deep copy of an object, you create a completely independent copy
+of the object and all of its data. This means that if the object contains pointers,
+you also need to allocate new memory for the data being pointed to and copy the
+actual data over, not just the pointer value. How do we do that? By defining
+a custom copy constructor and copy assignment operator & a destructor for our class.
+This is referred to as the Big Three, and it's what we need to do to properly manage
+resources in C++, but it's not the only way, as we'll see with the Rule of Zero.
+
+
+## The Rule of Zero, Three, and Five.
+All of that bullshit above was just to get us to this point. The reason these
+rules exist is to solve the same problem: managing resources in C++ classes.
+
+Broadly, let's dive into each of these rules one by one, then wrap up with showing
+the Big Three/Five & Rule of Zero in action.
+
+
+## The Rule of Three:
+The rule of three goes something like this: If you need to define a
+custom destructor, copy constructor, or copy assignment operator,
+then you should probably define all three.
+
 
 ### The Rule of Five
-C++11 introduced *move semantics*, which means we now have **five** special member functions to worry about:
+C++11 introduced *move semantics*, which means we now have **five**
+special member functions to worry about:
 1. Destructor
 2. Copy constructor
 3. Copy assignment operator
@@ -330,29 +484,38 @@ C++11 introduced *move semantics*, which means we now have **five** special memb
 5. **Move assignment operator** (new!)
 
 Move semantics let you "steal" resources from temporary objects
-instead of copying them. If you're managing resources and define the
-Big Three, you probably want to define move operations too for better performance.
-
-**Python analogy:** Python doesn't really have this problem because it uses reference counting. When you do `x = y`, you're just copying a reference, not the entire object. C++ makes you explicitly choose between copying (`Cat new_cat = old_cat;`) and moving (`Cat new_cat = std::move(old_cat);`).
+instead of copying them. If you're managing resources and define
+the Big Three, you probably want to define move operations too for
+better performance. More on that later.
 
 ### The Rule of Zero (The Actual Good Advice)
-Here's the plot twist: **Don't manage raw resources yourself!** 
+Here's some free advice: **Don't manage raw resources yourself!**
 
-Instead of using raw pointers and manually calling `new`/`delete`, use smart pointers like `std::unique_ptr` or `std::shared_ptr`. These handle memory management automatically, so you don't need to define *any* of the special member functions.
+Instead of using raw pointers and manually calling `new`/`delete`,
+use smart pointers like `std::unique_ptr` or `std::shared_ptr`.
+These handle memory management automatically, so you don't need to
+define *any* of the special member functions.
+
 ```cpp
 class GoodCat {
-private:
+  private:
     std::unique_ptr<int[]> data;  // Smart pointer handles cleanup!
-    // No destructor needed!
-    // No copy constructor needed (unique_ptr isn't copyable)!
-    // Compiler handles everything!
+    // no destructor needed!
+    // no copy constructor needed (unique_ptr isn't copyable)!
+    // compiler handles everything!
 };
 ```
 
-The Rule of Zero says: if you can avoid manually managing resources, **do it**. Let the standard library types handle it for you. Modern C++ code should rarely need custom destructors or copy/move operations.
+The Rule of Zero says: if you can avoid manually managing resources,
+**do it**. Let the standard library types handle it for you.
+Modern C++ code should rarely need custom destructors or copy/move operations.
 
 **TL;DR:** The Big Three became the Big Five, but the real wisdom is to aim for Zero.
 
+### Okay.. but I need to show you the Big Three anyway.
+Normally, I would stop there and just use the rule of zero because it's what you
+*should* be doing. Unfortunately, I'm actually using these posts to help myself
+study for a class... which makes me use the Big Three. So, let's dive into them one by one.
 
 ### Destructors & RAII
 So, if constructors are special methods that initialize an object when it's created,
