@@ -27,6 +27,26 @@
   border-radius: 0.5rem;
 }
 
+/* Code block scrollbar styling */
+.markdown-content pre::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.markdown-content pre::-webkit-scrollbar-track {
+  background: rgb(39 39 42); /* zinc-800 */
+  border-radius: 4px;
+}
+
+.markdown-content pre::-webkit-scrollbar-thumb {
+  background: rgb(82 82 91); /* zinc-600 */
+  border-radius: 4px;
+}
+
+.markdown-content pre::-webkit-scrollbar-thumb:hover {
+  background: rgb(113 113 122); /* zinc-500 */
+}
+
 .markdown-content pre > div {
   margin: 0 !important;
   border-radius: 0.5rem;
