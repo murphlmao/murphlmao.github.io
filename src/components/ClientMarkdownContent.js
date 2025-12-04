@@ -6,11 +6,8 @@ import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import rehypeSlug from 'rehype-slug';
 import { LuLink, LuCheck } from 'react-icons/lu';
-import dynamic from 'next/dynamic';
 
-const CodeBlock = dynamic(() => import('./CodeBlock'), {
-  ssr: false
-});
+import CodeBlock from './CodeBlock';
 
 const HeadingWithAnchor = ({ level, children, ...props }) => {
   const [copied, setCopied] = useState(false);

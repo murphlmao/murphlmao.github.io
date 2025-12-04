@@ -17,7 +17,7 @@ makes the stack fast and safe for temporary data that only needs to exist while
 a function is running.
 
 Think of the stack like a simple two-column spreadsheet. When you write:
-```c++
+```cpp
 int main() {
   int x = 10; // row gets added: [0x7fff100, 10]
   int y = 20; // row gets added: [0x7fff0fc, 20]
@@ -73,7 +73,7 @@ A stack frame is a chunk of the stack that belongs to a single function call. Wh
 
 Think of it like this: each function gets its own "section" of the spreadsheet, and when the function is done, that entire section disappears.
 
-```c++
+```cpp
 int double_it(int x) {
     int result = x * 2;
     return result;

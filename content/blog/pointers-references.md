@@ -1,5 +1,5 @@
 ---
-title: "Intro to Pointers & References."
+title: "Intro to Pointers & References"
 date: '2025-11-11'
 order: 2
 description: "Pointer? I barely even knew her! Can you allocate a pointer to my heart??? Do you know how long I've been single for????"
@@ -15,7 +15,7 @@ tags: ['cpp', 'programming', 'pointers', 'references', 'aliases', 'C++']
 
 ## What is a pointer?
 A pointer, for all intents and purposes, is just another variable. Let's start with a very simple code example:
-```c++
+```cpp
 int main() {
     int x = 10;
     int* ptr_to_x = &x;
@@ -39,33 +39,69 @@ That means that, to break down each line, we understand that `int`, `int*`, `int
 and `int&` are all types. `x`, `ptr_to_x`, `ptr_to_ptr_to_x`, and `reference_to_x` are
 all variable names. The stuff after the equals sign is the value assigned to each variable.
 
+### A quick tangent on pointer formatting
 You will occasionally see some people declare pointers & references using the 'politically incorrect' syntax,
 which usually consists of some variation of:
-```c++
+```cpp
 int * ptr_to_x = &x;
 int *ptr_to_x = &x;
 int ** ptr_to_ptr_to_x = &ptr_to_x;
 int &reference_to_x = x;
 ```
-**This is wrong**. The `*` and `&` are part of the type, not the variable name. Don't do this. Please. [Even Google agrees with me](https://google.github.io/styleguide/cppguide.html#Pointer_and_Reference_Expressions).
+**This is wrong**. The `*` and `&` are part of the type, not the variable name. Don't do this. Please.
+[Google](https://google.github.io/styleguide/cppguide.html#Pointer_and_Reference_Expressions "grr"),
+Pascal (a language that was actually created *before* C), and Rust all agree with me; they all
+understand that it's actually clearer to communicate to the user that the pointer is part of the type.
 
 > Ermmm actually ☝️🤓 what about multiple declarations on a single line???  Like `int *x, y`;
 
 Why the fuck are you doing this in the first place? That declares `x` as a pointer
 but `y` as just a regular int - which proves exactly why this syntax is terrible and
 you shouldn't do it. If it's not clear that they're supposed to be the same type
-**while you're using the type declaration symbols (*, &)**, like is the case with `int x, y` then
-you literally have no defendable position to argue from. You're risking code readability
-for the sake of getting back one extra line. Read Google's style guide & go take a shower.
+**while you're using the type declaration symbols (*, &)**, like is the case with `int x, y`, then
+you just shouldn't do it. You're risking code readability
+for the sake of getting back one extra line.
+
+Again, let's not pretend like this is actually the 'politically correct' way to do this either.
+Like I mentioned earlier, Pascal & Rust both clearly understand this concept:
+
+```pascal
+program main;
+
+var
+  x: Integer;
+  ptr_to_x: ^Integer; { pointer to integer }
+  ptr_to_ptr_to_x: ^^Integer;
+
+begin
+  x := 42;
+  ptr_to_x := @x; { @ is the address-of operator }
+  ptr_to_ptr_to_x := @ptr_to_x;
+end.
+```
+
+```rust
+fn main() {
+    let mut x: i32 = 42;
+    let reference_to_x: &i32 = &x;
+    let mut_reference: &mut i32 = &mut x;
+
+    // these are actual pointers (raw pointers)
+    let ptr_to_x: *const i32 = &x as *const i32;
+    let mut_ptr: *mut i32 = &mut x as *mut i32;
+}
+```
 
 
+
+### Tangent over
 The reason it helps to understand pointers this way is for when we
 start actually doing things with pointers. For example, can we get the value of a pointer? Yes, we
 just need to do something called `dereferencing`. This literally just means we are getting the value
 of the thing the pointer is pointing to. That's it.
 
 I, personally, treat the `*` symbol similarly to the mathematical concept of `cancelling out like terms`. What happens when we remove `*` from a type like `int*`? We are left with just an `int`. What about `*` from an `int**`? `int*`. And so on and so forth.
-```c++
+```cpp
 int main() {
   int x = 10;
   int* ptr_to_x = &x;
@@ -83,7 +119,7 @@ int main() {
 A reference is basically just an alias for another variable. When you create a reference, you are
 not creating a new variable; you are just creating a new name for an existing variable. This means
 that any changes made to the reference will also affect the original variable, and vice versa.
-```c++
+```cpp
 int main() {
   int x = 10;
   int& reference_to_x = x;
@@ -94,7 +130,7 @@ int main() {
 ```
 When you declare a reference, you cannot change what it is referencing. It is permanently bound
 to the variable it was created with.
-```c++
+```cpp
 int main() {
   int x = 10;
   int y = 20;
@@ -116,7 +152,7 @@ We can essentially provide a copy of `num` to `change_value`, where we cannot
 modify the argument that was passed into it, but we can modify that argument within
 the scope of the `change_value` function.
 
-```c++
+```cpp
 void change_value(int x) {
   x = 100;  // x is locally scoped here.
 }
@@ -132,7 +168,7 @@ int main() {
 We are literally passing an alias to the original variable. Remember, references
 are just another name for an existing variable.
 
-```c++
+```cpp
 void change_value(int& x) {
   x = 100; // this changes the ORIGINAL variable
 }
@@ -146,7 +182,7 @@ int main() {
 ```
 
 ### 3. Pass by Pointer (Address)
-```c++
+```cpp
 void change_value(int* x) {
   *x = 100;  // dereference to change the value at that address
 }
@@ -170,7 +206,7 @@ int main() {
 - Can be `nullptr` - useful for optional parameters
 - More explicit at call site (`&num` shows you're passing an address)
 - Required when you might want to reassign what you're pointing to
-```c++
+```cpp
 void process(int& required, int* optional) {
     required = 50;  // always valid
 

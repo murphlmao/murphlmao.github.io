@@ -1,5 +1,5 @@
 ---
-title: "Arrays & Pointer Arithmetic."
+title: "Arrays & Pointer Arithmetic"
 date: '2025-11-13'
 order: 1
 description: "You guys ever learn so much about something you really didn't want to learn about? That's been me for all of Fall 2025."
@@ -238,7 +238,7 @@ expressions:
 - Dereference to get the value (*)
 
 You could even write this (but please don't):
-```c++
+```cpp
 2[c_array] // this is just *(2 + c_array)
 ```
 Because addition is commutative, `c_array + 2` is the same as `2 + c_array`,

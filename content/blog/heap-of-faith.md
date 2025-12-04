@@ -1,5 +1,5 @@
 ---
-title: "What is the Heap? The Hell That is Dynamic Memory."
+title: "What is the Heap? The Hell That is Dynamic Memory"
 date: '2025-11-14'
 order: 1
 description: "1980s: yells down the hall: 'Hey everyone I’m using 0xE000, try not to clobber it, thanks!'"
@@ -100,7 +100,9 @@ int main() {
   // how do we find the pointer to the heap allocated array?
   // my_vector.data() -> 0x562fd87a8320
   for (int i = 0; i < my_vector.size(); ++i) {
-    std::cout << "vec[" << i << "] addr = " << (my_vector.data() + i) << std::endl;
+    std::cout <<
+      "vec[" << i << "] addr = " << (my_vector.data() + i)
+    << std::endl;
     // my_vector[0] = 1 at address 0x562fd87a8320
     // my_vector[1] = 2 at address 0x562fd87a8324
     // my_vector[2] = 3 at address 0x562fd87a8328
