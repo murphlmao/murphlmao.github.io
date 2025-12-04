@@ -15,7 +15,7 @@ tags: ['cpp', 'programming', 'pointers', 'references', 'aliases', 'C++']
 
 ## What is a pointer?
 A pointer, for all intents and purposes, is just another variable. Let's start with a very simple code example:
-```c++
+```cpp
 int main() {
     int x = 10;
     int* ptr_to_x = &x;
@@ -42,7 +42,7 @@ all variable names. The stuff after the equals sign is the value assigned to eac
 ### A quick tangent on pointer formatting
 You will occasionally see some people declare pointers & references using the 'politically incorrect' syntax,
 which usually consists of some variation of:
-```c++
+```cpp
 int * ptr_to_x = &x;
 int *ptr_to_x = &x;
 int ** ptr_to_ptr_to_x = &ptr_to_x;
@@ -59,14 +59,13 @@ Why the fuck are you doing this in the first place? That declares `x` as a point
 but `y` as just a regular int - which proves exactly why this syntax is terrible and
 you shouldn't do it. If it's not clear that they're supposed to be the same type
 **while you're using the type declaration symbols (*, &)**, like is the case with `int x, y` then
-you literally have no defendable position to argue from. You're risking code readability
+you just shouldn't do it. You're risking code readability
 for the sake of getting back one extra line.
 
 Again, let's not pretend like this is actually the 'politically correct' way to do this either.
 Like I mentioned earlier, Pascal & Rust both clearly understand this concept:
 
 ```pascal
-{ pascal }
 program main;
 
 var
@@ -82,7 +81,6 @@ end.
 ```
 
 ```rust
-// rust
 fn main() {
     let mut x: i32 = 42;
     let reference_to_x: &i32 = &x;
@@ -94,8 +92,7 @@ fn main() {
 }
 ```
 
-If that's STILL not enough for you.. check to see what type `int*` compiles to in C & C++, and
-you'll feel silly when you see the compiler evaluates it to the type of `int *`, vindicating me.
+
 
 ### Tangent over
 The reason it helps to understand pointers this way is for when we
@@ -104,7 +101,7 @@ just need to do something called `dereferencing`. This literally just means we a
 of the thing the pointer is pointing to. That's it.
 
 I, personally, treat the `*` symbol similarly to the mathematical concept of `cancelling out like terms`. What happens when we remove `*` from a type like `int*`? We are left with just an `int`. What about `*` from an `int**`? `int*`. And so on and so forth.
-```c++
+```cpp
 int main() {
   int x = 10;
   int* ptr_to_x = &x;
@@ -122,7 +119,7 @@ int main() {
 A reference is basically just an alias for another variable. When you create a reference, you are
 not creating a new variable; you are just creating a new name for an existing variable. This means
 that any changes made to the reference will also affect the original variable, and vice versa.
-```c++
+```cpp
 int main() {
   int x = 10;
   int& reference_to_x = x;
@@ -133,7 +130,7 @@ int main() {
 ```
 When you declare a reference, you cannot change what it is referencing. It is permanently bound
 to the variable it was created with.
-```c++
+```cpp
 int main() {
   int x = 10;
   int y = 20;
@@ -155,7 +152,7 @@ We can essentially provide a copy of `num` to `change_value`, where we cannot
 modify the argument that was passed into it, but we can modify that argument within
 the scope of the `change_value` function.
 
-```c++
+```cpp
 void change_value(int x) {
   x = 100;  // x is locally scoped here.
 }
@@ -171,7 +168,7 @@ int main() {
 We are literally passing an alias to the original variable. Remember, references
 are just another name for an existing variable.
 
-```c++
+```cpp
 void change_value(int& x) {
   x = 100; // this changes the ORIGINAL variable
 }
@@ -185,7 +182,7 @@ int main() {
 ```
 
 ### 3. Pass by Pointer (Address)
-```c++
+```cpp
 void change_value(int* x) {
   *x = 100;  // dereference to change the value at that address
 }
@@ -209,7 +206,7 @@ int main() {
 - Can be `nullptr` - useful for optional parameters
 - More explicit at call site (`&num` shows you're passing an address)
 - Required when you might want to reassign what you're pointing to
-```c++
+```cpp
 void process(int& required, int* optional) {
     required = 50;  // always valid
 
