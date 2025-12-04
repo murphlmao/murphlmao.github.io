@@ -1,5 +1,5 @@
 ---
-title: "Intro to Pointers & References."
+title: "Intro to Pointers & References"
 date: '2025-11-11'
 order: 2
 description: "Pointer? I barely even knew her! Can you allocate a pointer to my heart??? Do you know how long I've been single for????"
@@ -58,7 +58,7 @@ understand that it's actually clearer to communicate to the user that the pointe
 Why the fuck are you doing this in the first place? That declares `x` as a pointer
 but `y` as just a regular int - which proves exactly why this syntax is terrible and
 you shouldn't do it. If it's not clear that they're supposed to be the same type
-**while you're using the type declaration symbols (*, &)**, like is the case with `int x, y` then
+**while you're using the type declaration symbols (*, &)**, like is the case with `int x, y`, then
 you just shouldn't do it. You're risking code readability
 for the sake of getting back one extra line.
 

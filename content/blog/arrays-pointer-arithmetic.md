@@ -1,5 +1,5 @@
 ---
-title: "Arrays & Pointer Arithmetic."
+title: "Arrays & Pointer Arithmetic"
 date: '2025-11-13'
 order: 1
 description: "You guys ever learn so much about something you really didn't want to learn about? That's been me for all of Fall 2025."
