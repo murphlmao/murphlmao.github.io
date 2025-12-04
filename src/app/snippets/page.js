@@ -8,9 +8,9 @@ const icons = {
   clang: (
     <i className="devicon-c-plain-wordmark colored text-2xl text-sky-500 dark:text-sky-400 transition-transform group-hover:scale-110"></i>
   ),
-  // laravel: (
-  //   <i className="devicon-laravel-plain text-2xl text-sky-500 dark:text-sky-400 transition-transform group-hover:scale-110"></i>
-  // ),
+  cpp: (
+    <i className="devicon-cplusplus-plain text-2xl text-sky-500 dark:text-sky-400 transition-transform group-hover:scale-110"></i>
+  ),
   // react: (
   //   <i className="devicon-react-plain text-2xl text-sky-500 dark:text-sky-400 transition-transform group-hover:scale-110"></i>
   // ),
@@ -37,7 +37,7 @@ export default function SnippetsPage() {
                 Code snippets for developers
               </h1>
               <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-                A collection of code snippets that I&apos;m proud of.
+                A collection of code snippets that may or may not have some utility... somewhere.
               </p>
             </header>
 
