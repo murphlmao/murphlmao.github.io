@@ -5,7 +5,7 @@ date: December 1, 2025
 icon: cpp
 ---
 
-From my blog post on [C++ Classes, Operator Overloading, & Templates](../blog/cpp-classes-overloading-templates/), here's the complete code for a `Cat` class that supports division operators to slice the ASCII art representation of a cat. The class also includes an optional adoption sign when displaying the cat.
+From my blog post on [C++ Classes, Operator Overloading, & Templates](../blog/cpp-classes-overloading-templates), here's the complete code for a `Cat` class that supports division operators to slice the ASCII art representation of a cat. The class also includes an optional adoption sign when displaying the cat.
 
 ```cpp
 #include <iostream>
