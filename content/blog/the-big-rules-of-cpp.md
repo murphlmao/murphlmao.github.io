@@ -1,5 +1,5 @@
 ---
-title: "The Unholy Rules of Zero, Three, and Five in C++ Classes"
+title: "C++'s Unholy Rules of Three, Five, & Zero"
 date: '2025-12-08'
 order: 1
 description: "I had to split this away from the C++ classes post because this language is god awful."
