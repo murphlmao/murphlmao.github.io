@@ -93,6 +93,10 @@ class Cat {
 
     // default constructor
     Cat(std::string color_of_cat) {
+      // to call methods within a class,
+      // you can optionally just call the
+      // method name directly, or use 'this->'.
+      // i prefer using 'this->' for clarity.
       this->color_of_cat = color_of_cat;
     };
 

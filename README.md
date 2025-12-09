@@ -6,12 +6,6 @@ deno task dev
 # Deploy
 
 # TODO blogs:
-- the rules of 3, 5, and 0
-  - lvalues & rvalues
-  - RAII // Destructors
-  - Copy constructor, copy assignment operator
-  - Move constructor, move assignment operator
-  - Smart pointers (unique_ptr, shared_ptr, weak_ptr)
 - containers & iterators
  - maps, vectors, sets
 - functors & functional bros
@@ -30,3 +24,9 @@ deno task dev
 - error & exception handling & exit codes
 - classes, operator overloading, & templates
   - what are operators
+- the rules of 3, 5, and 0
+  - lvalues & rvalues
+  - RAII // Destructors
+  - Copy constructor, copy assignment operator
+  - Move constructor, move assignment operator
+  - Smart pointers (unique_ptr, shared_ptr, weak_ptr)
