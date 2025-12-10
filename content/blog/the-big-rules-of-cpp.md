@@ -1,5 +1,5 @@
 ---
-title: "C++'s Unholy Rules of Three, Five, & Zero"
+title: "The Unholy Rules of Three, Five, & Zero"
 date: '2025-12-08'
 order: 1
 description: "I had to split this away from the C++ classes post because this language is god awful."
@@ -17,14 +17,14 @@ There are five value categories in modern C++: `lvalues`, `prvalues`,
 understand at first, but there's a couple of rules you can generally
 use to identify and understand them. In all honesty, the semantics here
 are confusing and aren't practically important if you're just starting out
-with C++, so if you want, you can probably just read these heading and move on:
+with C++, so if you want, you can probably just read these headings and move on:
 
-- [What is an Expression?](#what-is-an-expression)
+- [What is an expression?](#whats-an-expression)
 - [The Three Core Categories](#the-three-core-categories)
 - [Why does this matter?](#why-does-this-matter)
 
 
-### What is an Expression?
+### What's an expression?
 
 An **expression** is any piece of code that produces a value.
 When you write code, almost everything is an expression:
