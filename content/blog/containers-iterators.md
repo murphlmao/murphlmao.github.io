@@ -1,10 +1,11 @@
 ---
 title: "Containers & Iterators"
-date: '2025-12-09'
+date: '2025-12-11'
 order: 1
-description: "I avoid iteration like the plague and use map and similar unless I'm held at gunpoint"
+description: "I avoid iteration like the plague and use map (or similar) unless I'm held at gunpoint"
 tags: ['C++', 'cpp', 'C-lang', 'C', 'programming', 'iterators', 'containers', 'sets', 'maps', 'vectors']
 ---
+
 
 ## What's a container?
 A container is very simple: It's a thing that stores (contains) objects.
@@ -23,6 +24,24 @@ own specialized containers when needed. There are a couple of basic
 containers in C++ that generally fall into 2 categories: sequence containers
 and associative containers.
 
+
+## Terminology Clarification: Ordered vs Sorted
+
+- Ordered = maintains insertion order (like `std::vector`)
+- Sorted = maintains elements by value (like `std::set`, `std::map`)
+
+```cpp
+// "ordered" - stores in insertion order
+std::vector<int> nums = {85, 92, 78, 95};  // stays: 85, 92, 78, 95
+
+// "sorted" - arranges by value
+std::set<int> sorted_nums = {85, 92, 78, 95};  // becomes: 78, 85, 92, 95
+
+// you can sort a vector manually
+std::sort(nums.begin(), nums.end());  // now: 78, 85, 92, 95
+```
+
+The confusion is that `std::map` and `std::set`, which I will get to shortly, are called "ordered associative containers" in the C++ standard, but they actually maintain **sorted** order (by key/value), not insertion order. They stay sorted automatically because they're implemented as binary search trees.
 
 ## Sequential Containers
 ### Arrays & Vector
@@ -300,47 +319,46 @@ int main() {
 I'd also like to point out my intentional usage of the word `cursor`. If you know what a cursor is, then this probably already clicked for you when you see how we move the cursor from one node to another. When you type out text anywhere, you literally have a cursor that types wherever it's currently located. This is exactly the same concept. Text editors are actually one of like 5 places on earth where you will ever use doubly linked lists (I'm kidding, there's probably like 6). In another later post, I'll give a much better linked list implementation that includes methods to add/remove nodes, etc. This is fine for now.
 
 
-### Back to std::list (TODO)
-
-Now that you understand how doubly linked lists work under the hood, let's talk about `std::list` from the C++ Standard Library. **`std::list` is literally a doubly-linked list** - it's implemented exactly like what we just coded above, but with all the bells and whistles of a production-ready container.
-
-This is why `std::list` behaves the way it does:
+### Back to std::list
+Now that you understand how doubly linked lists work under the hood, let's talk about `std::list` from the C++ Standard Library. **`std::list` is literally a doubly-linked list** - it's implemented exactly like what we just coded above, but with a lot more features and safety checks:
 ```cpp
 #include <iostream>
 #include <list>
 
 int main() {
   std::list<int> myList = {10, 20, 30, 40};
-  
+
   // you can't do this - no random access!
   // std::cout << myList[2] << "\n";  // ERROR
-  
+
   // why? because to get to index 2, std::list would have to
   // start at head and follow next pointers: head -> 10 -> 20 -> 30
-  // that's O(n) time complexity, so the [] operator isn't even provided
-  
+  // that's O(n) time complexity; the [] operator isn't provided
+
   // instead, you iterate with iterators or range-based for loops
   for (int value : myList) {
     std::cout << value << "\n";
   }
-  
+
   // but insertion/deletion at any position is O(1)
   // (once you have an iterator to that position)
   auto it = myList.begin();
   ++it;  // move to second element
   myList.insert(it, 15);  // just rewire a few pointers!
-  
+
   // prints: 10, 15, 20, 30, 40
   for (int value : myList) {
     std::cout << value << " ";
   }
-  
+
+  std::cout << std::endl;
+
   return 0;
 }
 ```
 
-**Why use `std::list` over `std::vector`?**
-- You need frequent insertions/deletions in the middle of the container
+Why use `std::list` over `std::vector`?
+- You need efficient insertions/deletions in the front/back of the list
 - You don't need random access by index
 - You're okay with slower iteration and higher memory overhead (each node needs extra pointers)
 
@@ -349,32 +367,219 @@ In practice, `std::vector` is almost always the better choice because:
 - Random access is incredibly useful
 - Most "insert in middle" operations happen rarely enough that O(n) is fine
 
-But now you know why `std::list` exists and when it might actually be useful!
-
-
 
 ## Associative Containers
+Associative containers are by far the easiest to understand conceptually.
+They store elements in whats called a "key-value pair" format. This means
+that each element in the container is associated with a unique key that
+can be used to quickly access the corresponding value. That's a lot of CS
+jargon, so let me introduce you to a file type called `json`, which is literally
+just a key-value pair storage format. Here is an example of a json object, which work almost identically to maps in C++:
 
+```json
+{
+  "name": "John Doe",
+  "age": 30,
+  "is_student": false,
+  "courses": ["Math", "Science", "History"]
+}
+```
+
+Sets are actually an exception to this key-value rule though, because a set is just a data structure that is comprised entirely of keys, but I'll get to that later.
 
 
 ### Map
-### Set
+As you can see from the above json object, all of the objects on the left side of the colon are the "keys", and the objects on the right side of the colon are the "values". You can use the keys to quickly access the corresponding values. For example, if you wanted to get the value associated with the key "name", you would simply look it up using that key.
 
-
-### Ordered vs Sorted
-
-An important distinction that the C++ standard library loves to confuse:
-
-- Ordered: Elements are stored in the order you add them. A vector is ordered.
-- Sorted: Elements are arranged according to their value (ascending or descending). A sorted vector is ordered AND sorted.
+Okay, but what does that look like in C++?
 
 ```cpp
-// this is "ordered" (order of submission)
-std::vector submissions = {85, 92, 78, 95};
+#include <iostream>
+#include <map>
+#include <string>
 
-// now it's "sorted" (ascending by value): {78, 85, 92, 95}
-std::sort(submissions.begin(), submissions.end());
+// pretty common - arrow operator on iterator
+void iterator_one(std::map<std::string, int>& mappp) {
+  for (
+    auto iter = mappp.begin();
+    iter != mappp.end();
+    ++iter
+  ) {
+    // this is because the arrow operator dereferences
+    // the iterator and gives us access to the
+    // members of the underlying object directly
+    std::cout << iter->first << " : " << iter->second << std::endl;
+  }
+}
+
+// less common - explicit dereference to pair
+void iterator_two(std::map<std::string, int>& mappp) {
+  for (
+    auto iter = mappp.begin();
+    iter != mappp.end();
+    ++iter
+  ) {
+    // since each entry in a map is actually
+    // just an instance of std::pair, we need
+    // to declare that in order to get the value
+    // of whatever entry we're looking for:
+    std::pair<const std::string, int>& entry = *iter;
+
+    // alternatively, you can be super lazy and just:
+    // auto& entry = *iter;
+    std::cout << entry.first << " : " << entry.second << std::endl;
+  }
+}
+
+// most common - range-based for loop with pair
+void iterator_three(std::map<std::string, int>& mappp) {
+  for (const auto& entry : mappp) {
+    std::cout << entry.first << " : " << entry.second << std::endl;
+  }
+}
+
+// this is by far the cleanest way to do it
+void iterator_four(std::map<std::string, int>& mappp) {
+  // in C++ 17, you can actually do structured bindings
+  // to unpack the pair directly into two variables:
+  for (const auto& [key, value] : mappp) {
+    std::cout << key << " : " << value << std::endl;
+  }
+}
+
+int main() {
+  std::map <std::string, int> cat_ratings = {
+    {"british shorthair", 10},
+    {"calico", 10},
+    {"siamese", 10},
+    {"maine coon", 10},
+    {"sphynx", 0}
+  };
+
+  // we can also insert after declaration
+  cat_ratings["scottish fold"] = 10;
+
+  iterator_one(cat_ratings);
+  std::cout << "-----" << std::endl;
+  iterator_two(cat_ratings);
+  std::cout << "-----" << std::endl;
+  iterator_three(cat_ratings);
+  std::cout << "-----" << std::endl;
+  // just do this where you can lol. it's the easiest
+  iterator_four(cat_ratings);
+
+  // this is unrelated, but demonstrates find()
+  std::cout << "-----" << std::endl;
+  auto iter = cat_ratings.find("maine coon");
+  if (iter != cat_ratings.end()) {
+    std::cout << "Found: " << iter->second << "\n";
+  }
+
+  return 0;
+}
+```
+
+In std::map, you CANNOT *modify* the keys. This is because they're sorted by key. If you changed a key to something else, the lookups & sorting would break. You can, however, erase keys from the map, and as you saw above, insert new key-value pairs as needed.
+
+The methods for that are `insert()` and `erase()`, respectively. You can also perform lookups using the `find()` method, which returns an iterator to the key-value pair if found, or `map.end()` if not found (more on iterators later).
+
+Note how I did use the `[]` operator above to insert new key-value pairs. This is because the `[]` operator in std::map will create a new entry if the key does not already exist. If the key does exist, it will return a reference to the existing value, allowing you to modify it directly.
+
+
+### Set
+Sets are very self explanatory, and you can use them whenever you need to
+store unique items without caring about order. They just care about uniqueness and are self-sorting; they handle all of that for you.
+
+```cpp
+#include <iostream>
+#include <set>
+
+int main() {
+  std::set<int> set_me_on_fire = {30, 40, 50};
+
+  set_me_on_fire.insert(10);
+  set_me_on_fire.insert(20);
+  set_me_on_fire.insert(30); // duplicate, won't be added
+
+  for (const auto& value : set_me_on_fire) {
+    std::cout << value << " ";
+    // 10 20 30 40 50
+  }
+
+  std::cout << "\n";
+  std::set<std::string> letters = {"c", "b", "a"};
+
+  for (const auto& value : letters) {
+    std::cout << value << " ";
+    // a b c
+  }
+
+  std::cout << std::endl;
+  return 0;
+}
 ```
 
 
-Maps and sets in C++ are **sorted by key** by default because they're implemented as binary search trees. The C++ standard sometimes calls them "ordered containers," which is confusing as hell.
+## Iterators
+Iterators are objects provided by the standard library that allow you to traverse
+the elements of a container (like vectors, lists, maps, and sets) in a uniform way,
+regardless of the underlying data structure.
+
+You're already actually using iterators when you do for loops over STL containers,
+but this was just something that I needed to point out separately because of it's just a weirdly separate explicit part of C++. Up until now, it's all been under the hood for us.
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <string>
+#include <map>
+
+void increment(
+  std::vector<int>::iterator& v_iter,
+  std::map<std::string, int>::iterator& m_iter
+) {
+  // increment to next element
+  ++v_iter;
+  ++m_iter;
+}
+
+int main() {
+  std::vector<int> my_vector = {1, 2, 3};
+  std::vector<int>::iterator v_iter = my_vector.begin();
+  // v_iter now points to the beginning of
+  // the vector. defining iterators this way
+  // allows us to use the ++i or i++ (prefix vs postfix)
+  // on the iterator element to allow us to traverse
+  // the object.
+
+  std::map<std::string, int> my_map = {
+    {"a", 1}, {"b", 2}, {"c", 3}
+  };
+  std::map<std::string, int>::iterator m_iter = my_map.begin();
+
+  std::cout << "Vector first element: " << *v_iter << "\n";
+  std::cout << "Map first element value: " << m_iter->second << "\n";
+
+  increment(v_iter, m_iter);
+
+  std::cout << "Vector second element: " << *v_iter << "\n";
+  std::cout << "Map second element value: " << m_iter->second << "\n";
+
+  increment(v_iter, m_iter);
+  std::cout << "Vector third element: " << *v_iter << "\n";
+  std::cout << "Map third element value: " << m_iter->second;
+
+  std::cout << std::endl;
+  return 0;
+}
+```
+
+Iterators can also be at the end of a container, which is represented by the `end()` method. This is useful for checking if you've reached the end of the container while iterating through it.
+
+
+## ++i vs i++
+A quick note on the difference between `++i` (prefix increment) and `i++` (postfix increment) when used with iterators:
+- `++i` increments the iterator and returns the incremented iterator. It's generally more efficient
+- `i++` increments the iterator but returns a copy of the iterator before it was incremented. This can be less efficient because it involves creating a temporary copy.
+
+When iterating through containers, prefer using `++i` for better performance, especially with complex iterators like those in linked lists or maps.
