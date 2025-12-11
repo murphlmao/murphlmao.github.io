@@ -1,5 +1,5 @@
 ---
-title: "Containers & Iterators"
+title: "Containers, Iterators, & Linked Lists"
 date: '2025-12-11'
 order: 1
 description: "I avoid iteration like the plague and use map (or similar) unless I'm held at gunpoint"
@@ -448,6 +448,7 @@ void iterator_four(std::map<std::string, int>& mappp) {
 }
 
 int main() {
+  // this gets sorted alphabetically by key automatically
   std::map <std::string, int> cat_ratings = {
     {"british shorthair", 10},
     {"calico", 10},
@@ -534,9 +535,10 @@ but this was just something that I needed to point out separately because of it'
 #include <string>
 #include <map>
 
+template<typename IterType1, typename IterType2>
 void increment(
-  std::vector<int>::iterator& v_iter,
-  std::map<std::string, int>::iterator& m_iter
+  IterType1& v_iter,
+  IterType2& m_iter
 ) {
   // increment to next element
   ++v_iter;
@@ -576,10 +578,169 @@ int main() {
 
 Iterators can also be at the end of a container, which is represented by the `end()` method. This is useful for checking if you've reached the end of the container while iterating through it.
 
+A quick footnote is that `.begin()` and `.end()` are methods that return iterators to the beginning and end of the container, respectively. If we wanted to write our above increment function to follow a pattern that's a little bit more common, we
+could do that with templates.
 
 ## ++i vs i++
 A quick note on the difference between `++i` (prefix increment) and `i++` (postfix increment) when used with iterators:
 - `++i` increments the iterator and returns the incremented iterator. It's generally more efficient
 - `i++` increments the iterator but returns a copy of the iterator before it was incremented. This can be less efficient because it involves creating a temporary copy.
 
-When iterating through containers, prefer using `++i` for better performance, especially with complex iterators like those in linked lists or maps.
+When iterating through containers, prefer using `++i` for better performance, especially with complex iterators like those in linked lists or maps. Here's a quick example to illustrate the difference:
+
+```cpp
+#include <iostream>
+#include <vector>
+
+int main() {
+  std::vector<int> my_vector = {1, 2, 3};
+  std::vector<int>::iterator v_iter = my_vector.begin();
+
+  // prefix
+  int prefix = *(++v_iter);
+  // v_iter now points to 2,
+  // prefix is 2
+
+  v_iter = my_vector.begin(); // reset iterator
+
+  // this increments the iterator, but
+  // returns the old (iterator) value
+  int postfix = *(v_iter++);
+  // v_iter now points to 2
+  // postfix is 1,
+
+  std::cout << "Prefix increment result: " << prefix << std::endl;
+  std::cout << "Postfix increment result: " << postfix << std::endl;
+  std::cout << std::endl;
+  return 0;
+}
+```
+
+If we're defining custom iterators for our own data structures, we can implement both versions of the increment operator to provide flexibility to users of our iterators. Here's a very complete example with a custom linked list bidirectional iterator that supports both prefix and postfix increment:
+
+```cpp
+#include <iostream>
+
+struct Node {
+  int data;
+  Node* next;
+  Node* prev;
+};
+
+class LinkedListIterator {
+  private:
+    Node* current;  // pointer to current node
+
+  public:
+    // constructor
+    LinkedListIterator(Node* node) : current(node) {}
+
+    // dereference operator - get the data
+    int& operator*() {
+      return current->data;
+    }
+
+    // prefix increment (++iter)
+    // returns reference to the incremented iterator
+    LinkedListIterator& operator++() {
+      current = current->next;  // move to next node
+      return *this;             // return reference to this
+    }
+
+    // postfix increment (iter++)
+    // note: int parameter is a dummy to distinguish from prefix
+    LinkedListIterator operator++(int) {
+      LinkedListIterator temp = *this;  // copy current state
+      current = current->next;          // move to next node
+      return temp;                      // return OLD state (the copy)
+    }
+
+    // prefix decrement (--iter)
+    // returns reference to the decremented iterator
+    LinkedListIterator& operator--() {
+      current = current->prev;  // move to previous node
+      return *this;             // return reference to this
+    }
+
+    // postfix decrement (iter--)
+    // note: int parameter is a dummy to distinguish from prefix
+    LinkedListIterator operator--(int) {
+      LinkedListIterator temp = *this;  // copy current state
+      current = current->prev;          // move to previous node
+      return temp;                      // return OLD state (the copy)
+    }
+
+    // equality comparison
+    bool operator!=(const LinkedListIterator& other) const {
+      return current != other.current;
+    }
+
+    bool operator==(const LinkedListIterator& other) const {
+      return current == other.current;
+    }
+};
+
+class LinkedList {
+  private:
+    Node* head;
+    Node* tail;
+
+  public:
+    LinkedList() : head(nullptr), tail(nullptr) {}
+
+    void push_back(int value) {
+      Node* new_node = new Node{value, nullptr, tail};
+      if (tail) {
+        tail->next = new_node;
+      } else {
+        head = new_node;
+      }
+      tail = new_node;
+    }
+
+    // begin returns iterator to first element
+    LinkedListIterator begin() {
+      return LinkedListIterator(head);
+    }
+
+    // end returns iterator past the last element
+    LinkedListIterator end() {
+      return LinkedListIterator(nullptr);
+    }
+};
+
+int main() {
+  LinkedList list;
+  list.push_back(10);
+  list.push_back(20);
+  list.push_back(30);
+
+  auto iter = list.begin();
+
+  std::cout << "using prefix increment:" << std::endl;
+  std::cout << *iter << std::endl;      // 10
+  std::cout << *(++iter) << std::endl;  // 20 (increments first, then returns)
+
+  // reset
+  iter = list.begin();
+
+  std::cout << "\nusing postfix increment:" << std::endl;
+  std::cout << *iter << std::endl;      // 10
+  std::cout << *(iter++) << std::endl;  // 10 (returns old value, then increments)
+  std::cout << *iter << std::endl;      // 20 (now pointing to next node)
+
+  std::cout << "\nusing decrement operators:" << std::endl;
+  std::cout << *(--iter) << std::endl;  // 10 (prefix: decrements first)
+  ++iter;  // back to 20
+  std::cout << *(iter--) << std::endl;  // 20 (postfix: returns old value)
+  std::cout << *iter << std::endl;      // 10 (now pointing to previous node)
+
+  std::cout << "\niterating with begin() and end():" << std::endl;
+  for (auto iter = list.begin(); iter != list.end(); ++iter) {
+    std::cout << *iter << " ";  // 10 20 30
+  }
+  std::cout << std::endl;
+
+  return 0;
+}
+```
