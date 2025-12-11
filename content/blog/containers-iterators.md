@@ -175,24 +175,183 @@ added 100 | size: 10 | capacity: 10
 ```
 
 
-### List
+### What the fuck is a linked list?
 Welcome to linked lists! You will use these exactly 3 more times
 for the remainder of your career.
 
 Linked lists are another type of sequential container that store
 elements in a linear sequence. However, unlike arrays and vectors,
 which store elements in contiguous memory locations, linked lists
-store elements in `nodes`. A node is just a single unit that contains
-the data, often called a datum, & pointer(s) to other nodes in the
-structure that are connected via pointers.
+store elements in non-contiguous memory locations, which we call
+`nodes`. A node is just a single unit that contains the data, often
+called a `datum`, & pointer(s) to other nodes in the structure that
+are connected via pointers.
 
-This sounds simply conceptually, but, personally, I find the syntax
-frustrating. Here is a diagram to help demonstrate a **REGULAR** linked
-list first, not a doubly linked list, which is what `std::list` is in C++:
+This is very simple conceptually, but it can be difficult to remember
+all of the rules needed for linked lists. Here is a diagram to help
+demonstrate a **REGULAR** linked list first, not a doubly linked list,
+which is what C++'s `std::list` is.
 
+#### Singly Linked List
+```cpp
+#include <iostream>
+
+struct Node {
+  int datum;
+  Node* next;
+};
+
+int main() {
+  Node* head = new Node{10, nullptr};
+  head->next = new Node{20, nullptr};
+  head->next->next = new Node{30, nullptr};
+  head->next->next->next = new Node{40, nullptr};
+
+    /*
+  (Front)                                         (Back)
+  ┌────┬────┐    ┌────┬────┐    ┌────┬────┐    ┌────┬────┐
+  │ 10 │  ──┼───>│ 20 │  ──┼───>│ 30 │  ──┼───>│ 40 │null│
+  └────┴────┘    └────┴────┘    └────┴────┘    └────┴────┘
+  data  next     data  next     data  next     data  next
+  */
+
+  Node* cursor = head;
+
+  while (cursor != nullptr) {
+    std::cout << cursor->datum << "\n";
+    cursor = cursor->next;
+  }
+
+  return 0;
+}
 ```
 
+As usual, I recommend reading what's happening out loud:
+- We establish what a struct called `Node`, which has fields for a `datum`
+and then a pointer (with the `Node` type), which we call `next`, *literally*
+refers to the next `Node` that will be in our linked list.
+- We establish the `head` of the list (the first object in the list), which
+has `10` & `nullptr` as values.
+- When establish our next `Node`, we actually wire the `head`'s `next` pointer
+to point to the node we are about to assign. At this point, it looks like [10] -> [20]
+- Next, we want to iterate through the entire list & just print all of the values.
+The only problem is that because this is a custom data structure, we don't have
+any native ways for us to iterate through it, so we need to manually walk through
+the list by following the `next` pointers until we hit `nullptr`, which indicates
+the end of the list (because if the last value is nullptr, that implies that there is no next node).
+- We need to have a `cursor` for us to walk through the list. We assign this to the
+beginning (`head`) of the list, and then we just keep following the `next` pointers
+until we hit `nullptr`.
+
+
+#### Doubly Linked Lists
+A doubly linked list is similar to a singly linked list, but each node contains
+pointers to both the next and previous nodes in the sequence. This allows for
+bidirectional traversal of the list, making it easier to navigate both forwards
+and backwards.
+
+```cpp
+#include <iostream>
+
+struct Node {
+  int datum;
+  Node* prev;
+  Node* next;
+};
+
+int main() {
+  Node* head = new Node{10, nullptr, nullptr};
+  head->next = new Node{20, head, nullptr};
+  head->next->next = new Node{30, head->next, nullptr};
+  head->next->next->next = new Node{40, head->next->next, nullptr};
+
+  Node* cursor = head;
+
+  // this loop previously would assign
+  // the cursor to 1 past the end of the list.
+  // we can avoid that in this case by breaking
+  // out of the loop early.
+  while (cursor != nullptr) {
+    std::cout << cursor->datum << "\n";
+
+    if (cursor->next == nullptr) {
+      break;
+    }
+
+    cursor = cursor->next;
+  }
+
+  // this is the less clean way to loop through
+  // a linked list. for this example, we're going
+  // to traverse backwards through the list. our
+  // old cursor is currently pointed at the end of
+  // the list, so this works out.
+  for (
+      /* no precondition here */;
+      cursor != nullptr;
+      cursor = cursor->prev
+  ) {
+    std::cout << cursor->datum << "\n";
+  }
+  return 0;
+}
 ```
+
+I'd also like to point out my intentional usage of the word `cursor`. If you know what a cursor is, then this probably already clicked for you when you see how we move the cursor from one node to another. When you type out text anywhere, you literally have a cursor that types wherever it's currently located. This is exactly the same concept. Text editors are actually one of like 5 places on earth where you will ever use doubly linked lists (I'm kidding, there's probably like 6). In another later post, I'll give a much better linked list implementation that includes methods to add/remove nodes, etc. This is fine for now.
+
+
+### Back to std::list (TODO)
+
+Now that you understand how doubly linked lists work under the hood, let's talk about `std::list` from the C++ Standard Library. **`std::list` is literally a doubly-linked list** - it's implemented exactly like what we just coded above, but with all the bells and whistles of a production-ready container.
+
+This is why `std::list` behaves the way it does:
+```cpp
+#include <iostream>
+#include <list>
+
+int main() {
+  std::list<int> myList = {10, 20, 30, 40};
+  
+  // you can't do this - no random access!
+  // std::cout << myList[2] << "\n";  // ERROR
+  
+  // why? because to get to index 2, std::list would have to
+  // start at head and follow next pointers: head -> 10 -> 20 -> 30
+  // that's O(n) time complexity, so the [] operator isn't even provided
+  
+  // instead, you iterate with iterators or range-based for loops
+  for (int value : myList) {
+    std::cout << value << "\n";
+  }
+  
+  // but insertion/deletion at any position is O(1)
+  // (once you have an iterator to that position)
+  auto it = myList.begin();
+  ++it;  // move to second element
+  myList.insert(it, 15);  // just rewire a few pointers!
+  
+  // prints: 10, 15, 20, 30, 40
+  for (int value : myList) {
+    std::cout << value << " ";
+  }
+  
+  return 0;
+}
+```
+
+**Why use `std::list` over `std::vector`?**
+- You need frequent insertions/deletions in the middle of the container
+- You don't need random access by index
+- You're okay with slower iteration and higher memory overhead (each node needs extra pointers)
+
+In practice, `std::vector` is almost always the better choice because:
+- CPU caching loves contiguous memory (vectors are FAST to iterate)
+- Random access is incredibly useful
+- Most "insert in middle" operations happen rarely enough that O(n) is fine
+
+But now you know why `std::list` exists and when it might actually be useful!
+
+
 
 ## Associative Containers
 
