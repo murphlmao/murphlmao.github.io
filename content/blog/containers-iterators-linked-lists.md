@@ -359,6 +359,7 @@ int main() {
 
 Why use `std::list` over `std::vector`?
 - You need efficient insertions/deletions in the front/back of the list
+- You need efficient insertions/deletions in the middle of the list
 - You don't need random access by index
 - You're okay with slower iteration and higher memory overhead (each node needs extra pointers)
 
@@ -526,8 +527,8 @@ Iterators are objects provided by the standard library that allow you to travers
 the elements of a container (like vectors, lists, maps, and sets) in a uniform way,
 regardless of the underlying data structure.
 
-You're already actually using iterators when you do for loops over STL containers,
-but this was just something that I needed to point out separately because of it's just a weirdly separate explicit part of C++. Up until now, it's all been under the hood for us.
+You're actually already using iterators when you do for loops over STL containers,
+but this was just something that I needed to point out separately because of it's just a weirdly separate explicit part of C++. Up until now, it's all been under the hood:
 
 ```cpp
 #include <iostream>
@@ -717,25 +718,24 @@ int main() {
 
   auto iter = list.begin();
 
-  std::cout << "using prefix increment:" << std::endl;
-  std::cout << *iter << std::endl;      // 10
-  std::cout << *(++iter) << std::endl;  // 20 (increments first, then returns)
+  std::cout << "using prefix increment:" << "\n";
+  std::cout << *iter << "\n";      // 10
+  std::cout << *(++iter) << "\n";  // 20 (increments first, then returns)
 
   // reset
   iter = list.begin();
 
-  std::cout << "\nusing postfix increment:" << std::endl;
-  std::cout << *iter << std::endl;      // 10
-  std::cout << *(iter++) << std::endl;  // 10 (returns old value, then increments)
-  std::cout << *iter << std::endl;      // 20 (now pointing to next node)
+  std::cout << "\n" << "using postfix increment:" << "\n";
+  std::cout << *iter << "\n";      // 10
+  std::cout << *(iter++) << "\n";  // 10 (returns old value, then increments)
+  std::cout << *iter << "\n";      // 20 (now pointing to next node)
 
-  std::cout << "\nusing decrement operators:" << std::endl;
-  std::cout << *(--iter) << std::endl;  // 10 (prefix: decrements first)
+  std::cout << "\n" <<  "using decrement operators:" << "\n";
+  std::cout << *(--iter) << "\n";  // 10 (prefix: decrements first)
   ++iter;  // back to 20
-  std::cout << *(iter--) << std::endl;  // 20 (postfix: returns old value)
-  std::cout << *iter << std::endl;      // 10 (now pointing to previous node)
-
-  std::cout << "\niterating with begin() and end():" << std::endl;
+  std::cout << *(iter--) << "\n";  // 20 (postfix: returns old value)
+  std::cout << *iter << "\n";      // 10 (now pointing to previous node)
+  std::cout << "\niterating with begin() and end():" << "\n";
   for (auto iter = list.begin(); iter != list.end(); ++iter) {
     std::cout << *iter << " ";  // 10 20 30
   }

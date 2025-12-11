@@ -6,12 +6,19 @@ deno task dev
 # Deploy
 
 # TODO blogs:
-- containers & iterators
- - maps, vectors, sets
-- functors & functional bros
+- functors & function pointers
 - recursion, tail recursion, structural recursion
-- linked lists & binary search trees
+-  binary search trees
 - time complexity: BIG O (shit)
+
+## ec
+recursion/structural recursion
+binary search trees
+functions & function pointers
+
+An invariant is a condition or property that must always be true throughout the lifetime of a data structure, no matter what operations are performed on it.
+
+
 
 # topics covered/done
 - stack
@@ -30,3 +37,5 @@ deno task dev
   - Copy constructor, copy assignment operator
   - Move constructor, move assignment operator
   - Smart pointers (unique_ptr, shared_ptr, weak_ptr)
+- containers & iterators
+ - maps, vectors, sets, linked lists
