@@ -16,9 +16,17 @@ recursion/structural recursion
 binary search trees
 functions & function pointers
 
-An invariant is a condition or property that must always be true throughout the lifetime of a data structure, no matter what operations are performed on it.
+- An invariant is a condition or property that must always be true throughout the lifetime of a data structure, no matter what operations are performed on it.
+- BST
+- Linked Lists
+
+- Recursion Examples
 
 
+# todo: formatting
+- subheadings in blog posts
+- separate area to scroll through 'sections' of blog posts.
+- remove pages for posts, just scroll infinitely
 
 # topics covered/done
 - stack
