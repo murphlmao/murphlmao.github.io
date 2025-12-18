@@ -4,14 +4,14 @@ const workHistory = [
   {
     company: "Prism Controls",
     role: "Software & Platform Engineer",
-    logo: "/company/prismcontrols.jpg",
+    logo: "/icons/prismcontrols.jpg",
     startDate: "June 2022",
     endDate: "Present",
   },
   {
     company: "Self Employed",
     role: "IT & Software Engineer / Consultant",
-    logo: "/company/selfemployed.jpg",
+    logo: "/icons/selfemployed.jpg",
     startDate: "March 2015",
     endDate: "July 2023",
   },

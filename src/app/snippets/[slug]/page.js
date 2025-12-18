@@ -1,10 +1,10 @@
 import Link from 'next/link';
 import path from 'path';
-import { getMarkdownContent, getAllMarkdownFiles, MarkdownContent } from '@/utils/markdown';
+import { getMarkdownContent, getFlatMarkdownFiles, MarkdownContent } from '@/utils/markdown';
 import '@/styles/markdown.css';
 
 export async function generateStaticParams() {
-  const snippets = getAllMarkdownFiles(path.join(process.cwd(), 'content/snippets'));
+  const snippets = getFlatMarkdownFiles(path.join(process.cwd(), 'content/snippets'));
   return snippets.map((snippet) => ({
     slug: snippet.slug,
   }));

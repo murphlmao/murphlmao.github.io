@@ -3,32 +3,27 @@
 deno install
 deno task dev
 
-# Deploy
 
-# TODO blogs:
+# TODO:
+## Code
+- Refactor to typescript / tsx
+- Renaming: Blog -> Articles
+  - Include a redirect for /blog/ to /articles
+
+
+## Formatting
+- subheadings in blog posts
+- separate area to scroll through 'sections' of blog posts.
+- remove pages for posts, just scroll infinitely
+
+
+## Blogs / Articles / Posts:
 - functors & function pointers
 - recursion, tail recursion, structural recursion
 -  binary search trees
 - time complexity: BIG O (shit)
 
-## ec
-recursion/structural recursion
-binary search trees
-functions & function pointers
-
-- An invariant is a condition or property that must always be true throughout the lifetime of a data structure, no matter what operations are performed on it.
-- BST
-- Linked Lists
-
-- Recursion Examples
-
-
-# todo: formatting
-- subheadings in blog posts
-- separate area to scroll through 'sections' of blog posts.
-- remove pages for posts, just scroll infinitely
-
-# topics covered/done
+### Topics Covered/Done
 - stack
 - pointers & references
 - heap

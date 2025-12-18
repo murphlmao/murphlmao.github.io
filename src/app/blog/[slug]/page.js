@@ -1,25 +1,59 @@
-import { getMarkdownContent, MarkdownContent, getAllMarkdownFiles } from '@/utils/markdown';
+import {
+  getMarkdownContent,
+  MarkdownContent,
+  getAllMarkdownFiles,
+  getPostFilePath,
+  getPostsByCategory,
+  isCategorySlug,
+  getCategoryBySlug,
+  getAllCategorySlugs,
+  getBlogStructure
+} from '@/utils/markdown';
 import path from 'path';
 import Link from 'next/link';
 import '@/styles/markdown.css';
 import Script from 'next/script';
-// import Image from 'next/image';
+import CategoryPage from '../CategoryPage';
 
+const blogDir = path.join(process.cwd(), 'content/blog');
 
 export async function generateStaticParams() {
-  const posts = getAllMarkdownFiles(path.join(process.cwd(), 'content/blog'));
-  return posts.map((post) => ({
-    slug: post.slug,
-  }));
+  const posts = getAllMarkdownFiles(blogDir);
+  const categorySlugs = getAllCategorySlugs(blogDir);
+
+  // Include both post slugs and category slugs
+  const postParams = posts.map((post) => ({ slug: post.slug }));
+  const categoryParams = categorySlugs.map((slug) => ({ slug }));
+
+  return [...postParams, ...categoryParams];
 }
 
 // Add metadata export for better SEO
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug;
-  const filePath = path.join(process.cwd(), 'content/blog', `${slug}.md`);
-  const { frontmatter } = getMarkdownContent(filePath);
 
+  // Check if this is a category
+  if (isCategorySlug(blogDir, slug)) {
+    const category = getCategoryBySlug(blogDir, slug);
+    return {
+      title: `${category.name} - Blog`,
+      description: category.description,
+      openGraph: {
+        title: `${category.name} - Blog`,
+        description: category.description,
+        type: 'website',
+      },
+    };
+  }
+
+  // It's a blog post
+  const filePath = getPostFilePath(blogDir, slug);
+  if (!filePath) {
+    return { title: 'Post Not Found' };
+  }
+
+  const { frontmatter } = getMarkdownContent(filePath);
   const ogImage = frontmatter.image || '/images/blog-default.jpg';
 
   return {
@@ -51,11 +85,35 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default async function BlogPost({ params }) {
+export default async function BlogPostOrCategory({ params }) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug;
-  const filePath = path.join(process.cwd(), 'content/blog', `${slug}.md`);
+
+  // Check if this is a category page
+  if (isCategorySlug(blogDir, slug)) {
+    const category = getCategoryBySlug(blogDir, slug);
+    const posts = getPostsByCategory(blogDir, slug);
+    const headers = getBlogStructure(blogDir);
+    const allPosts = getAllMarkdownFiles(blogDir);
+
+    // Calculate post counts for sidebar
+    const postCounts = allPosts.reduce((acc, post) => {
+      if (post.category) {
+        acc[post.category] = (acc[post.category] || 0) + 1;
+      }
+      return acc;
+    }, {});
+
+    return <CategoryPage category={category} posts={posts} headers={headers} postCounts={postCounts} />;
+  }
+
+  // It's a blog post
+  const filePath = getPostFilePath(blogDir, slug);
   const { content, frontmatter } = getMarkdownContent(filePath);
+
+  // Get category info for breadcrumb
+  const currentPost = getAllMarkdownFiles(blogDir).find(p => p.slug === slug);
+  const categoryInfo = currentPost?.category ? getCategoryBySlug(blogDir, currentPost.category) : null;
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -117,22 +175,30 @@ export default async function BlogPost({ params }) {
 
                   <article className="prose prose-zinc dark:prose-invert lg:prose-xl mx-auto px-4 prose-headings:font-medium prose-p:leading-relaxed">
                     <header className="mb-8">
-                      {frontmatter.date && (
-                        <time
-                          dateTime={frontmatter.date}
-                          className="order-first flex items-center text-base text-zinc-400 dark:text-zinc-500"
-                        >
-                          <span className="h-4 w-0.5 rounded-full bg-zinc-200 dark:bg-zinc-500"></span>
-                          <span className="ml-3">
+                      <div className="order-first flex items-center gap-3 text-base text-zinc-400 dark:text-zinc-500 mb-4">
+                        <span className="h-4 w-0.5 rounded-full bg-zinc-200 dark:bg-zinc-500"></span>
+                        {frontmatter.date && (
+                          <time dateTime={frontmatter.date}>
                             {new Date(frontmatter.date).toLocaleDateString('en-US', {
                               year: 'numeric',
                               month: 'long',
                               day: 'numeric',
                               timeZone: 'UTC',
                             })}
-                          </span>
-                        </time>
-                      )}
+                          </time>
+                        )}
+                        {categoryInfo && (
+                          <>
+                            <span className="text-zinc-300 dark:text-zinc-600">·</span>
+                            <Link
+                              href={`/blog/${categoryInfo.slug}`}
+                              className="text-sky-500 hover:text-sky-600 dark:text-sky-400 dark:hover:text-sky-300 no-underline"
+                            >
+                              {categoryInfo.name}
+                            </Link>
+                          </>
+                        )}
+                      </div>
                       <h1 className="mb-2 !mt-0">{frontmatter.title}</h1>
                     </header>
                     <div className="markdown-content">

@@ -1,5 +1,5 @@
 import "@/styles/markdown.css";
-import { getAllMarkdownFiles } from "@/utils/markdown";
+import { getFlatMarkdownFiles } from "@/utils/markdown";
 import "devicon/devicon.min.css";
 import path from "path";
 
@@ -25,7 +25,7 @@ const icons = {
 export default function SnippetsPage() {
   // Get all markdown files from the snippets directory
   const snippetsDirectory = path.join(process.cwd(), "content/snippets");
-  const snippets = getAllMarkdownFiles(snippetsDirectory);
+  const snippets = getFlatMarkdownFiles(snippetsDirectory);
 
   return (
     <div className="mt-16 sm:mt-18">
