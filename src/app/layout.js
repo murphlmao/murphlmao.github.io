@@ -16,7 +16,7 @@ export const metadata = {
     template: "%s | Murphy Malcolm"
   },
   description: "Full Stack Developer",
-  keywords: ["Full Stack Developer", "Software Engineering", "Python", "Software", "Rust", "Web Development", "JavaScript", "TypeScript", "Next.JS", "React", "Node.js", "Go", "C#"],
+  keywords: ["Full Stack Developer", "Software Engineering", "Python", "Software", "Rust", "Web Development", "JavaScript", "TypeScript", "Next.JS", "React", "Rust", "C++", "Node.js", "Go", "C#"],
   authors: [{ name: "Murphy Malcolm", url: "https://murph.rip" }],
   creator: "Murphy Malcolm",
   openGraph: {

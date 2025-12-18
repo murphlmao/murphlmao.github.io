@@ -3,17 +3,19 @@
 deno install
 deno task dev
 
-# Deploy
 
-# TODO blogs:
-- containers & iterators
- - maps, vectors, sets
-- functors & functional bros
-- recursion, tail recursion, structural recursion
-- linked lists & binary search trees
+# TODO:
+## Code
+- Refactor to typescript / tsx
+- Convert from Next.js to React / Deno Fresh
+
+## Formatting
+
+## Blogs / Articles / Posts:
+### eecs281
 - time complexity: BIG O (shit)
 
-# topics covered/done
+### Topics Covered/Done
 - stack
 - pointers & references
 - heap
@@ -30,3 +32,5 @@ deno task dev
   - Copy constructor, copy assignment operator
   - Move constructor, move assignment operator
   - Smart pointers (unique_ptr, shared_ptr, weak_ptr)
+- containers & iterators
+ - maps, vectors, sets, linked lists

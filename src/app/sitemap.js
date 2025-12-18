@@ -9,7 +9,7 @@ export default async function sitemap() {
   // Get all blog posts
   const blogPosts = getAllMarkdownFiles(path.join(process.cwd(), 'content/blog'));
   const blogUrls = blogPosts.map((post) => ({
-    url: `${baseUrl}/blog/${post.slug}`,
+    url: `${baseUrl}/articles/${post.slug}`,
     lastModified: post.lastModified || post.date,
     changeFrequency: 'monthly',
     priority: 0.8,
@@ -33,7 +33,7 @@ export default async function sitemap() {
       priority: 1.0,
     },
     {
-      url: `${baseUrl}/blog`,
+      url: `${baseUrl}/articles`,
       lastModified: new Date().toISOString(),
       changeFrequency: 'daily',
       priority: 0.9,

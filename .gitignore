@@ -9,6 +9,7 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
+.mypy_cache/
 
 # testing
 /coverage
@@ -24,7 +25,7 @@ temp
 # misc
 .DS_Store
 *.pem
-.vscode/*
+# .vscode/*
 
 # debug
 npm-debug.log*
