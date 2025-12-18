@@ -12,9 +12,7 @@ deno task dev
 ## Formatting
 
 ## Blogs / Articles / Posts:
-- functors & function pointers
-- recursion, tail recursion, structural recursion
-- binary search trees
+### eecs281
 - time complexity: BIG O (shit)
 
 ### Topics Covered/Done
