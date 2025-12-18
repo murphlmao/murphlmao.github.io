@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import BlogPagination from './BlogPagination';
+import InfiniteArticleList from './InfiniteArticleList';
 import CategoryNav from './CategoryNav';
 import { MarkdownContent } from '@/utils/markdown';
 
@@ -37,7 +37,7 @@ export default function CategoryPage({ category, posts, headers, postCounts }) {
           <div className="mx-auto max-w-2xl lg:max-w-6xl">
             {/* Back link */}
             <Link
-              href="/blog"
+              href="/articles"
               className="group mb-8 inline-flex items-center text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
             >
               <svg
@@ -82,7 +82,7 @@ export default function CategoryPage({ category, posts, headers, postCounts }) {
               {/* Posts list */}
               <div className="lg:flex-1 lg:min-w-0">
                 {sortedPosts.length > 0 ? (
-                  <BlogPagination articles={sortedPosts} articlesPerPage={10} />
+                  <InfiniteArticleList articles={sortedPosts} />
                 ) : (
                   <p className="text-zinc-600 dark:text-zinc-400">
                     No posts in this category yet.

@@ -92,13 +92,13 @@ export default function Navbar() {
                 )}
               </Link>
               <Link
-                href="/blog"
+                href="/articles"
                 className="relative rounded-lg px-3 inline-block py-2 text-sm transition-all delay-150 cursor-pointer"
               >
-                <span className={`relative z-10 ${pathname.startsWith('/blog') ? 'text-sky-500 dark:text-sky-400' : 'text-gray-600 dark:text-gray-50'}`}>
-                  Blog
+                <span className={`relative z-10 ${pathname.startsWith('/articles') ? 'text-sky-500 dark:text-sky-400' : 'text-gray-600 dark:text-gray-50'}`}>
+                  Articles
                 </span>
-                {pathname.startsWith('/blog') && (
+                {pathname.startsWith('/articles') && (
                   <span className="absolute inset-x-1 -bottom-px h-px bg-gradient-to-r from-sky-500/0 via-sky-500/40 to-sky-500/0 dark:from-sky-400/0 dark:via-sky-400/40 dark:to-sky-400/0" />
                 )}
               </Link>
@@ -213,11 +213,11 @@ export default function Navbar() {
                 className="w-full text-left cursor-pointer"
               >
                 <Link
-                  href="/blog"
+                  href="/articles"
                   className="relative block px-3 py-2 text-sm transition-all delay-150 cursor-pointer"
                 >
-                  <span className={`relative z-10 ${pathname.startsWith('/blog') ? 'text-sky-500 dark:text-sky-400' : 'text-gray-600 dark:text-gray-50'}`}>
-                    Blog
+                  <span className={`relative z-10 ${pathname.startsWith('/articles') ? 'text-sky-500 dark:text-sky-400' : 'text-gray-600 dark:text-gray-50'}`}>
+                    Articles
                   </span>
                 </Link>
               </button>

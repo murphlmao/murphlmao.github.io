@@ -41,7 +41,7 @@ export default function CategoryNav({ headers = [], postCounts = {} }) {
               return (
                 <li key={category.slug}>
                   <Link
-                    href={`/blog/${category.slug}`}
+                    href={`/articles/${category.slug}`}
                     className="group flex items-center justify-between rounded-lg px-3 py-2 text-sm text-zinc-600 transition hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800/50"
                   >
                     <span className="flex items-center gap-1.5 group-hover:text-sky-500 dark:group-hover:text-sky-400">

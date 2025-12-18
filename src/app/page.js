@@ -33,7 +33,7 @@ export default function Home() {
                     {blogPosts.map((post) => (
                       <article key={post.slug} className="group relative flex flex-col items-start">
                         <h2 className="text-base font-semibold tracking-tight text-zinc-800 dark:text-zinc-100">
-                          <Link href={`/blog/${post.slug}`}>
+                          <Link href={`/articles/${post.slug}`}>
                             <span className="absolute -inset-x-4 -inset-y-6 z-20 sm:-inset-x-6 sm:rounded-2xl" />
                             <span className="relative z-10">{post.title}</span>
                           </Link>

@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export default function Footer() {
   const navigation = [
-    { name: 'Blog', href: '/blog' },
+    { name: 'Articles', href: '/articles' },
     { name: 'Snippets', href: '/snippets' },
     { name: 'Resources', href: '/resources' },
     { name: 'Projects', href: '/projects' },
