@@ -38,7 +38,7 @@ export default function Blog() {
                 Article Archive
               </h1>
               <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-                Since {stats.earliestYear} I&apos;ve written {stats.totalArticles.toLocaleString()} articles and {stats.totalWords.toLocaleString()} words. Please enjoy my strong opinions & feelings here!
+                Since {stats.earliestYear} I&apos;ve written {stats.totalArticles.toLocaleString()} articles and {stats.totalWords.toLocaleString()} words. Please enjoy my strong opinions, feelings, and some of my study material here!
               </p>
             </header>
 

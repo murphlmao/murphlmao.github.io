@@ -372,5 +372,3 @@ int main() {
 ```
 
 You will often see that binary search trees almost always use tree recursion and structural recursion for various operations. Each node in the tree can lead to two recursive calls: one for the left subtree and one for the right subtree.
-
-With that being said... my next post will be about binary search trees, so please pray I don't pull the trigger.
