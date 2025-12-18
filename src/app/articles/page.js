@@ -1,4 +1,4 @@
-import { getAllMarkdownFiles, getBlogStructure } from '@/utils/markdown';
+import { getAllMarkdownFiles, getBlogStructure, getBlogStats } from '@/utils/markdown';
 import path from 'path';
 import BlogPagination from './BlogPagination';
 import CategoryNav from './CategoryNav';
@@ -8,6 +8,9 @@ const blogDir = path.join(process.cwd(), 'content/blog');
 export default function Blog() {
   // Get blog structure (headers and categories) from file system
   const headers = getBlogStructure(blogDir);
+
+  // Get blog stats
+  const stats = getBlogStats(blogDir);
 
   // Get all posts sorted by date
   const allArticles = getAllMarkdownFiles(blogDir)
@@ -32,10 +35,10 @@ export default function Blog() {
           <div className="mx-auto max-w-2xl lg:max-w-6xl">
             <header className="max-w-full">
               <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-                Keyboard Warrior&apos;s Manifesto.
+                Article Archive
               </h1>
               <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-                This is where I share things I find useful and occasionally complain about various issues :).
+                Since {stats.earliestYear} I&apos;ve written {stats.totalArticles.toLocaleString()} articles and {stats.totalWords.toLocaleString()} words. Please enjoy my strong opinions & feelings here!
               </p>
             </header>
 

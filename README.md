@@ -7,14 +7,9 @@ deno task dev
 # TODO:
 ## Code
 - Refactor to typescript / tsx
-- Renaming: Blog -> Articles
-  - Include a redirect for /blog/ to /articles
 - Convert from Next.js to React / Deno Fresh
 
 ## Formatting
-- subheadings in blog posts
-- separate area to scroll through 'sections' of blog posts.
-- remove pages for posts, just scroll infinitely
 
 ## Blogs / Articles / Posts:
 - functors & function pointers

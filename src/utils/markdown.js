@@ -167,3 +167,34 @@ export function getPostFilePath(blogDir, slug) {
   }
   return null;
 }
+
+// Get blog statistics: total articles, earliest year, total word count
+export function getBlogStats(blogDir) {
+  const posts = getAllMarkdownFiles(blogDir);
+  let totalWords = 0;
+  let earliestYear = new Date().getFullYear();
+
+  for (const post of posts) {
+    // Get the file path and read content for word count
+    const filePath = path.join(blogDir, post.headerSlug, post.category, `${post.slug}.md`);
+    const { content } = matter(fs.readFileSync(filePath, 'utf8'));
+
+    // Count words (split on whitespace, filter empty strings)
+    const words = content.trim().split(/\s+/).filter(word => word.length > 0);
+    totalWords += words.length;
+
+    // Track earliest year
+    if (post.date) {
+      const year = new Date(post.date).getFullYear();
+      if (year < earliestYear) {
+        earliestYear = year;
+      }
+    }
+  }
+
+  return {
+    totalArticles: posts.length,
+    earliestYear,
+    totalWords
+  };
+}
