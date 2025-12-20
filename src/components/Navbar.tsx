@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { GiDeer } from 'react-icons/gi';
 
 interface NavbarProps {
   pathname: string;
@@ -96,8 +97,16 @@ export default function Navbar({ pathname }: NavbarProps) {
               ))}
             </div>
 
-            {/* Dark Mode Toggle and Menu Button */}
+            {/* Deer Icon, Dark Mode Toggle, and Menu Button */}
             <div className="flex items-center gap-4">
+              <a
+                href="/deer"
+                className="cursor-pointer rounded-full p-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-800 focus:outline-none"
+                aria-label="murphy's pain"
+                title="Tragedy & Pain."
+              >
+                <GiDeer className="w-5 h-5" />
+              </a>
               <div className="pointer-events-auto md:hidden">
                 <button
                   onClick={toggleMenu}

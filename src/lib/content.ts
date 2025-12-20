@@ -123,6 +123,18 @@ export interface Snippet {
   date?: string;
 }
 
+export interface AnimalIncident {
+  slug: string;
+  title: string;
+  date: string;
+  animal: 'deer' | 'raccoon' | 'other';
+  count: number;
+  car: string;
+  damage?: string;
+  images: string[];
+  content: string;
+}
+
 // Get content directory path
 function getContentDir(): string {
   return path.join(process.cwd(), 'src/content');
@@ -134,6 +146,10 @@ function getBlogDir(): string {
 
 function getSnippetsDir(): string {
   return path.join(getContentDir(), 'snippets');
+}
+
+function getDeerDir(): string {
+  return path.join(getContentDir(), 'deer');
 }
 
 // Read and parse a markdown file
@@ -351,6 +367,42 @@ export function getSnippetContent(slug: string): { frontmatter: Record<string, u
   const fileContents = fs.readFileSync(filePath, 'utf8');
   const { data, content } = matter(fileContents);
   return { frontmatter: data, content };
+}
+
+// Get all animal incidents
+export function getAnimalIncidents(): AnimalIncident[] {
+  const deerDir = getDeerDir();
+  if (!fs.existsSync(deerDir)) return [];
+
+  const files = fs.readdirSync(deerDir);
+  const incidents: AnimalIncident[] = [];
+
+  for (const file of files) {
+    if (!file.endsWith('.md') || file.startsWith('_')) continue;
+
+    const filePath = path.join(deerDir, file);
+    const fileContents = fs.readFileSync(filePath, 'utf8');
+    const { data, content } = matter(fileContents);
+
+    incidents.push({
+      slug: file.replace('.md', ''),
+      title: data.title || 'Untitled',
+      date: data.date || '',
+      animal: data.animal || 'deer',
+      count: data.count || 1,
+      car: data.car || 'Unknown',
+      damage: data.damage || '',
+      images: data.images || [],
+      content: content.trim(),
+    });
+  }
+
+  // Sort by date descending (newest first), then by slug descending for consistent ordering
+  return incidents.sort((a, b) => {
+    const dateCompare = new Date(b.date).getTime() - new Date(a.date).getTime();
+    if (dateCompare !== 0) return dateCompare;
+    return b.slug.localeCompare(a.slug);
+  });
 }
 
 // Render markdown to HTML with syntax highlighting

@@ -6,6 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   site: 'https://murph.rip',
   output: 'static',
+  server: { port: 3000 },
   integrations: [react(), sitemap()],
   vite: {
     plugins: [tailwindcss()],
