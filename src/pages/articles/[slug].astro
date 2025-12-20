@@ -1,0 +1,287 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CategoryNav from '../../components/CategoryNav.astro';
+import BlogPagination from '../../components/BlogPagination';
+import {
+  getAllPosts,
+  getPostContent,
+  getPostsByCategory,
+  isCategorySlug,
+  getCategoryBySlug,
+  getAllCategorySlugs,
+  getBlogStructure,
+  renderMarkdown,
+  type Post,
+  type Category,
+} from '../../lib/content';
+import '../../styles/markdown.css';
+
+export async function getStaticPaths() {
+  const posts = getAllPosts();
+  const categorySlugs = getAllCategorySlugs();
+
+  const postPaths = posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { type: 'post' as const, slug: post.slug },
+  }));
+
+  const categoryPaths = categorySlugs.map((slug) => ({
+    params: { slug },
+    props: { type: 'category' as const, slug },
+  }));
+
+  return [...postPaths, ...categoryPaths];
+}
+
+const { slug, type } = Astro.props;
+
+// Get common data
+const headers = getBlogStructure();
+const allPosts = getAllPosts();
+const postCounts = allPosts.reduce((acc, post) => {
+  if (post.category) {
+    acc[post.category] = (acc[post.category] || 0) + 1;
+  }
+  return acc;
+}, {} as Record<string, number>);
+
+// Determine if this is a category or post page
+const isCategory = isCategorySlug(slug);
+
+// Get data for the appropriate page type
+let category: Category | null = null;
+let categoryPosts: Post[] = [];
+let post: Post | undefined;
+let postContent: { frontmatter: any; content: string } | null = null;
+let categoryInfo: Category | null = null;
+
+if (isCategory) {
+  category = getCategoryBySlug(slug);
+  categoryPosts = getPostsByCategory(slug).sort((a, b) => {
+    const dateCompare = new Date(b.date).getTime() - new Date(a.date).getTime();
+    if (dateCompare !== 0) return dateCompare;
+    return (b.order || 0) - (a.order || 0);
+  });
+} else {
+  post = allPosts.find((p) => p.slug === slug);
+  postContent = getPostContent(slug);
+  if (post?.category) {
+    categoryInfo = getCategoryBySlug(post.category);
+  }
+}
+
+function formatDate(dateStr: string): string {
+  return new Date(dateStr).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'UTC',
+  });
+}
+
+// Build metadata
+const title = isCategory
+  ? `${category?.name} - Articles`
+  : postContent?.frontmatter?.title || 'Article';
+const description = isCategory
+  ? category?.description || ''
+  : postContent?.frontmatter?.description || '';
+
+// JSON-LD for blog posts
+const jsonLd = !isCategory && postContent ? {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: postContent.frontmatter.title,
+  description: postContent.frontmatter.description,
+  author: {
+    '@type': 'Person',
+    name: 'Murphy Malcolm',
+    url: 'https://murph.rip',
+  },
+  datePublished: postContent.frontmatter.date,
+  dateModified: postContent.frontmatter.lastModified || postContent.frontmatter.date,
+  image: postContent.frontmatter.image || '/images/blog-default.jpg',
+  url: `https://murph.rip/articles/${slug}`,
+  keywords: postContent.frontmatter.tags?.join(', '),
+  publisher: {
+    '@type': 'Organization',
+    name: 'Murphy Malcolm',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://murph.rip/images/logo.png',
+    },
+  },
+} : null;
+---
+
+<Layout
+  title={title}
+  description={description}
+  image={!isCategory && postContent?.frontmatter?.image ? postContent.frontmatter.image : undefined}
+  article={!isCategory && postContent ? {
+    publishedTime: postContent.frontmatter.date,
+    modifiedTime: postContent.frontmatter.lastModified || postContent.frontmatter.date,
+    author: 'Murphy Malcolm',
+    tags: postContent.frontmatter.tags,
+  } : undefined}
+>
+  {!isCategory && jsonLd && (
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} slot="head" />
+  )}
+
+  {isCategory && category ? (
+    <!-- Category Page -->
+    <div class="sm:px-8 mt-16 sm:mt-18">
+      <div class="mx-auto max-w-7xl lg:px-8">
+        <div class="relative px-4 sm:px-8 lg:px-12">
+          <div class="mx-auto max-w-2xl lg:max-w-6xl">
+            <!-- Back link -->
+            <a
+              href="/articles"
+              class="group mb-8 inline-flex items-center text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+            >
+              <svg
+                viewBox="0 0 16 16"
+                fill="none"
+                aria-hidden="true"
+                class="mr-2 h-4 w-4 stroke-current"
+              >
+                <path
+                  d="M7.25 11.25 3.75 8m0 0 3.5-3.25M3.75 8h8.5"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              Back to all posts
+            </a>
+
+            <!-- Header -->
+            <header class="max-w-full mb-12">
+              <p class="text-sm font-medium text-sky-500 dark:text-sky-400 mb-2">
+                {category.headerName}
+              </p>
+              <h1 class="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl flex items-center gap-3">
+                {category.showIconInHeader && category.icon && category.icon.startsWith('/') && (
+                  <img src={category.icon} alt="" width="40" height="40" class="inline-block" />
+                )}
+                {category.showIconInHeader && category.icon && !category.icon.startsWith('/') && (
+                  <span>{category.icon}</span>
+                )}
+                {category.name}
+              </h1>
+              {category.description && (
+                <p class="mt-4 text-base text-zinc-600 dark:text-zinc-400">
+                  {category.description}
+                </p>
+              )}
+            </header>
+
+            <!-- Two-column layout -->
+            <div class="lg:flex lg:gap-12">
+              <!-- Posts list -->
+              <div class="lg:flex-1 lg:min-w-0">
+                {categoryPosts.length > 0 ? (
+                  <BlogPagination client:load articles={categoryPosts} articlesPerPage={10} />
+                ) : (
+                  <p class="text-zinc-600 dark:text-zinc-400">
+                    No posts in this category yet.
+                  </p>
+                )}
+              </div>
+
+              <!-- Sidebar -->
+              <aside class="hidden lg:block lg:w-64 lg:flex-shrink-0">
+                <div class="sticky top-8">
+                  <CategoryNav headers={headers} postCounts={postCounts} />
+                </div>
+              </aside>
+            </div>
+
+            <!-- Mobile category nav -->
+            <div class="mt-12 lg:hidden">
+              <CategoryNav headers={headers} postCounts={postCounts} />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  ) : postContent ? (
+    <!-- Blog Post Page -->
+    <div class="sm:px-8 mt-16 lg:mt-18">
+      <div class="mx-auto max-w-7xl lg:px-8">
+        <div class="relative px-4 sm:px-8 lg:px-12">
+          <div class="mx-auto max-w-2xl lg:max-w-5xl">
+            <div class="xl:relative">
+              <div class="mx-auto max-w-2xl">
+                <a
+                  href="/articles"
+                  aria-label="Go back to articles"
+                  class="group mb-8 flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-md shadow-zinc-800/5 ring-1 ring-zinc-900/5 transition dark:border dark:border-zinc-700/50 dark:bg-zinc-800 dark:ring-0 dark:ring-white/10 dark:hover:border-zinc-700 dark:hover:ring-white/20 lg:absolute lg:-left-5 lg:mb-0 lg:-mt-2 xl:-top-1.5 xl:left-0 xl:mt-0"
+                >
+                  <svg
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    aria-hidden="true"
+                    class="h-4 w-4 stroke-zinc-500 transition group-hover:stroke-zinc-700 dark:stroke-zinc-500 dark:group-hover:stroke-zinc-400"
+                  >
+                    <path
+                      d="M7.25 11.25 3.75 8m0 0 3.5-3.25M3.75 8h8.5"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </a>
+
+                <article class="prose prose-zinc dark:prose-invert lg:prose-xl mx-auto px-4 prose-headings:font-medium prose-p:leading-relaxed">
+                  <header class="mb-8">
+                    <div class="order-first flex items-center gap-3 text-base text-zinc-400 dark:text-zinc-500 mb-4">
+                      <span class="h-4 w-0.5 rounded-full bg-zinc-200 dark:bg-zinc-500"></span>
+                      {postContent.frontmatter.date && (
+                        <time datetime={postContent.frontmatter.date}>
+                          {formatDate(postContent.frontmatter.date)}
+                        </time>
+                      )}
+                      {categoryInfo && (
+                        <>
+                          <span class="text-zinc-300 dark:text-zinc-600">·</span>
+                          <a
+                            href={`/articles/${categoryInfo.slug}`}
+                            class="text-sky-500 hover:text-sky-600 dark:text-sky-400 dark:hover:text-sky-300 no-underline"
+                          >
+                            {categoryInfo.name}
+                          </a>
+                        </>
+                      )}
+                    </div>
+                    <h1 class="mb-2 !mt-0">{postContent.frontmatter.title}</h1>
+                  </header>
+                  <div class="markdown-content">
+                    <Fragment set:html={await renderMarkdown(postContent.content)} />
+                  </div>
+                </article>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  ) : (
+    <div class="sm:px-8 mt-16 sm:mt-18">
+      <div class="mx-auto max-w-7xl lg:px-8">
+        <div class="relative px-4 sm:px-8 lg:px-12">
+          <div class="mx-auto max-w-2xl lg:max-w-5xl">
+            <h1 class="text-4xl font-bold">Post Not Found</h1>
+            <p class="mt-4 text-zinc-600 dark:text-zinc-400">
+              The requested article could not be found.
+            </p>
+            <a href="/articles" class="mt-4 inline-block text-sky-500 hover:text-sky-600">
+              Back to articles
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  )}
+</Layout>

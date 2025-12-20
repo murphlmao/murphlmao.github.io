@@ -1,0 +1,24 @@
+---
+import { getAllPosts, getAllCategorySlugs } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const posts = getAllPosts();
+  const categorySlugs = getAllCategorySlugs();
+
+  // Generate paths for both posts and categories
+  const postPaths = posts.map((post) => ({
+    params: { slug: post.slug },
+  }));
+
+  const categoryPaths = categorySlugs.map((slug) => ({
+    params: { slug },
+  }));
+
+  return [...postPaths, ...categoryPaths];
+}
+
+const { slug } = Astro.params;
+
+// Redirect to the new articles URL
+return Astro.redirect(`/articles/${slug}`, 301);
+---

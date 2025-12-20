@@ -1,13 +1,12 @@
 # Dev
 
-deno install
-deno task dev
-
+pnpm install
+pnpm dev
+pnpm build
 
 # TODO:
 ## Code
 - Refactor to typescript / tsx
-- Convert from Next.js to React / Deno Fresh
 
 ## Formatting
 
