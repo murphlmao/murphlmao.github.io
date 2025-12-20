@@ -1,0 +1,401 @@
+import fs from 'fs';
+import path from 'path';
+import matter from 'gray-matter';
+import { marked, type Tokens } from 'marked';
+import { createHighlighter, type Highlighter } from 'shiki';
+
+// Language display names for the code block header
+const languageNames: Record<string, string> = {
+  cpp: 'C++',
+  cplusplus: 'C++',
+  c: 'C',
+  rust: 'Rust',
+  js: 'JavaScript',
+  javascript: 'JavaScript',
+  ts: 'TypeScript',
+  typescript: 'TypeScript',
+  py: 'Python',
+  python: 'Python',
+  go: 'Go',
+  java: 'Java',
+  csharp: 'C#',
+  cs: 'C#',
+  html: 'HTML',
+  css: 'CSS',
+  json: 'JSON',
+  bash: 'Bash',
+  sh: 'Shell',
+  shell: 'Shell',
+  sql: 'SQL',
+  yaml: 'YAML',
+  yml: 'YAML',
+  xml: 'XML',
+  markdown: 'Markdown',
+  md: 'Markdown',
+  jsx: 'JSX',
+  tsx: 'TSX',
+  php: 'PHP',
+  ruby: 'Ruby',
+  rb: 'Ruby',
+  swift: 'Swift',
+  kotlin: 'Kotlin',
+  scala: 'Scala',
+  lua: 'Lua',
+  perl: 'Perl',
+  r: 'R',
+  asm: 'Assembly',
+  assembly: 'Assembly',
+  pascal: 'Pascal',
+  text: 'Text',
+  plaintext: 'Text',
+};
+
+// Cache the highlighter instance
+let highlighterPromise: Promise<Highlighter> | null = null;
+
+async function getHighlighter(): Promise<Highlighter> {
+  if (!highlighterPromise) {
+    highlighterPromise = createHighlighter({
+      themes: ['dracula'],
+      langs: [
+        'javascript', 'typescript', 'python', 'rust', 'go', 'java', 'c', 'cpp',
+        'csharp', 'html', 'css', 'json', 'bash', 'shell', 'sql', 'yaml', 'xml',
+        'markdown', 'jsx', 'tsx', 'php', 'ruby', 'swift', 'kotlin', 'scala',
+        'lua', 'perl', 'r', 'pascal', 'asm',
+      ],
+    });
+  }
+  return highlighterPromise;
+}
+
+// Types
+export interface PostFrontmatter {
+  title: string;
+  date: string;
+  description: string;
+  tags?: string[];
+  order?: number;
+  lastModified?: string;
+  image?: string;
+}
+
+export interface Post extends PostFrontmatter {
+  slug: string;
+  category: string;
+  categoryName: string;
+  headerSlug: string;
+  headerName: string;
+}
+
+export interface Category {
+  slug: string;
+  headerSlug: string;
+  headerName: string;
+  name: string;
+  description: string;
+  order: number;
+  icon: string | null;
+  showIconInHeader: boolean;
+  content: string | null;
+}
+
+export interface Header {
+  slug: string;
+  name: string;
+  description: string;
+  order: number;
+  icon: string | null;
+  content: string | null;
+  categories: Category[];
+}
+
+export interface BlogStats {
+  totalArticles: number;
+  earliestYear: number;
+  totalWords: number;
+}
+
+export interface Snippet {
+  slug: string;
+  title: string;
+  description: string;
+  icon?: string;
+  date?: string;
+}
+
+// Get content directory path
+function getContentDir(): string {
+  return path.join(process.cwd(), 'src/content');
+}
+
+function getBlogDir(): string {
+  return path.join(getContentDir(), 'blog');
+}
+
+function getSnippetsDir(): string {
+  return path.join(getContentDir(), 'snippets');
+}
+
+// Read and parse a markdown file
+export function getMarkdownContent(filePath: string): { frontmatter: PostFrontmatter; content: string } {
+  const fileContents = fs.readFileSync(filePath, 'utf8');
+  const { data, content } = matter(fileContents);
+  return { frontmatter: data as PostFrontmatter, content };
+}
+
+// Get all markdown files from a flat directory (no nested structure)
+export function getFlatMarkdownFiles<T extends Record<string, unknown>>(directory: string): (T & { slug: string })[] {
+  const files = fs.readdirSync(directory);
+  return files
+    .filter(file => file.endsWith('.md') && !file.startsWith('_'))
+    .map(file => {
+      const filePath = path.join(directory, file);
+      const { data } = matter(fs.readFileSync(filePath, 'utf8'));
+      return {
+        slug: file.replace('.md', ''),
+        ...data,
+      } as T & { slug: string };
+    });
+}
+
+// Get the full blog structure: headers -> categories -> posts
+export function getBlogStructure(): Header[] {
+  const blogDir = getBlogDir();
+  const headers: Header[] = [];
+  const entries = fs.readdirSync(blogDir, { withFileTypes: true });
+
+  for (const entry of entries) {
+    if (!entry.isDirectory()) continue;
+
+    const headerPath = path.join(blogDir, entry.name);
+    const headerMetaPath = path.join(headerPath, '_header.md');
+
+    // Skip directories without _header.md
+    if (!fs.existsSync(headerMetaPath)) continue;
+
+    const { data: headerMeta, content: headerContent } = matter(
+      fs.readFileSync(headerMetaPath, 'utf8')
+    );
+
+    const header: Header = {
+      slug: entry.name,
+      name: (headerMeta.name as string) || entry.name,
+      description: (headerMeta.description as string) || '',
+      order: (headerMeta.order as number) || 0,
+      icon: (headerMeta.icon as string) || null,
+      content: headerContent.trim() || null,
+      categories: [],
+    };
+
+    // Scan for category directories
+    const categoryEntries = fs.readdirSync(headerPath, { withFileTypes: true });
+    for (const catEntry of categoryEntries) {
+      if (!catEntry.isDirectory()) continue;
+
+      const categoryPath = path.join(headerPath, catEntry.name);
+      const categoryMetaPath = path.join(categoryPath, '_category.md');
+
+      // Skip directories without _category.md
+      if (!fs.existsSync(categoryMetaPath)) continue;
+
+      const { data: catMeta, content: catContent } = matter(
+        fs.readFileSync(categoryMetaPath, 'utf8')
+      );
+
+      const category: Category = {
+        slug: catEntry.name,
+        headerSlug: entry.name,
+        headerName: header.name,
+        name: (catMeta.name as string) || catEntry.name,
+        description: (catMeta.description as string) || '',
+        order: (catMeta.order as number) || 0,
+        icon: (catMeta.icon as string) || null,
+        showIconInHeader: catMeta.showIconInHeader !== false,
+        content: catContent.trim() || null,
+      };
+
+      header.categories.push(category);
+    }
+
+    // Sort categories by order
+    header.categories.sort((a, b) => a.order - b.order);
+    headers.push(header);
+  }
+
+  // Sort headers by order
+  headers.sort((a, b) => a.order - b.order);
+  return headers;
+}
+
+// Get all posts from all categories
+export function getAllPosts(): Post[] {
+  const blogDir = getBlogDir();
+  const posts: Post[] = [];
+  const structure = getBlogStructure();
+
+  for (const header of structure) {
+    for (const category of header.categories) {
+      const categoryPath = path.join(blogDir, header.slug, category.slug);
+      const files = fs.readdirSync(categoryPath);
+
+      for (const file of files) {
+        // Skip metadata files and non-markdown files
+        if (file.startsWith('_') || !file.endsWith('.md')) continue;
+
+        const filePath = path.join(categoryPath, file);
+        const { data } = matter(fs.readFileSync(filePath, 'utf8'));
+
+        posts.push({
+          slug: file.replace('.md', ''),
+          category: category.slug,
+          categoryName: category.name,
+          headerSlug: header.slug,
+          headerName: header.name,
+          ...(data as PostFrontmatter),
+        });
+      }
+    }
+  }
+
+  return posts;
+}
+
+// Get all category slugs
+export function getAllCategorySlugs(): string[] {
+  const structure = getBlogStructure();
+  return structure.flatMap(header => header.categories.map(cat => cat.slug));
+}
+
+// Get category by slug
+export function getCategoryBySlug(slug: string): Category | null {
+  const structure = getBlogStructure();
+  for (const header of structure) {
+    const category = header.categories.find(cat => cat.slug === slug);
+    if (category) return category;
+  }
+  return null;
+}
+
+// Check if a slug is a category
+export function isCategorySlug(slug: string): boolean {
+  return getAllCategorySlugs().includes(slug);
+}
+
+// Get posts for a specific category
+export function getPostsByCategory(categorySlug: string): Post[] {
+  return getAllPosts().filter(post => post.category === categorySlug);
+}
+
+// Find a post by slug
+export function findPostBySlug(slug: string): Post | undefined {
+  return getAllPosts().find(post => post.slug === slug);
+}
+
+// Get file path for a post
+export function getPostFilePath(slug: string): string | null {
+  const post = findPostBySlug(slug);
+  if (post) {
+    return path.join(getBlogDir(), post.headerSlug, post.category, `${slug}.md`);
+  }
+  return null;
+}
+
+// Get post content by slug
+export function getPostContent(slug: string): { frontmatter: PostFrontmatter; content: string } | null {
+  const filePath = getPostFilePath(slug);
+  if (!filePath) return null;
+  return getMarkdownContent(filePath);
+}
+
+// Get blog statistics: total articles, earliest year, total word count
+export function getBlogStats(): BlogStats {
+  const blogDir = getBlogDir();
+  const posts = getAllPosts();
+  let totalWords = 0;
+  let earliestYear = new Date().getFullYear();
+
+  for (const post of posts) {
+    // Get the file path and read content for word count
+    const filePath = path.join(blogDir, post.headerSlug, post.category, `${post.slug}.md`);
+    const { content } = matter(fs.readFileSync(filePath, 'utf8'));
+
+    // Count words (split on whitespace, filter empty strings)
+    const words = content.trim().split(/\s+/).filter(word => word.length > 0);
+    totalWords += words.length;
+
+    // Track earliest year
+    if (post.date) {
+      const year = new Date(post.date).getFullYear();
+      if (year < earliestYear) {
+        earliestYear = year;
+      }
+    }
+  }
+
+  return {
+    totalArticles: posts.length,
+    earliestYear,
+    totalWords,
+  };
+}
+
+// Get all snippets
+export function getAllSnippets(): Snippet[] {
+  return getFlatMarkdownFiles<Omit<Snippet, 'slug'>>(getSnippetsDir());
+}
+
+// Get snippet content by slug
+export function getSnippetContent(slug: string): { frontmatter: Record<string, unknown>; content: string } | null {
+  const filePath = path.join(getSnippetsDir(), `${slug}.md`);
+  if (!fs.existsSync(filePath)) return null;
+  const fileContents = fs.readFileSync(filePath, 'utf8');
+  const { data, content } = matter(fileContents);
+  return { frontmatter: data, content };
+}
+
+// Render markdown to HTML with syntax highlighting
+export async function renderMarkdown(content: string): Promise<string> {
+  const highlighter = await getHighlighter();
+
+  // Create a custom renderer for code blocks
+  const renderer = new marked.Renderer();
+
+  renderer.code = function({ text, lang }: Tokens.Code): string {
+    const language = lang || 'text';
+    const displayName = languageNames[language] || language.toUpperCase();
+
+    // Try to highlight with shiki, fall back to plain text
+    let highlightedCode: string;
+    try {
+      // Check if language is supported
+      const loadedLangs = highlighter.getLoadedLanguages();
+      const langToUse = loadedLangs.includes(language as any) ? language : 'text';
+
+      highlightedCode = highlighter.codeToHtml(text, {
+        lang: langToUse,
+        theme: 'dracula',
+      });
+    } catch {
+      // Fallback to escaped plain text
+      const escaped = text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+      highlightedCode = `<pre class="shiki dracula" style="background-color:#282A36"><code>${escaped}</code></pre>`;
+    }
+
+    // Wrap with our custom styling (language label + structure)
+    return `<div class="code-block-wrapper">
+      <span class="code-block-lang">${displayName}</span>
+      ${highlightedCode}
+    </div>`;
+  };
+
+  // Configure marked for GFM support
+  marked.setOptions({
+    gfm: true,
+    breaks: false,
+  });
+
+  return await marked.parse(content, { renderer });
+}

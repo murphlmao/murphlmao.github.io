@@ -18,6 +18,8 @@ temp
 # next.js
 /.next/
 /out/
+dist/
+.astro/
 
 # production
 /build

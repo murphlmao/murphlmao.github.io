@@ -1,0 +1,68 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CategoryNav from '../../components/CategoryNav.astro';
+import BlogPagination from '../../components/BlogPagination';
+import { getAllPosts, getBlogStructure, getBlogStats } from '../../lib/content';
+
+// Get blog structure (headers and categories)
+const headers = getBlogStructure();
+
+// Get blog stats
+const stats = getBlogStats();
+
+// Get all posts sorted by date
+const allArticles = getAllPosts()
+  .sort((a, b) => {
+    const dateCompare = new Date(b.date).getTime() - new Date(a.date).getTime();
+    if (dateCompare !== 0) return dateCompare;
+    return (b.order || 0) - (a.order || 0);
+  });
+
+// Calculate post counts per category
+const postCounts = allArticles.reduce((acc, article) => {
+  if (article.category) {
+    acc[article.category] = (acc[article.category] || 0) + 1;
+  }
+  return acc;
+}, {} as Record<string, number>);
+---
+
+<Layout title="Article Archive" description={`Since ${stats.earliestYear} I've written ${stats.totalArticles.toLocaleString()} articles and ${stats.totalWords.toLocaleString()} words.`}>
+  <div class="sm:px-8 mt-16 sm:mt-18">
+    <div class="mx-auto max-w-7xl lg:px-8">
+      <div class="relative px-4 sm:px-8 lg:px-12">
+        <div class="mx-auto max-w-2xl lg:max-w-6xl">
+          <header class="max-w-full">
+            <h1 class="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
+              Article Archive
+            </h1>
+            <p class="mt-6 text-base text-zinc-600 dark:text-zinc-400">
+              Since {stats.earliestYear} I've written {stats.totalArticles.toLocaleString()} articles and {stats.totalWords.toLocaleString()} words. Please enjoy my strong opinions, feelings, and some of my study material here!
+            </p>
+          </header>
+
+          <!-- Two-column layout -->
+          <div class="mt-16 sm:mt-20 lg:flex lg:gap-12">
+            <!-- Recent posts (left column) -->
+            <div class="lg:flex-1 lg:min-w-0">
+              <h2 class="sr-only">Recent Posts</h2>
+              <BlogPagination client:load articles={allArticles} articlesPerPage={10} />
+            </div>
+
+            <!-- Category navigation (right column) -->
+            <aside class="hidden lg:block lg:w-64 lg:flex-shrink-0">
+              <div class="sticky top-8">
+                <CategoryNav headers={headers} postCounts={postCounts} />
+              </div>
+            </aside>
+          </div>
+
+          <!-- Mobile category nav -->
+          <div class="mt-12 lg:hidden">
+            <CategoryNav headers={headers} postCounts={postCounts} />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>

@@ -1,0 +1,183 @@
+import { useState, useEffect } from 'react';
+
+interface NavbarProps {
+  pathname: string;
+}
+
+export default function Navbar({ pathname }: NavbarProps) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDark, setIsDark] = useState(true);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY < lastScrollY) {
+        setIsVisible(true);
+      } else if (currentScrollY > lastScrollY && currentScrollY > 50) {
+        setIsVisible(false);
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [lastScrollY]);
+
+  useEffect(() => {
+    const isLight = document.documentElement.classList.contains('dark') === false;
+    setIsDark(!isLight);
+  }, []);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const toggleDarkMode = () => {
+    const newIsDark = !isDark;
+    setIsDark(newIsDark);
+
+    if (newIsDark) {
+      document.documentElement.classList.add('dark');
+      localStorage.theme = 'dark';
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.theme = 'light';
+    }
+  };
+
+  const navLinks = [
+    { name: 'Home', href: '/', isActive: pathname === '/' },
+    { name: 'Articles', href: '/articles', isActive: pathname.startsWith('/articles') },
+    { name: 'Snippets', href: '/snippets', isActive: pathname.startsWith('/snippets') },
+    { name: 'Resources', href: '/resources', isActive: pathname.startsWith('/resources') },
+    { name: 'Projects', href: '/projects', isActive: pathname.startsWith('/projects') },
+  ];
+
+  return (
+    <div
+      className={`fixed inset-x-0 top-0 z-50 transform transition-transform duration-300 ${
+        isVisible ? 'translate-y-0' : '-translate-y-full'
+      }`}
+    >
+      <nav className="pb-4 pt-8">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex justify-between items-center mx-auto lg:max-w-5xl">
+            {/* Profile Photo placeholder */}
+            <div className="flex items-center"></div>
+
+            {/* Centered Desktop Menu */}
+            <div className="hidden sm:block rounded-full bg-white/90 px-3 text-sm font-medium text-zinc-800 shadow-lg shadow-zinc-800/5 ring-1 ring-zinc-900/5 backdrop-blur dark:bg-zinc-900/90 dark:text-zinc-200 dark:ring-white/10">
+              {navLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="relative rounded-lg px-3 inline-block py-2 text-sm transition-all delay-150 cursor-pointer"
+                >
+                  <span
+                    className={`relative z-10 ${
+                      link.isActive
+                        ? 'text-sky-500 dark:text-sky-400'
+                        : 'text-gray-600 dark:text-gray-50'
+                    }`}
+                  >
+                    {link.name}
+                  </span>
+                  {link.isActive && (
+                    <span className="absolute inset-x-1 -bottom-px h-px bg-gradient-to-r from-sky-500/0 via-sky-500/40 to-sky-500/0 dark:from-sky-400/0 dark:via-sky-400/40 dark:to-sky-400/0" />
+                  )}
+                </a>
+              ))}
+            </div>
+
+            {/* Dark Mode Toggle and Menu Button */}
+            <div className="flex items-center gap-4">
+              <div className="pointer-events-auto md:hidden">
+                <button
+                  onClick={toggleMenu}
+                  className="group flex items-center rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-zinc-800 shadow-lg shadow-zinc-800/5 ring-1 ring-zinc-900/5 backdrop-blur dark:bg-zinc-800/90 dark:text-zinc-200 dark:ring-white/10 dark:hover:ring-white/20 cursor-pointer"
+                  type="button"
+                  aria-expanded={isMenuOpen}
+                >
+                  {isMenuOpen ? 'Close' : 'Menu'}
+                  <svg
+                    viewBox="0 0 8 6"
+                    aria-hidden="true"
+                    className={`ml-3 h-auto w-2 stroke-zinc-500 group-hover:stroke-zinc-700 dark:group-hover:stroke-zinc-400 transition-transform duration-200 ${
+                      isMenuOpen ? 'rotate-180' : ''
+                    }`}
+                  >
+                    <path
+                      d="M1.75 1.75 4 4.25l2.25-2.5"
+                      fill="none"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+              </div>
+              <button
+                onClick={toggleDarkMode}
+                className="cursor-pointer rounded-full p-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-800 focus:outline-none"
+                aria-label="Toggle Dark Mode"
+              >
+                {isDark ? (
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                    />
+                  </svg>
+                ) : (
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+                    />
+                  </svg>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        {isMenuOpen && (
+          <div className="sm:hidden mt-4">
+            <div className="rounded-lg bg-white/90 px-3 py-2 text-sm font-medium text-zinc-800 shadow-lg shadow-zinc-800/5 ring-1 ring-zinc-900/5 backdrop-blur dark:bg-zinc-900/90 dark:text-zinc-200 dark:ring-white/10 space-y-1">
+              {navLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={toggleMenu}
+                  className="relative block px-3 py-2 text-sm transition-all delay-150 cursor-pointer"
+                >
+                  <span
+                    className={`relative z-10 ${
+                      link.isActive
+                        ? 'text-sky-500 dark:text-sky-400'
+                        : 'text-gray-600 dark:text-gray-50'
+                    }`}
+                  >
+                    {link.name}
+                  </span>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+      </nav>
+    </div>
+  );
+}

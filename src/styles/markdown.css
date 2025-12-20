@@ -20,6 +20,42 @@
   text-decoration: underline;
 }
 
+/* Code block wrapper with language label */
+.code-block-wrapper {
+  position: relative;
+  margin: 1.5rem 0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.code-block-lang {
+  position: absolute;
+  left: 0.75rem;
+  top: 0.5rem;
+  font-size: 0.75rem;
+  color: rgb(113 113 122); /* zinc-500 */
+  z-index: 10;
+  pointer-events: none;
+}
+
+.code-block-wrapper pre {
+  margin: 0 !important;
+  border-radius: 0.5rem !important;
+  overflow-x: auto;
+}
+
+.code-block-wrapper pre code {
+  display: block;
+  padding: 2.25rem 1rem 1rem 1rem !important;
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+/* Shiki theme background override */
+.code-block-wrapper .shiki {
+  background-color: #090915 !important;
+}
+
 .markdown-content pre {
   overflow-x: auto;
   padding: 0;
