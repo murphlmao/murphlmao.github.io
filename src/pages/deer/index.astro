@@ -63,7 +63,7 @@ const animalEmoji: Record<string, string> = {
                     {deerCount}
                   </div>
                   <div class="text-lg text-zinc-600 dark:text-zinc-400 mt-1">
-                    🦌 deer
+                    🦌 Deer
                   </div>
                 </div>
               )}
@@ -73,7 +73,7 @@ const animalEmoji: Record<string, string> = {
                     {raccoonCount}
                   </div>
                   <div class="text-lg text-zinc-600 dark:text-zinc-400 mt-1">
-                    🦝 raccoons
+                    🦝 Raccoons
                   </div>
                 </div>
               )}
@@ -87,6 +87,16 @@ const animalEmoji: Record<string, string> = {
                   </div>
                 </div>
               )}
+              {carOrder.length > 0 && (
+                <div class="text-center">
+                  <div class="text-5xl sm:text-7xl font-black text-red-500 dark:text-red-400">
+                    {carOrder.length}
+                  </div>
+                  <div class="text-lg text-zinc-600 dark:text-zinc-400 mt-1">
+                    🚗 {carOrder.length === 1 ? 'Car' : 'Cars'} Deep
+                  </div>
+                </div>
+              )}
             </div>
 
             {totalCount === 0 && (
@@ -95,7 +105,7 @@ const animalEmoji: Record<string, string> = {
               </div>
             )}
 
-            <p class="mt-8 text-base text-zinc-600 dark:text-zinc-400 max-w-lg mx-auto">
+            <p class="mt-6 text-base text-zinc-600 dark:text-zinc-400 max-w-lg mx-auto">
               A running tally of my encounters with Michigan's wildlife.
             </p>
           </header>
