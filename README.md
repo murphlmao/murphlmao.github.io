@@ -9,6 +9,7 @@ pnpm build
 - Refactor to typescript / tsx
 
 ## Formatting
+- Fix mobile view for hamburger menu & deer redirect / dark mode toggle
 
 ## Blogs / Articles / Posts:
 ### eecs281
