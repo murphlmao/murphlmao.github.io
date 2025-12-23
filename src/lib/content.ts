@@ -121,6 +121,8 @@ export interface Snippet {
   description: string;
   icon?: string;
   date?: string;
+  type?: 'markdown' | 'interactive';
+  assetPath?: string;
 }
 
 export interface AnimalIncident {
@@ -355,18 +357,60 @@ export function getBlogStats(): BlogStats {
   };
 }
 
-// Get all snippets
+// Get all snippets (supports both flat .md files and directories with index.md)
 export function getAllSnippets(): Snippet[] {
-  return getFlatMarkdownFiles<Omit<Snippet, 'slug'>>(getSnippetsDir());
+  const snippetsDir = getSnippetsDir();
+  const entries = fs.readdirSync(snippetsDir, { withFileTypes: true });
+  const snippets: Snippet[] = [];
+
+  for (const entry of entries) {
+    if (entry.name.startsWith('_')) continue;
+
+    if (entry.isFile() && entry.name.endsWith('.md')) {
+      // Flat markdown file
+      const filePath = path.join(snippetsDir, entry.name);
+      const { data } = matter(fs.readFileSync(filePath, 'utf8'));
+      snippets.push({
+        slug: entry.name.replace('.md', ''),
+        type: 'markdown',
+        ...data,
+      } as Snippet);
+    } else if (entry.isDirectory()) {
+      // Directory-based snippet with index.md
+      const indexPath = path.join(snippetsDir, entry.name, 'index.md');
+      if (fs.existsSync(indexPath)) {
+        const { data } = matter(fs.readFileSync(indexPath, 'utf8'));
+        snippets.push({
+          slug: entry.name,
+          type: (data.type as 'markdown' | 'interactive') || 'markdown',
+          ...data,
+        } as Snippet);
+      }
+    }
+  }
+
+  return snippets;
 }
 
-// Get snippet content by slug
+// Get snippet content by slug (supports both flat files and directories)
 export function getSnippetContent(slug: string): { frontmatter: Record<string, unknown>; content: string } | null {
-  const filePath = path.join(getSnippetsDir(), `${slug}.md`);
-  if (!fs.existsSync(filePath)) return null;
-  const fileContents = fs.readFileSync(filePath, 'utf8');
-  const { data, content } = matter(fileContents);
-  return { frontmatter: data, content };
+  // Try flat file first
+  const flatFilePath = path.join(getSnippetsDir(), `${slug}.md`);
+  if (fs.existsSync(flatFilePath)) {
+    const fileContents = fs.readFileSync(flatFilePath, 'utf8');
+    const { data, content } = matter(fileContents);
+    return { frontmatter: data, content };
+  }
+
+  // Try directory with index.md
+  const dirIndexPath = path.join(getSnippetsDir(), slug, 'index.md');
+  if (fs.existsSync(dirIndexPath)) {
+    const fileContents = fs.readFileSync(dirIndexPath, 'utf8');
+    const { data, content } = matter(fileContents);
+    return { frontmatter: data, content };
+  }
+
+  return null;
 }
 
 // Get all animal incidents

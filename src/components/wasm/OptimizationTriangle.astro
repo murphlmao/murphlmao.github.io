@@ -1,0 +1,478 @@
+---
+/**
+ * Interactive Optimization Triangle WASM Component
+ * Visualizes the tradeoffs between Performance, Velocity, and Adaptability
+ */
+interface Props {
+  assetPath?: string;
+}
+
+const { assetPath = '/snippets/premature-optimization' } = Astro.props;
+---
+
+<div class="optimization-triangle" data-asset-path={assetPath}>
+  <div id="ot-loading" class="loading">
+    <div class="spinner"></div>
+    <span>Loading WASM module...</span>
+  </div>
+
+  <div id="ot-error" class="error hidden">
+    <span>Failed to load WASM module. Please refresh the page.</span>
+  </div>
+
+  <div id="ot-container" class="container hidden">
+    <div class="canvas-section">
+      <div class="triangle-wrapper">
+        <span class="label label-top">Performance</span>
+        <canvas id="ot-canvas" width="500" height="400"></canvas>
+        <div class="label-bottom">
+          <span class="label label-left">Velocity</span>
+          <span class="label label-right">Adaptability</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar">
+      <div class="focus-section">
+        <span class="focus-label">Current Focus</span>
+        <span id="ot-primary" class="focus-value">Balanced</span>
+      </div>
+
+      <p id="ot-description" class="insight">
+        You're balancing all three concerns equally. This is a safe middle ground.
+      </p>
+
+      <div class="metrics">
+        <div class="metric" data-metric="performance">
+          <div class="metric-header">
+            <span class="metric-label">Performance</span>
+            <span id="ot-perf-val" class="metric-value">33%</span>
+          </div>
+          <div class="bar-track">
+            <div id="ot-perf-bar" class="bar-fill" style="width: 33%"></div>
+          </div>
+        </div>
+
+        <div class="metric" data-metric="velocity">
+          <div class="metric-header">
+            <span class="metric-label">Velocity</span>
+            <span id="ot-vel-val" class="metric-value">33%</span>
+          </div>
+          <div class="bar-track">
+            <div id="ot-vel-bar" class="bar-fill" style="width: 33%"></div>
+          </div>
+        </div>
+
+        <div class="metric" data-metric="adaptability">
+          <div class="metric-header">
+            <span class="metric-label">Adaptability</span>
+            <span id="ot-adapt-val" class="metric-value">34%</span>
+          </div>
+          <div class="bar-track">
+            <div id="ot-adapt-bar" class="bar-fill" style="width: 34%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="quote">"Premature optimization is the root of all evil" — Donald Knuth</p>
+</div>
+
+<style>
+  .optimization-triangle {
+    width: 100%;
+  }
+
+  .loading, .error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 3rem;
+    color: var(--color-purple, #a78bfa);
+  }
+
+  .error {
+    color: var(--color-red, #f87171);
+  }
+
+  .spinner {
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  .container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  @media (min-width: 900px) {
+    .container {
+      grid-template-columns: 1fr 300px;
+    }
+  }
+
+  .canvas-section {
+    display: flex;
+    justify-content: center;
+  }
+
+  .triangle-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text, #e4e4e7);
+  }
+
+  .label-top {
+    margin-bottom: 0.25rem;
+  }
+
+  .label-bottom {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 1rem;
+  }
+
+  canvas {
+    border: 1px solid var(--color-border, #3f3f46);
+    border-radius: 0.5rem;
+    background: var(--color-canvas-bg, #18181b);
+    cursor: crosshair;
+    max-width: 100%;
+    height: auto;
+  }
+
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .focus-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .focus-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted, #71717a);
+  }
+
+  .focus-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--color-purple, #a78bfa), var(--color-rose, #fb7185));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .insight {
+    font-size: 0.9375rem;
+    color: var(--color-text, #d4d4d8);
+    line-height: 1.6;
+    margin: 0;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--color-border, #3f3f46);
+  }
+
+  .metrics {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .metric-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.375rem;
+  }
+
+  .metric-label {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--color-text-muted, #a1a1aa);
+  }
+
+  .metric-value {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-text, #e4e4e7);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bar-track {
+    height: 0.375rem;
+    background: var(--color-bar-bg, #3f3f46);
+    border-radius: 0.1875rem;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-purple, #a78bfa), var(--color-rose, #fb7185));
+    transition: width 0.15s ease-out;
+  }
+
+  .quote {
+    text-align: center;
+    font-style: italic;
+    font-size: 0.875rem;
+    color: var(--color-text-muted, #71717a);
+    margin-top: 1rem;
+  }
+</style>
+
+<script>
+  import { loadWasmModule } from '../../lib/wasm/loader';
+  import { createOptimizationTriangle, getPriorityInfo } from '../../lib/wasm/optimization-triangle';
+  import type { OptimizationTriangleModule, TriangleVertices } from '../../lib/wasm/optimization-triangle';
+
+  class OptimizationTriangleController {
+    private canvas: HTMLCanvasElement;
+    private ctx: CanvasRenderingContext2D;
+    private module: OptimizationTriangleModule | null = null;
+    private triangle: TriangleVertices | null = null;
+    private assetPath: string;
+    private rafId: number | null = null;
+
+    // UI elements
+    private elements = {
+      loading: document.getElementById('ot-loading')!,
+      error: document.getElementById('ot-error')!,
+      container: document.getElementById('ot-container')!,
+      perfVal: document.getElementById('ot-perf-val')!,
+      velVal: document.getElementById('ot-vel-val')!,
+      adaptVal: document.getElementById('ot-adapt-val')!,
+      perfBar: document.getElementById('ot-perf-bar')!,
+      velBar: document.getElementById('ot-vel-bar')!,
+      adaptBar: document.getElementById('ot-adapt-bar')!,
+      primary: document.getElementById('ot-primary')!,
+      description: document.getElementById('ot-description')!,
+    };
+
+    constructor() {
+      const wrapper = document.querySelector('.optimization-triangle') as HTMLElement;
+      this.assetPath = wrapper?.dataset.assetPath || '/snippets/premature-optimization';
+      this.canvas = document.getElementById('ot-canvas') as HTMLCanvasElement;
+      this.ctx = this.canvas.getContext('2d')!;
+    }
+
+    async init() {
+      try {
+        const emModule = await loadWasmModule({
+          basePath: this.assetPath,
+          moduleName: 'optimization_triangle',
+          enableLogging: false,
+        });
+
+        this.module = createOptimizationTriangle(emModule);
+        this.module.init();
+        this.triangle = this.module.getTriangle();
+
+        this.setupEventListeners();
+        this.show();
+        this.startRenderLoop();
+      } catch (error) {
+        console.error('Failed to initialize WASM module:', error);
+        this.showError();
+      }
+    }
+
+    private show() {
+      this.elements.loading.classList.add('hidden');
+      this.elements.container.classList.remove('hidden');
+    }
+
+    private showError() {
+      this.elements.loading.classList.add('hidden');
+      this.elements.error.classList.remove('hidden');
+    }
+
+    private setupEventListeners() {
+      this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
+      document.addEventListener('mousemove', this.onMouseMove.bind(this));
+      document.addEventListener('mouseup', this.onMouseUp.bind(this));
+
+      // Touch support
+      this.canvas.addEventListener('touchstart', this.onTouchStart.bind(this), { passive: false });
+      document.addEventListener('touchmove', this.onTouchMove.bind(this), { passive: false });
+      document.addEventListener('touchend', this.onTouchEnd.bind(this));
+    }
+
+    private getCanvasPos(clientX: number, clientY: number) {
+      const rect = this.canvas.getBoundingClientRect();
+      // Scale from display coords to canvas coords, then to WASM coords
+      const displayToCanvas = this.canvas.width / rect.width;
+      const canvasToWasm = 1 / this.scaleX; // Same ratio for both axes roughly
+      return {
+        x: (clientX - rect.left) * displayToCanvas / this.scaleX,
+        y: (clientY - rect.top) * displayToCanvas / this.scaleY,
+      };
+    }
+
+    private onMouseDown(e: MouseEvent) {
+      const pos = this.getCanvasPos(e.clientX, e.clientY);
+      this.module?.handleMouseDown(pos.x, pos.y);
+      this.updateUI();
+    }
+
+    private onMouseMove(e: MouseEvent) {
+      const pos = this.getCanvasPos(e.clientX, e.clientY);
+      this.module?.handleMouseMove(pos.x, pos.y);
+    }
+
+    private onMouseUp() {
+      this.module?.handleMouseUp();
+    }
+
+    private onTouchStart(e: TouchEvent) {
+      e.preventDefault();
+      const touch = e.touches[0];
+      const pos = this.getCanvasPos(touch.clientX, touch.clientY);
+      this.module?.handleMouseDown(pos.x, pos.y);
+      this.updateUI();
+    }
+
+    private onTouchMove(e: TouchEvent) {
+      e.preventDefault();
+      const touch = e.touches[0];
+      const pos = this.getCanvasPos(touch.clientX, touch.clientY);
+      this.module?.handleMouseMove(pos.x, pos.y);
+    }
+
+    private onTouchEnd() {
+      this.module?.handleMouseUp();
+    }
+
+    // Scale factor from WASM coords (700x550) to canvas (500x400)
+    private scaleX = 500 / 700;
+    private scaleY = 400 / 550;
+
+    private draw() {
+      if (!this.module || !this.triangle) return;
+
+      const ctx = this.ctx;
+      const tri = this.triangle;
+      const sx = this.scaleX;
+      const sy = this.scaleY;
+
+      ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+      // Calculate triangle centroid (balance point)
+      const centerX = ((tri.topX + tri.leftX + tri.rightX) / 3) * sx;
+      const centerY = ((tri.topY + tri.leftY + tri.rightY) / 3) * sy;
+
+      // Draw balance zone circle (subtle dashed)
+      ctx.strokeStyle = 'rgba(167, 139, 250, 0.3)';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, 45, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Draw triangle (scaled from WASM coordinates)
+      ctx.strokeStyle = '#a78bfa';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(tri.topX * sx, tri.topY * sy);
+      ctx.lineTo(tri.leftX * sx, tri.leftY * sy);
+      ctx.lineTo(tri.rightX * sx, tri.rightY * sy);
+      ctx.closePath();
+      ctx.stroke();
+
+      // Draw dot with glow (scaled)
+      const dotX = this.module.getDotX() * sx;
+      const dotY = this.module.getDotY() * sy;
+
+      // Check if dot is in balance zone
+      const distFromCenter = Math.sqrt((dotX - centerX) ** 2 + (dotY - centerY) ** 2);
+      const inBalanceZone = distFromCenter < 50;
+
+      ctx.shadowBlur = 12;
+      ctx.shadowColor = inBalanceZone ? '#a78bfa' : '#fb7185';
+      ctx.fillStyle = inBalanceZone ? '#a78bfa' : '#fb7185';
+      ctx.beginPath();
+      ctx.arc(dotX, dotY, 10, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    private updateUI() {
+      if (!this.module) return;
+
+      const values = this.module.getValues();
+      const p = Math.round(values.performance * 100);
+      const v = Math.round(values.velocity * 100);
+      const a = Math.round(values.adaptability * 100);
+
+      this.elements.perfVal.textContent = `${p}%`;
+      this.elements.velVal.textContent = `${v}%`;
+      this.elements.adaptVal.textContent = `${a}%`;
+
+      this.elements.perfBar.style.width = `${p}%`;
+      this.elements.velBar.style.width = `${v}%`;
+      this.elements.adaptBar.style.width = `${a}%`;
+
+      const priority = getPriorityInfo(values);
+      this.elements.primary.textContent = priority.primary;
+      this.elements.description.textContent = priority.description;
+    }
+
+    private startRenderLoop() {
+      let lastUpdate = 0;
+      const loop = (timestamp: number) => {
+        this.draw();
+
+        // Throttle UI updates to 30fps
+        if (timestamp - lastUpdate > 33) {
+          this.updateUI();
+          lastUpdate = timestamp;
+        }
+
+        this.rafId = requestAnimationFrame(loop);
+      };
+      this.rafId = requestAnimationFrame(loop);
+    }
+
+    destroy() {
+      if (this.rafId) {
+        cancelAnimationFrame(this.rafId);
+      }
+    }
+  }
+
+  // Initialize when DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    const controller = new OptimizationTriangleController();
+    controller.init();
+  });
+</script>

@@ -1,16 +1,19 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { getAllSnippets, getSnippetContent, renderMarkdown } from '../../lib/content';
+import OptimizationTriangle from '../../components/wasm/OptimizationTriangle.astro';
 import '../../styles/markdown.css';
 
 export async function getStaticPaths() {
   const snippets = getAllSnippets();
   return snippets.map((snippet) => ({
     params: { slug: snippet.slug },
+    props: { snippetType: snippet.type, assetPath: snippet.assetPath },
   }));
 }
 
 const { slug } = Astro.params;
+const { snippetType, assetPath } = Astro.props;
 const snippetContent = getSnippetContent(slug!);
 
 if (!snippetContent) {
@@ -19,15 +22,22 @@ if (!snippetContent) {
 
 const { frontmatter, content } = snippetContent;
 const htmlContent = await renderMarkdown(content);
+const isInteractive = snippetType === 'interactive';
 ---
 
 <Layout title={frontmatter.title as string} description={frontmatter.description as string}>
   <div class="sm:px-8 mt-16 lg:mt-18">
     <div class="mx-auto max-w-7xl lg:px-8">
       <div class="relative px-4 sm:px-8 lg:px-12">
-        <div class="mx-auto max-w-2xl lg:max-w-5xl">
+        <div class:list={[
+          "mx-auto",
+          isInteractive ? "max-w-5xl" : "max-w-2xl lg:max-w-5xl"
+        ]}>
           <div class="xl:relative">
-            <div class="mx-auto max-w-2xl">
+            <div class:list={[
+              "mx-auto",
+              isInteractive ? "max-w-5xl" : "max-w-2xl"
+            ]}>
               <a
                 href="/snippets"
                 aria-label="Go back to snippets"
@@ -63,6 +73,13 @@ const htmlContent = await renderMarkdown(content);
                     </time>
                   )}
                 </header>
+
+                {isInteractive && slug === 'premature-optimization' && (
+                  <div class="mt-8">
+                    <OptimizationTriangle assetPath={assetPath} />
+                  </div>
+                )}
+
                 <div class="mt-8 prose dark:prose-invert markdown-content">
                   <Fragment set:html={htmlContent} />
                 </div>
