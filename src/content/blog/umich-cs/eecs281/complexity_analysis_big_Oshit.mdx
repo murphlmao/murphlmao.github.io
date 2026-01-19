@@ -43,6 +43,7 @@ bool duplicate_nested(std::vector<int> vec) {
   }
   return false;
 }
+// time: ~0.510 seconds for 10,000 items
 ```
 
 While this is a *valid* way to solve the problem, it's actually one of the *worst* ways to do so. Why? Because for every item in the array, you're checking it against *every other item* in the array. This means that if you have 10 items, you could be doing up to 100 checks. If you have 100 items, you could be doing up to 10,000 checks. If you have 1,000 items, you could be doing up to 1,000,000 checks. This is a classic example of an algorithm with O(n²) time complexity.
@@ -58,6 +59,7 @@ bool duplicate_simple(std::vector<int> vec) {
   }
   return false;
 }
+// time: ~0.0006 seconds for 10,000 items
 ```
 
 #### How does an unordered_set work tho?
