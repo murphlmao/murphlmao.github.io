@@ -1,6 +1,6 @@
 ---
 title: "What is Empathy in Computing?"
-date: '2025-01-09'
+date: '2026-01-09'
 order: 1
 description: ""
 tags: ['C++', 'cpp', 'C-lang', 'C', 'programming']

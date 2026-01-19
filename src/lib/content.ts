@@ -258,13 +258,13 @@ export function getAllPosts(): Post[] {
 
       for (const file of files) {
         // Skip metadata files and non-markdown files
-        if (file.startsWith('_') || !file.endsWith('.md')) continue;
+        if (file.startsWith('_') || (!file.endsWith('.md') && !file.endsWith('.mdx'))) continue;
 
         const filePath = path.join(categoryPath, file);
         const { data } = matter(fs.readFileSync(filePath, 'utf8'));
 
         posts.push({
-          slug: file.replace('.md', ''),
+          slug: file.replace(/\.mdx?$/, ''),
           category: category.slug,
           categoryName: category.name,
           headerSlug: header.slug,
@@ -313,7 +313,12 @@ export function findPostBySlug(slug: string): Post | undefined {
 export function getPostFilePath(slug: string): string | null {
   const post = findPostBySlug(slug);
   if (post) {
-    return path.join(getBlogDir(), post.headerSlug, post.category, `${slug}.md`);
+    const basePath = path.join(getBlogDir(), post.headerSlug, post.category, slug);
+    // Check for .mdx first, then .md
+    if (fs.existsSync(`${basePath}.mdx`)) {
+      return `${basePath}.mdx`;
+    }
+    return `${basePath}.md`;
   }
   return null;
 }
@@ -334,7 +339,8 @@ export function getBlogStats(): BlogStats {
 
   for (const post of posts) {
     // Get the file path and read content for word count
-    const filePath = path.join(blogDir, post.headerSlug, post.category, `${post.slug}.md`);
+    const basePath = path.join(blogDir, post.headerSlug, post.category, post.slug);
+    const filePath = fs.existsSync(`${basePath}.mdx`) ? `${basePath}.mdx` : `${basePath}.md`;
     const { content } = matter(fs.readFileSync(filePath, 'utf8'));
 
     // Count words (split on whitespace, filter empty strings)

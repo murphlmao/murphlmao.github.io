@@ -1,8 +1,8 @@
 ---
 title: "Stacks & Queues"
-date: '2025-01-13'
+date: '2026-01-13'
 order: 1
-description: ""
+description: "Stacks, Queues, Priority Queues, and Deques, and Permutations! And, oh my god, a bridge to jump off of!"
 tags: ['C++', 'cpp', 'clang', 'C', 'programming', 'stacks', 'queues']
 ---
 

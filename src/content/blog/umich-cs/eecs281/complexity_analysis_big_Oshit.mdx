@@ -1,0 +1,100 @@
+---
+title: "Complexity Analysis & Big(O)"
+date: '2026-01-10'
+order: 1
+description: "That's a very Big O-oooooooh shit what the FUCK is this???? The worst part of computer science?? YESSSIRRRR."
+tags: ['C++', 'cpp', 'C-lang', 'C', 'programming', 'stacks', 'big O', 'time complexity', 'data structures', 'algorithms']
+---
+
+import BigOGraph from '../../../../components/blog/eecs281/complexity_analysis/BigOGraph.tsx';
+
+
+## Why Should We Give A Shit?
+
+This is a question I've wanted to avoid for as long as humanly possible. Why? Because its math. Math, notoriously, blows. Why should you care? Will I use this in my day to day? Honestly, probably not. But the reality of the situation is that you need some way to represent these abstract ideas, even if you recognize, mentally, that some ways of writing code are just better (and more clever) than others.
+
+For example, let's take a really simple problem: "How can I find a duplicate number in my array?" As simple as this question is, the consequences for how you solve this problem can be vast. I'll get into the nitty gritty of Big O later, so just bear with me through this example: To some people, this is how they would genuinely think to solve the issue:
+
+```
+Vector: [1, 2, 3, 4, 5]
+
+cursor1 = 0, checks against:
+   v
+  [1, 2, 3, 4, 5]
+      ^  ^  ^  ^  (cursor2 goes 1→4)
+
+cursor1 = 1, checks against:
+      v
+  [1, 2, 3, 4, 5]
+         ^  ^  ^  (cursor2 goes 2→4)
+
+cursor1 = 2, checks against:
+         v
+  [1, 2, 3, 4, 5]
+            ^  ^  (cursor2 goes 3→4)
+```
+
+As code, this comes out as:
+```cpp
+bool duplicate_nested(std::vector<int> vec) {
+  for(int cursor1 = 0; cursor1 < vec.size(); cursor1++) {
+    for (int cursor2 = cursor1 + 1; cursor2 < vec.size(); cursor2++)
+      if (vec[cursor1] == vec[cursor2]) { return true; }
+  }
+  return false;
+}
+```
+
+While this is a *valid* way to solve the problem, it's actually one of the *worst* ways to do so. Why? Because for every item in the array, you're checking it against *every other item* in the array. This means that if you have 10 items, you could be doing up to 100 checks. If you have 100 items, you could be doing up to 10,000 checks. If you have 1,000 items, you could be doing up to 1,000,000 checks. This is a classic example of an algorithm with O(n²) time complexity.
+
+"So, what's a better way?" Your Grandmother asks at the dinner table. Great question, Grandma! A better way to solve this problem is to use a data structure that A) Doesn't allow duplicates, and B) Has fast lookup times. A `std::unordered_set` in C++ is perfect for this. Here's how you could implement it:
+
+```cpp
+bool duplicate_simple(std::vector<int> vec) {
+  std::unordered_set<int> seen_values;
+  for (int nums : vec) {
+    if (seen_values.count(nums)) { return true; }
+    seen_values.insert(nums);
+  }
+  return false;
+}
+```
+
+#### How does an unordered_set work tho?
+
+Hash Sets (unordered_set) uses a hash table. When you insert a number, it runs it through a hash function that converts it to an index (like `hash(42) = 7`). It stores the number at that index in an internal array. When you check `if (seen.count(num))`, it hashes num again, jumps directly to that index, and checks if it's there.
+
+Because of allllllat, this works out to about O(n) time complexity, because for each of the n items in the array, you're doing a constant time operation (hashing and checking/inserting into the set). If you want to be a fucking chad, you can set a vector to a set & compare the sizes:
+
+```cpp
+bool duplicate_cast(vector<int>& nums) {
+  unordered_set<int> s(nums.begin(), nums.end());
+  return s.size() != nums.size();  // if sizes differ: dupes exist
+}
+```
+
+This method also runs in O(n) time, but is just cleaner code. It's not necessarily better for space, since you're still using extra space for the set, but it's a nice one-liner.
+
+## What Is An Algorithm?
+
+An algorithm is a set of instructions. That's it. There is literally nothing else to it.
+
+## What. The Fuck. Is. Complexity Analysis?
+
+If you've ever been in a college level computer science classroom before, or just tried to Google "What does `O(log(n(myparentsneverlovedme)^2*sqrt(15))` mean," one of the first pains you'll suffer will be some dumbass graph like this:
+
+<BigOGraph client:load />
+
+{/* You can customize which functions to show: */}
+{/* <BigOGraph client:load functions={['O(1)', 'O(n)', 'O(n²)']} maxN={15} /> */}
+
+If you also suck at math, this means very little to you. When I first saw this graph, this is the relationship I was able to identify: Based on the number of items going into something (indicated by the variable `n`), the number of operations will increase based on that amount.
+
+
+### But *what does this mean*? How does this correlate to code?
+
+The relationship that complexity analysis is trying to create is that which tells you how an algorithm's time/space usage scales as input grows. In other words, you're measuring two main things: time (operations) and space (memory).
+
+
+
+

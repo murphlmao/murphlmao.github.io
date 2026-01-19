@@ -83,5 +83,11 @@
     "editor.wordWrap": "wordWrapColumn",
     "editor.wordWrapColumn": 85,
     "editor.rulers": [85]
+  },
+  "[mdx]": {
+    "editor.wordWrap": "wordWrapColumn",
+    "editor.wordWrapColumn": 85,
+    "editor.rulers": [85]
   }
+
 }

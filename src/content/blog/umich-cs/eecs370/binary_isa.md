@@ -1,6 +1,6 @@
 ---
 title: "Binary & ISA"
-date: '2025-01-13'
+date: '2026-01-13'
 order: 1
 description: ""
 tags: ['c', 'clang', 'gcc', 'programming', 'binary', 'isa', 'assembly']
