@@ -10,6 +10,10 @@ https://drive.google.com/drive/u/3/folders/14RejTyto2PeaMkH4uoGvVnYuz5-z6Dgx
 
 
 storage types, binary and addressing modes
+RISC vs CISC
+
+TODO: practice & talk about binary -> hex
+TOOD: practice byte-bit
 
 
 ## Computer Model & Binary

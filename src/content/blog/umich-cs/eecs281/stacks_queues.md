@@ -129,3 +129,9 @@ Output: {
 {3, 1, 2},
 {3, 2, 1}
 }
+
+
+# Linked lists and double pointer indexing
+- two pointer technique
+- lab questions from lab2 are very fucking good for examples
+- queue with stacks
