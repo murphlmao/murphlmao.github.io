@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import CategoryNav from '../../components/CategoryNav.astro';
 import BlogPagination from '../../components/BlogPagination';
+import { getCollection, render } from 'astro:content';
 import {
   getAllPosts,
   getPostContent,
@@ -11,6 +12,7 @@ import {
   getAllCategorySlugs,
   getBlogStructure,
   renderMarkdown,
+  getPostFilePath,
   type Post,
   type Category,
 } from '../../lib/content';
@@ -55,18 +57,40 @@ let post: Post | undefined;
 let postContent: { frontmatter: any; content: string } | null = null;
 let categoryInfo: Category | null = null;
 
+// Check if this is an MDX file for special rendering
+let isMdxPost = false;
+let MdxContent: any = null;
+
 if (isCategory) {
   category = getCategoryBySlug(slug);
+  // Sort by date first (oldest first), then by order field as tiebreaker
+  // This ordering follows course structure for students
   categoryPosts = getPostsByCategory(slug).sort((a, b) => {
-    const dateCompare = new Date(b.date).getTime() - new Date(a.date).getTime();
+    // Primary: date (oldest first)
+    const dateCompare = new Date(a.date).getTime() - new Date(b.date).getTime();
     if (dateCompare !== 0) return dateCompare;
-    return (b.order || 0) - (a.order || 0);
+    // Secondary: order field (lower = earlier)
+    return (a.order || 999) - (b.order || 999);
   });
 } else {
   post = allPosts.find((p) => p.slug === slug);
   postContent = getPostContent(slug);
   if (post?.category) {
     categoryInfo = getCategoryBySlug(post.category);
+  }
+
+  // Check if this is an MDX file and render with Astro's MDX renderer
+  const filePath = getPostFilePath(slug);
+  if (filePath?.endsWith('.mdx')) {
+    isMdxPost = true;
+    const blogPosts = await getCollection('blog');
+    // Entry IDs are lowercase and without extension
+    const slugLower = slug.toLowerCase();
+    const mdxEntry = blogPosts.find((entry) => entry.id.toLowerCase().endsWith(slugLower));
+    if (mdxEntry) {
+      const rendered = await render(mdxEntry);
+      MdxContent = rendered.Content;
+    }
   }
 }
 
@@ -131,7 +155,7 @@ const jsonLd = !isCategory && postContent ? {
 
   {isCategory && category ? (
     <!-- Category Page -->
-    <div class="sm:px-8 mt-16 sm:mt-18">
+    <div class="sm:px-8 mt-14 sm:mt-18">
       <div class="mx-auto max-w-7xl lg:px-8">
         <div class="relative px-4 sm:px-8 lg:px-12">
           <div class="mx-auto max-w-2xl lg:max-w-6xl">
@@ -179,10 +203,10 @@ const jsonLd = !isCategory && postContent ? {
 
             <!-- Two-column layout -->
             <div class="lg:flex lg:gap-12">
-              <!-- Posts list -->
+              <!-- Posts list - show ALL articles, no pagination -->
               <div class="lg:flex-1 lg:min-w-0">
                 {categoryPosts.length > 0 ? (
-                  <BlogPagination client:load articles={categoryPosts} articlesPerPage={10} />
+                  <BlogPagination client:load articles={categoryPosts} articlesPerPage={999} />
                 ) : (
                   <p class="text-zinc-600 dark:text-zinc-400">
                     No posts in this category yet.
@@ -208,7 +232,7 @@ const jsonLd = !isCategory && postContent ? {
     </div>
   ) : postContent ? (
     <!-- Blog Post Page -->
-    <div class="sm:px-8 mt-16 lg:mt-18">
+    <div class="sm:px-8 mt-14 sm:mt-18">
       <div class="mx-auto max-w-7xl lg:px-8">
         <div class="relative px-4 sm:px-8 lg:px-12">
           <div class="mx-auto max-w-2xl lg:max-w-5xl">
@@ -258,7 +282,11 @@ const jsonLd = !isCategory && postContent ? {
                     <h1 class="mb-2 !mt-0">{postContent.frontmatter.title}</h1>
                   </header>
                   <div class="markdown-content">
-                    <Fragment set:html={await renderMarkdown(postContent.content)} />
+                    {isMdxPost && MdxContent ? (
+                      <MdxContent />
+                    ) : (
+                      <Fragment set:html={await renderMarkdown(postContent.content)} />
+                    )}
                   </div>
                 </article>
               </div>
@@ -268,7 +296,7 @@ const jsonLd = !isCategory && postContent ? {
       </div>
     </div>
   ) : (
-    <div class="sm:px-8 mt-16 sm:mt-18">
+    <div class="sm:px-8 mt-14 sm:mt-18">
       <div class="mx-auto max-w-7xl lg:px-8">
         <div class="relative px-4 sm:px-8 lg:px-12">
           <div class="mx-auto max-w-2xl lg:max-w-5xl">

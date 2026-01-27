@@ -1,0 +1,364 @@
+---
+title: "Complexity Analysis & Big(O)"
+date: '2026-01-10'
+order: 1
+description: "That's a very Big O-oooooooh shit what the FUCK is this???? The worst part of computer science?? YESSSIRRRR."
+tags: ['C++', 'cpp', 'C-lang', 'C', 'programming', 'stacks', 'big O', 'time complexity', 'data structures', 'algorithms']
+---
+
+import BigOGraph from '../../../../components/blog/eecs281/complexity_analysis/BigOGraph.tsx';
+
+
+## Why Should We Give A Shit?
+
+This is a question I've wanted to avoid for as long as humanly possible. Why? Because its math. Math, notoriously, blows. Why should you care? Will I use this in my day to day? Honestly, probably not. But the reality of the situation is that you need some way to represent these abstract ideas, even if you recognize, mentally, that some ways of writing code are just better (and more clever) than others.
+
+For example, let's take a really simple problem: "How can I find a duplicate number in my array?" As simple as this question is, the consequences for how you solve this problem can be vast. I'll get into the nitty gritty of Big O later, so just bear with me through this example: To some people, this is how they would genuinely think to solve the issue:
+
+```
+Vector: [1, 2, 3, 4, 5]
+
+cursor1 = 0, checks against:
+   v
+  [1, 2, 3, 4, 5]
+      ^  ^  ^  ^  (cursor2 goes 1→4)
+
+cursor1 = 1, checks against:
+      v
+  [1, 2, 3, 4, 5]
+         ^  ^  ^  (cursor2 goes 2→4)
+
+cursor1 = 2, checks against:
+         v
+  [1, 2, 3, 4, 5]
+            ^  ^  (cursor2 goes 3→4)
+```
+
+As code, this comes out as:
+```cpp
+bool duplicate_nested(std::vector<int> vec) {
+  for(int cursor1 = 0; cursor1 < vec.size(); cursor1++) {
+    for (int cursor2 = cursor1 + 1; cursor2 < vec.size(); cursor2++)
+      if (vec[cursor1] == vec[cursor2]) { return true; }
+  }
+  return false;
+}
+// time: ~0.510 seconds for 10,000 items
+```
+
+While this is a *valid* way to solve the problem, it's actually one of the *worst* ways to do so. Why? Because for every item in the array, you're checking it against *every other item* in the array. This means that if you have 10 items, you could be doing up to 100 checks. If you have 100 items, you could be doing up to 10,000 checks. If you have 1,000 items, you could be doing up to 1,000,000 checks. This is a classic example of an algorithm with O(n²) time complexity.
+
+"So, what's a better way?" Your Grandmother asks at the dinner table. Great question, Grandma! A better way to solve this problem is to use a data structure that A) Doesn't allow duplicates, and B) Has fast lookup times. A `std::unordered_set` in C++ is perfect for this. Here's how you could implement it:
+
+```cpp
+bool duplicate_simple(std::vector<int> vec) {
+  std::unordered_set<int> seen_values;
+  for (int nums : vec) {
+    if (seen_values.count(nums)) { return true; }
+    seen_values.insert(nums);
+  }
+  return false;
+}
+// time: ~0.0006 seconds for 10,000 items
+```
+
+#### How does an unordered_set work tho?
+
+Hash Sets (unordered_set) uses a hash table. When you insert a number, it runs it through a hash function that converts it to an index (like `hash(42) = 7`). It stores the number at that index in an internal array. When you check `if (seen.count(num))`, it hashes num again, jumps directly to that index, and checks if it's there.
+
+Because of allllllat, this works out to about O(n) time complexity, because for each of the n items in the array, you're doing a constant time operation (hashing and checking/inserting into the set). If you want to be a fucking chad, you can set a vector to a set & compare the sizes:
+
+```cpp
+bool duplicate_cast(vector<int>& nums) {
+  unordered_set<int> s(nums.begin(), nums.end());
+  return s.size() != nums.size();  // if sizes differ: dupes exist
+}
+```
+
+This method also runs in O(n) time, but is just cleaner code. It's not necessarily better for space, since you're still using extra space for the set, but it's a nice one-liner.
+
+#### Time vs. Space: The Eternal Tradeoff
+
+Notice what we did here: our shitty nested loop solution used **O(1) space** (just two integer cursors, no matter how big the input), but **O(n²) time**. The hash set solution uses **O(n) space** (storing up to n elements) but only **O(n) time**. We traded memory for speed. This tradeoff shows up *constantly* in algorithm design - faster solutions often need more memory, and memory-efficient solutions are often slower. When someone asks about complexity, make sure you know if they mean time or space.
+
+Let's backtrack a little bit, though, and start from the beginning.
+
+## What Is An Algorithm?
+
+An algorithm is a set of instructions. That's it. There is literally nothing else to it.
+
+## What. The Fuck. Is. Complexity Analysis?
+
+If you've ever been in a college level computer science classroom before, or just tried to Google "What does `O(log(n(myparentsneverlovedme)^2*sqrt(15))` mean," one of the first pains you'll suffer will be some dumbass graph like this:
+
+<BigOGraph client:load />
+
+{/* You can customize which functions to show: */}
+{/* <BigOGraph client:load functions={['O(1)', 'O(n)', 'O(n²)']} maxN={15} /> */}
+
+If you also suck at math, this means very little to you. When I first saw this graph, this is the relationship I was able to identify: Based on the number of items going into something (indicated by the variable `n`), the number of operations will increase based on that amount.
+
+
+### But *what does this mean*? How does this correlate to code?
+
+The relationship that complexity analysis is trying to create is that which tells you how an algorithm's time/space usage scales as input grows. In other words, you're measuring two main things: time (operations) and space (memory).
+
+Below is a restatement of some Big O notations that you'll see, and some rules of thumb for identifying time complexity. Generally, you can use this pattern: For every item, you loop through all items again; count your loops and see if they're dividing or multiplying your work!
+
+
+#### O(1) - Constant
+- **Look for**: Direct access, no loops
+- **Example**: `array[5]`, `hashMap.get(key)`, simple math operations
+- **Pattern**: One operation, regardless of input size
+
+#### O(n) - Linear
+- **Look for**: Single loop through data
+- **Example**: `for (let i = 0; i < array.length; i++)`
+- **Pattern**: You touch each item once
+
+#### O(log n) - Logarithmic
+- **Look for**: Halving/dividing the search space repeatedly
+- **Example**: Binary search - `if (target < middle) searchLeft() else searchRight()`
+- **Pattern**: Each step eliminates a large chunk of possibilities
+
+#### O(n log n) - Linearithmic
+- **Look for**: Divide-and-conquer sorting
+- **Example**: Merge sort, quicksort (splits data, then processes each piece)
+- **Pattern**: Splitting + touching everything = n × log n
+
+#### O(n²) - Quadratic
+- **Look for**: Nested loops over the same data
+- **Example**: 
+```javascript
+for (let i = 0; i < n; i++) {
+    for (let j = 0; j < n; j++) {
+        // compare array[i] with array[j]
+    }
+}
+```
+
+
+
+## Amortized Time Complexity (aka "It Averages Out To...")
+
+Amortized time complexity is really just asking: "If I do this operation a bunch of times, what's the *average* cost per operation?" Thats it.
+
+Here's an example: `std::vector` in C++ can grow dynamically via the `push_back()` method as opposed to a standard C style array that has a fixed number of elements. What is the time complexity of performing certain operations on a vector, then?
+
+Under the hood, a vector is just a regular array with a fixed size. When you fill it up and try to add one more element, it has to:
+1. Allocate a NEW array (usually 2x the size)
+2. Copy ALL the old elements over
+3. Add your new element
+4. Delete the old array
+
+That sounds expensive as hell, right? If you have 1000 elements, you're copying 1000 things just to add ONE element. That's O(n) for a single `push_back()`! Sounds terrible!
+
+But here's the thing: that expensive copy doesn't happen *every* time. It only happens when the array is full. Most of the time, `push_back()` is just "put the thing in the next slot" - that's O(1).
+
+Let's trace through what happens if we push 8 elements into a vector that starts with capacity 1:
+
+```
+push 1: [1]           - capacity 1, just insert          O(1)
+push 2: [1,2]         - capacity 1→2, copy 1, insert 1   O(1) + O(1)
+push 3: [1,2,3,_]     - capacity 2→4, copy 2, insert 1   O(2) + O(1)
+push 4: [1,2,3,4]     - just insert                      O(1)
+push 5: [1,2,3,4,5,_,_,_] - capacity 4→8, copy 4, insert O(4) + O(1)
+push 6: [1,2,3,4,5,6,_,_] - just insert                  O(1)
+push 7: [1,2,3,4,5,6,7,_] - just insert                  O(1)
+push 8: [1,2,3,4,5,6,7,8] - just insert                  O(1)
+```
+
+Total work: 8 inserts + (1 + 2 + 4) copies = 8 + 7 = 15 operations for 8 elements.
+
+That's less than 2 operations per element on average. And as n gets larger, this ratio approaches 2. So we say `push_back()` has **amortized O(1)** time complexity. Yeah, *occasionally* it's O(n), but if you average it out over many operations, each one "costs" O(1).
+
+**TL;DR:** Amortized complexity = "yeah sometimes it's slow, but on average it's fast, trust me bro"
+
+Dumb as shit.
+
+
+## The Power Function: A Case Study in "Why Think Harder?"
+
+Alright, let's talk about computing powers. You want to calculate x^n (x raised to the power of n). How hard could it be?
+
+### The Obvious (Dogshit) Way: O(n)
+
+If someone asked you to compute 2^10, your brain probably does this:
+
+```
+2 × 2 × 2 × 2 × 2 × 2 × 2 × 2 × 2 × 2 = 1024
+```
+
+That's 9 multiplications (n-1, technically). In code:
+
+```cpp
+// The "I didn't think about this at all" approach
+int power_naive(int x, uint32_t n) {
+    int result = 1;
+    for (uint32_t i = 0; i < n; i++) {
+        result *= x;
+    }
+    return result;
+}
+// Time: O(n) - one multiplication per power
+```
+
+This works. But what if n is like... a billion? That's a billion multiplications. Your computer will be there for a while.
+
+### The Big Brain Way: O(log n)
+
+Here's the trick that makes computer scientists feel smart. Instead of multiplying one at a time, we can *square* our way to victory.
+
+Think about it: 2^10 = 2^5 × 2^5
+
+And 2^5 = 2^2 × 2^2 × 2
+
+And 2^2 = 2 × 2
+
+See what happened? We went from needing 10 multiplications to needing... way fewer. We're cutting the problem in half each time.
+
+The key insight is this mathematical property:
+- If n is **even**: x^n = (x^(n/2))^2 = x^(n/2) × x^(n/2)
+- If n is **odd**: x^n = x × x^(n-1)
+
+Let's trace through 2^10:
+
+```
+power(2, 10)
+  → 10 is even, so compute power(2, 5) and square it
+
+  power(2, 5)
+    → 5 is odd, so compute 2 × power(2, 4)
+
+    power(2, 4)
+      → 4 is even, so compute power(2, 2) and square it
+
+      power(2, 2)
+        → 2 is even, so compute power(2, 1) and square it
+
+        power(2, 1)
+          → 1 is odd, so compute 2 × power(2, 0)
+
+          power(2, 0) = 1  (base case)
+
+        → return 2 × 1 = 2
+
+      → return 2 × 2 = 4
+
+    → return 4 × 4 = 16
+
+  → return 2 × 16 = 32
+
+→ return 32 × 32 = 1024
+```
+
+Instead of 9 multiplications, we did like... 5-ish. And the gap gets WAY bigger as n increases. For n = 1,000,000, the naive approach does ~1,000,000 multiplications. The smart approach? About 20.
+
+### The Code (Recursive)
+
+```cpp
+// the "I paid attention in class" approach
+int power_recursive(int x, uint32_t n) {
+    // base case: anything to the 0 is 1
+    if (n == 0) return 1;
+
+    // if n is even: x^n = (x^(n/2))^2
+    if (n % 2 == 0) {
+        int half = power_recursive(x, n / 2);
+        return half * half;
+    }
+    // If n is odd: x^n = x * x^(n-1)
+    else {
+        return x * power_recursive(x, n - 1);
+    }
+}
+// time: O(log n) - we halve n each time (roughly)
+```
+
+**IMPORTANT:** Notice we compute `power_recursive(x, n / 2)` ONCE and store it in `half`, then do `half * half`. If you wrote `return power_recursive(x, n/2) * power_recursive(x, n/2)`, you'd be computing the same thing twice, which defeats the whole purpose and makes it O(n) again. Don't be that guy.
+
+### The Code (Iterative)
+
+Some people hate recursion (valid). Here's the ~~better~~ iterative implementation using the same idea:
+
+```cpp
+// the "recursion gives me anxiety" approach
+int power_iterative(int x, uint32_t n) {
+    int result = 1;
+
+    while (n > 0) {
+        // if n is odd, multiply result by x
+        if (n % 2 == 1) {
+            result *= x;
+        }
+        // square x and halve n
+        x *= x;
+        n /= 2;
+    }
+
+    return result;
+}
+// time: O(log n)
+```
+
+This one's trickier to understand. Let's trace 2^10:
+
+```
+n=10, x=2,  result=1  → n even, x=4,   n=5
+n=5,  x=4,  result=1  → n odd,  result=4,  x=16,  n=2
+n=2,  x=16, result=4  → n even, x=256, n=1
+n=1,  x=256,result=4  → n odd,  result=1024, x=..., n=0
+n=0  → return 1024
+```
+
+The loop runs log₂(n) times because we're dividing n by 2 each iteration. That's where the O(log n) comes from.
+
+
+## Recurrence Relations: The Math Behind "How Fast Is This?"
+
+"Okay cool," you say, "but how do we *prove* this is O(log n)? You just said it is."
+
+Fair. This is where **recurrence relations** come in. A recurrence relation is just a fancy way of expressing "the cost of solving this problem in terms of smaller versions of itself."
+
+For our power function, we can write:
+
+```
+T(n) = T(n/2) + O(1)
+```
+
+Translation: "The time to compute x^n equals the time to compute x^(n/2), plus some constant work (one multiplication and one comparison)."
+
+And the base case: T(1) = O(1)
+
+To solve this, let's just expand it:
+
+```
+T(n) = T(n/2) + 1
+     = T(n/4) + 1 + 1
+     = T(n/8) + 1 + 1 + 1
+     = ...
+     = T(1) + log₂(n) × 1
+     = O(log n)
+```
+
+We keep halving until we hit 1, which takes log₂(n) steps. Each step costs O(1). So total = O(log n).
+
+This pattern of "T(n) = T(n/2) + O(1)" shows up everywhere:
+- Binary search
+- Finding an element in a balanced BST
+- This power function
+
+Whenever you see a problem getting cut in half each step with constant work, it's O(log n). Tattoo this on your brain.
+
+
+## Quick Reference: Common Recurrence Patterns
+
+| Recurrence | Solution | Example |
+|------------|----------|---------|
+| T(n) = T(n/2) + O(1) | O(log n) | Binary search, power function |
+| T(n) = T(n-1) + O(1) | O(n) | Linear search, factorial |
+| T(n) = T(n-1) + O(n) | O(n²) | Selection sort, bubble sort |
+| T(n) = 2T(n/2) + O(n) | O(n log n) | Merge sort |
+| T(n) = 2T(n/2) + O(1) | O(n) | Binary tree traversal |
+
+The formal way to solve these is the **Master Theorem**, but honestly for most cases you can just pattern-match from this table and call it a day.
