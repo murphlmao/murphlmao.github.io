@@ -63,10 +63,12 @@ let MdxContent: any = null;
 
 if (isCategory) {
   category = getCategoryBySlug(slug);
+  // Sort by order field first (lower = earlier in course), then by date (oldest first)
+  // This ordering follows course structure for students
   categoryPosts = getPostsByCategory(slug).sort((a, b) => {
-    const dateCompare = new Date(b.date).getTime() - new Date(a.date).getTime();
-    if (dateCompare !== 0) return dateCompare;
-    return (b.order || 0) - (a.order || 0);
+    const orderCompare = (a.order || 999) - (b.order || 999);
+    if (orderCompare !== 0) return orderCompare;
+    return new Date(a.date).getTime() - new Date(b.date).getTime();
   });
 } else {
   post = allPosts.find((p) => p.slug === slug);

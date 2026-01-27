@@ -99,31 +99,29 @@ export default function Navbar({ pathname }: NavbarProps) {
           isVisible ? 'translate-y-0' : '-translate-y-full'
         }`}
       >
-        <nav className="pb-4 pt-6 sm:pt-8">
+        <nav className="pb-3 pt-4 sm:pb-4 sm:pt-6">
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex justify-between items-center mx-auto lg:max-w-5xl">
-              {/* Mobile Menu Button - Left side on mobile */}
+              {/* Mobile Menu Button - Hamburger icon */}
               <div className="sm:hidden">
                 <button
                   onClick={toggleMenu}
-                  className="group flex items-center rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-zinc-800 shadow-lg shadow-zinc-800/5 ring-1 ring-zinc-900/5 backdrop-blur dark:bg-zinc-800/90 dark:text-zinc-200 dark:ring-white/10 dark:hover:ring-white/20 cursor-pointer"
+                  className="flex items-center justify-center w-10 h-10 rounded-full bg-white/90 shadow-lg shadow-zinc-800/5 ring-1 ring-zinc-900/5 backdrop-blur dark:bg-zinc-800/90 dark:ring-white/10 dark:hover:ring-white/20 cursor-pointer"
                   type="button"
                   aria-expanded={isMenuOpen}
+                  aria-label="Toggle menu"
                 >
-                  Menu
                   <svg
-                    viewBox="0 0 8 6"
-                    aria-hidden="true"
-                    className={`ml-2 h-auto w-2 stroke-zinc-500 group-hover:stroke-zinc-700 dark:group-hover:stroke-zinc-400 transition-transform duration-200 ${
-                      isMenuOpen ? 'rotate-180' : ''
-                    }`}
+                    className="w-5 h-5 text-zinc-600 dark:text-zinc-300"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
                   >
                     <path
-                      d="M1.75 1.75 4 4.25l2.25-2.5"
-                      fill="none"
-                      strokeWidth="1.5"
                       strokeLinecap="round"
                       strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 6h16M4 12h16M4 18h16"
                     />
                   </svg>
                 </button>
@@ -218,7 +216,7 @@ export default function Navbar({ pathname }: NavbarProps) {
 
         {/* Menu Panel */}
         <div
-          className={`absolute inset-x-4 top-24 rounded-2xl bg-white p-6 shadow-2xl ring-1 ring-zinc-900/10 dark:bg-zinc-900 dark:ring-zinc-800 transform transition-all duration-300 ${
+          className={`absolute inset-x-4 top-20 rounded-2xl bg-white p-6 shadow-2xl ring-1 ring-zinc-900/10 dark:bg-zinc-900 dark:ring-zinc-800 transform transition-all duration-300 ${
             isMenuOpen ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'
           }`}
         >
@@ -250,21 +248,6 @@ export default function Navbar({ pathname }: NavbarProps) {
                   </a>
                 </li>
               ))}
-              {/* Deer link in mobile menu */}
-              <li>
-                <a
-                  href="/deer"
-                  onClick={() => setIsMenuOpen(false)}
-                  className={`flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium transition-colors ${
-                    isDeerActive
-                      ? 'bg-sky-50 text-sky-600 dark:bg-sky-900/30 dark:text-sky-400'
-                      : 'text-zinc-700 hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-800/50'
-                  }`}
-                >
-                  <GiDeer className="w-5 h-5" />
-                  Tragedy & Pain
-                </a>
-              </li>
             </ul>
           </nav>
         </div>
