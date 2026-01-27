@@ -210,4 +210,3 @@ Everything in your CPU is built from these gates:
 - **ALU** (the thing that does math) = tons of gates working together
 
 When you write `int x = 5 + 3;` in C, somewhere deep down, that addition is happening through a circuit made of these exact logic gates. Understanding this level helps you understand *why* computers work the way they do, not just *that* they work.
-
