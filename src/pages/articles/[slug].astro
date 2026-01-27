@@ -63,12 +63,14 @@ let MdxContent: any = null;
 
 if (isCategory) {
   category = getCategoryBySlug(slug);
-  // Sort by order field first (lower = earlier in course), then by date (oldest first)
+  // Sort by date first (oldest first), then by order field as tiebreaker
   // This ordering follows course structure for students
   categoryPosts = getPostsByCategory(slug).sort((a, b) => {
-    const orderCompare = (a.order || 999) - (b.order || 999);
-    if (orderCompare !== 0) return orderCompare;
-    return new Date(a.date).getTime() - new Date(b.date).getTime();
+    // Primary: date (oldest first)
+    const dateCompare = new Date(a.date).getTime() - new Date(b.date).getTime();
+    if (dateCompare !== 0) return dateCompare;
+    // Secondary: order field (lower = earlier)
+    return (a.order || 999) - (b.order || 999);
   });
 } else {
   post = allPosts.find((p) => p.slug === slug);
@@ -153,7 +155,7 @@ const jsonLd = !isCategory && postContent ? {
 
   {isCategory && category ? (
     <!-- Category Page -->
-    <div class="sm:px-8 mt-16 sm:mt-18">
+    <div class="sm:px-8 mt-14 sm:mt-18">
       <div class="mx-auto max-w-7xl lg:px-8">
         <div class="relative px-4 sm:px-8 lg:px-12">
           <div class="mx-auto max-w-2xl lg:max-w-6xl">
@@ -201,10 +203,10 @@ const jsonLd = !isCategory && postContent ? {
 
             <!-- Two-column layout -->
             <div class="lg:flex lg:gap-12">
-              <!-- Posts list -->
+              <!-- Posts list - show ALL articles, no pagination -->
               <div class="lg:flex-1 lg:min-w-0">
                 {categoryPosts.length > 0 ? (
-                  <BlogPagination client:load articles={categoryPosts} articlesPerPage={10} />
+                  <BlogPagination client:load articles={categoryPosts} articlesPerPage={999} />
                 ) : (
                   <p class="text-zinc-600 dark:text-zinc-400">
                     No posts in this category yet.
@@ -230,7 +232,7 @@ const jsonLd = !isCategory && postContent ? {
     </div>
   ) : postContent ? (
     <!-- Blog Post Page -->
-    <div class="sm:px-8 mt-16 lg:mt-18">
+    <div class="sm:px-8 mt-14 sm:mt-18">
       <div class="mx-auto max-w-7xl lg:px-8">
         <div class="relative px-4 sm:px-8 lg:px-12">
           <div class="mx-auto max-w-2xl lg:max-w-5xl">
@@ -294,7 +296,7 @@ const jsonLd = !isCategory && postContent ? {
       </div>
     </div>
   ) : (
-    <div class="sm:px-8 mt-16 sm:mt-18">
+    <div class="sm:px-8 mt-14 sm:mt-18">
       <div class="mx-auto max-w-7xl lg:px-8">
         <div class="relative px-4 sm:px-8 lg:px-12">
           <div class="mx-auto max-w-2xl lg:max-w-5xl">
