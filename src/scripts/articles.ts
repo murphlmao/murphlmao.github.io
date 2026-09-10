@@ -66,7 +66,7 @@ export function initArticles(): void {
   }
 
   let saved: string | null = null;
-  try { saved = localStorage.getItem('articlesView'); } catch { saved = null; }
+  try { saved = localStorage.getItem('articlesView'); } catch { /* storage blocked: saved stays null */ }
 
   // A hash pointing at a group or a course forces the grouped view for this load only.
   const hash = decodeURIComponent(location.hash.slice(1));

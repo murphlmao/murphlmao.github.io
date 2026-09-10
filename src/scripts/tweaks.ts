@@ -4,6 +4,10 @@
    (initTweaks, lines 19-99). */
 import { tweakDefaults, type Tweaks } from '../site.config';
 
+declare global {
+  interface Window { TWEAKS: Tweaks }
+}
+
 const KEY = 'tweaks';
 export let state: Tweaks = { ...tweakDefaults };
 
@@ -30,14 +34,14 @@ export function writeAttrs(): void {
 
 export function set<K extends keyof Tweaks>(key: K, value: Tweaks[K], persist = true): void {
   state[key] = value;
-  if (persist) { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {} }
+  if (persist) { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch { /* storage blocked */ } }
   writeAttrs();
   document.dispatchEvent(new CustomEvent('tweakchange', { detail: { key, value, state } }));
 }
 
 export function reset(): void {
   Object.assign(state, tweakDefaults); // keep identity: window.TWEAKS points here
-  try { localStorage.removeItem(KEY); } catch {}
+  try { localStorage.removeItem(KEY); } catch { /* storage blocked */ }
   writeAttrs(); sync();
   document.dispatchEvent(new CustomEvent('tweakchange', { detail: { key: 'reset', value: null, state } }));
 }
@@ -63,9 +67,9 @@ export function initTweaks(): void {
   const qs = new URLSearchParams(location.search);
   for (const k of ['palette', 'logo', 'draw'] as const) {
     const v = qs.get(k);
-    if (v) (state as any)[k] = v;
+    if (v) Object.assign(state, { [k]: v });
   }
-  (window as any).TWEAKS = state;
+  window.TWEAKS = state;
   writeAttrs(); sync();
   const form = document.getElementById('tweaks');
   form?.addEventListener('input', (e) => {

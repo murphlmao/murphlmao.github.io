@@ -10,7 +10,6 @@
    onto r4's scene keys (home/book/bigo/prompt/catslash/compass). Unknown names and
    "none" draw nothing. */
 
-/* eslint-disable */
 const reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
 
 const CAT: any[] = [

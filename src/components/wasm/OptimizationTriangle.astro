@@ -367,7 +367,6 @@ const { assetPath = '/snippets/premature-optimization' } = Astro.props;
       const rect = this.canvas.getBoundingClientRect();
       // Scale from display coords to canvas coords, then to WASM coords
       const displayToCanvas = this.canvas.width / rect.width;
-      const canvasToWasm = 1 / this.scaleX; // Same ratio for both axes roughly
       return {
         x: (clientX - rect.left) * displayToCanvas / this.scaleX,
         y: (clientY - rect.top) * displayToCanvas / this.scaleY,

@@ -38,13 +38,13 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:url" content={canonical} />
     <script is:inline define:vars={{ defaults: tweakDefaults }}>
       try {
-        var s = Object.assign({}, defaults, JSON.parse(localStorage.getItem('tweaks') || '{}'));
-        var d = document.documentElement.dataset;
+        const s = Object.assign({}, defaults, JSON.parse(localStorage.getItem('tweaks') || '{}'));
+        const d = document.documentElement.dataset;
         d.palette = s.palette; d.logo = s.logo; d.mich = s.mich; d.draw = s.draw;
         ['orb','bg','strands','motes','paws','walker','deer','raccoon'].forEach(function (k) { d[k] = s[k] ? 'on' : 'off'; });
         document.documentElement.style.setProperty('--bg-opacity', String(s.bgOpacity / 100));
         document.documentElement.style.setProperty('--bg-dim', String(s.bgDim / 100));
-      } catch (e) {}
+      } catch { /* no storage or bad JSON: the CSS defaults stand */ }
     </script>
     <slot name="head" />
   </head>
