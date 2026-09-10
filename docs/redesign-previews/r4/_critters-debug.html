@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en" data-deer="off" data-raccoon="off">
+<head>
+<meta charset="utf-8">
+<title>r4 — critter filmstrip (not linked from the site)</title>
+<style>
+  :root {
+    --bg: #121016; --bg-2: #1A171F; --line: #2B2634; --text: #EDE7DF; --muted: #9B939E;
+    --accent: #F5A742; --cat: #3A3344;
+  }
+  body { margin: 0; padding: 16px 20px 40px; background: var(--bg); color: var(--muted);
+         font: 12px/1.4 ui-monospace, monospace; }
+  h2 { margin: 22px 0 6px; font: 500 12px/1 ui-monospace, monospace; letter-spacing: .12em;
+       text-transform: uppercase; color: var(--accent); }
+  canvas { display: block; background: var(--bg); border: 1px solid var(--line); }
+</style>
+</head>
+<body>
+<!-- live strip the module attaches to; driven by the fake clock below -->
+<div class="foot__walk" style="position:relative;height:56px;width:1100px;overflow:hidden;visibility:hidden;position:absolute;left:-4000px">
+  <canvas class="critters"></canvas>
+</div>
+<a class="side__deer" href="#" style="display:none">deer</a>
+<div id="out"></div>
+<script>
+  /* Fake clock installed BEFORE critters.js so the live simulation can be pumped
+     deterministically (headless --virtual-time-budget freezes rAF). */
+  window.__NOW = 0;
+  window.__CBS = [];
+  performance.now = function () { return window.__NOW; };
+  window.requestAnimationFrame = function (cb) { window.__CBS.push(cb); return window.__CBS.length; };
+  window.cancelAnimationFrame = function () {};
+  window.__step = function (ms) {
+    window.__NOW += ms;
+    var q = window.__CBS; window.__CBS = [];
+    for (var i = 0; i < q.length; i++) q[i](window.__NOW);
+  };
+</script>
+<script src="critters.js"></script>
+<script>
+(function () {
+  var CW = 240, CH = 200, GY = 176, Z = 2.6;
+  var out = document.getElementById('out');
+
+  function strip(title, kind, frames) {
+    var h = document.createElement('h2');
+    h.textContent = title;
+    out.appendChild(h);
+    var c = document.createElement('canvas');
+    var cols = Math.min(frames.length, 6);
+    var rows = Math.ceil(frames.length / cols);
+    c.width = CW * cols; c.height = CH * rows;
+    out.appendChild(c);
+    var g = c.getContext('2d');
+    g.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
+    g.fillRect(0, 0, c.width, c.height);
+    frames.forEach(function (f, i) {
+      var cx = (i % cols) * CW, cy = ((i / cols) | 0) * CH;
+      g.save();
+      g.translate(cx, cy);
+      g.strokeStyle = '#2B2634'; g.lineWidth = 1;
+      g.strokeRect(0.5, 0.5, CW - 1, CH - 1);
+      g.beginPath(); g.moveTo(0, GY + 0.5); g.lineTo(CW, GY + 0.5); g.stroke();
+      g.restore();
+      g.save();
+      g.translate(cx + CW * 0.46, cy + GY);
+      g.scale(Z, Z);
+      Critters.renderAt(g, kind, f.state, f.t, 0, 0, f.dir || 1);
+      g.restore();
+      g.save();
+      g.translate(cx, cy);
+      g.fillStyle = '#9B939E'; g.font = '15px ui-monospace, monospace';
+      g.fillText(f.label, 10, 22);
+      g.restore();
+    });
+  }
+
+  function cycle(kind, state, n) {
+    var f = [];
+    for (var i = 0; i < n; i++) {
+      f.push({ state: state, t: i / n, label: state + ' ' + (i + 1) + '/' + n });
+    }
+    return f;
+  }
+
+  function poses(kind, list) {
+    return list.map(function (p) {
+      return { state: p[0], t: p[1], dir: p[2] || 1, label: p[0] + ' t=' + p[1] };
+    });
+  }
+
+  strip('deer — walk cycle (12 frames)', 'deer', cycle('deer', 'walk', 12));
+  strip('deer — trot cycle (12 frames)', 'deer', cycle('deer', 'trot', 12));
+  strip('deer — key poses', 'deer', poses('deer', [
+    ['graze', 0.15], ['graze', 0.5], ['graze', 0.9],
+    ['look', 0.25], ['look', 0.6], ['look', 1.0],
+    ['startle', 0.5], ['pause', 0.3], ['pause', 0.7],
+    ['turn', 0.2], ['turn', 0.42], ['turn', 0.8]
+  ]));
+
+  strip('raccoon — walk cycle (12 frames)', 'raccoon', cycle('raccoon', 'walk', 12));
+  strip('raccoon — key poses', 'raccoon', poses('raccoon', [
+    ['rummage', 0.1], ['rummage', 0.4], ['rummage', 0.75],
+    ['sit', 0.2], ['sit', 0.5], ['sit', 1.0],
+    ['look', 0.3], ['look', 0.8], ['startle', 0.5],
+    ['carry', 0.2], ['carry', 0.6], ['pause', 0.4]
+  ]));
+  strip('both — facing left (mirror check)', 'deer', [
+    { state: 'walk', t: 0.1, dir: -1, label: 'deer walk L' },
+    { state: 'look', t: 1, dir: -1, label: 'deer look L' }
+  ]);
+  strip('raccoon — facing left', 'raccoon', [
+    { state: 'walk', t: 0.1, dir: -1, label: 'racc walk L' },
+    { state: 'sit', t: 1, dir: -1, label: 'racc sit L' }
+  ]);
+
+  /* ---- live state-machine timeline (open with #sim): pumps the real simulation
+       on a fake clock and samples the strip, so the state machines get an
+       end-to-end check, not just the poses ---- */
+  var src = document.querySelector('canvas.critters');
+  if (src && window.__step && location.hash === '#sim') {
+    Critters.setEnabled('deer', true);
+    Critters.setEnabled('raccoon', true);
+    var SW = 1100, SH = 56, ROWS = 28, EVERY = 3200, DT = 1000 / 60;
+    var h = document.createElement('h2');
+    h.textContent = 'live sim — strip sampled every ' + (EVERY / 1000) + 's (fake clock, ' + ROWS + ' rows)';
+    out.appendChild(h);
+    var tl = document.createElement('canvas');
+    tl.width = SW + 60; tl.height = SH * ROWS;
+    out.appendChild(tl);
+    var tg = tl.getContext('2d');
+    tg.fillStyle = '#121016'; tg.fillRect(0, 0, tl.width, tl.height);
+    for (var r = 0; r < ROWS; r++) {
+      var target = r * EVERY;
+      var guard = 0;
+      while (window.__NOW < target && guard++ < 20000) window.__step(DT);
+      tg.drawImage(src, 60, r * SH, SW, SH);
+      tg.fillStyle = '#3A3344'; tg.fillRect(60, r * SH + SH - 1, SW, 1);
+      tg.fillStyle = '#9B939E'; tg.font = '11px ui-monospace, monospace';
+      tg.fillText(((r * EVERY) / 1000).toFixed(0) + 's', 6, r * SH + 32);
+    }
+  }
+})();
+</script>
+</body>
+</html>

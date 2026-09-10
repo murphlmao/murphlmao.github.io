@@ -47,3 +47,7 @@ next-env.d.ts
 
 # misc
 codebase.md
+# redesign preview scratch
+docs/redesign-previews/_shots/
+docs/redesign-previews/_inspo/
+.playwright-mcp/

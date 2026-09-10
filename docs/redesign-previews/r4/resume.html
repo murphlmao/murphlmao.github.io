@@ -1,0 +1,380 @@
+<!doctype html><html lang="en" data-palette="alley" data-logo="orb" data-mich="maize" data-orb="on" data-bg="on" data-strands="on" data-motes="on" data-paws="on" data-walker="on" data-deer="on" data-raccoon="on">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Resume &middot; murph.rip</title>
+<script>(function(){var d={palette:'alley',logo:'orb',mich:'maize',draw:'pen',orb:1,bg:1,bgOpacity:55,strands:1,motes:1,bgDim:50,paws:1,walker:1,deer:1,raccoon:1};try{var s=JSON.parse(localStorage.getItem('tweaks')||'{}');for(var k in s)if(k in d)d[k]=s[k]}catch(e){}var h=document.documentElement;h.dataset.palette=d.palette;h.dataset.logo=d.logo;h.dataset.mich=d.mich;h.dataset.draw=d.draw;['orb','bg','strands','motes','paws','walker','deer','raccoon'].forEach(function(k){h.dataset[k]=d[k]?'on':'off'});h.style.setProperty('--bg-opacity',d.bgOpacity/100);h.style.setProperty('--bg-dim',d.bgDim/100);window.TWEAKS=d})()</script>
+<link rel="icon" id="favicon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%20fill%3D%22%23F5A742%22%20fill-rule%3D%22evenodd%22%3E%3Cpath%20d%3D%22M4%203l8.6%205.6a12%2012%200%200%201%206.8%200L28%203v13c0%207.2-5.4%2013-12%2013S4%2023.2%204%2016zM9%2017.5a3%203.4%200%201%200%206%200%203%203.4%200%201%200-6%200zM17%2017.5a3%203.4%200%201%200%206%200%203%203.4%200%201%200-6%200z%22%2F%3E%3C%2Fsvg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="walker.css">
+<link rel="stylesheet" href="pages.css">
+<link rel="stylesheet" href="resume.css"></head>
+<body class="is-resume">
+<a class="skip" href="#main">Skip to content</a>
+<canvas class="scene" aria-hidden="true"></canvas>
+<aside class="side">
+  <a class="side__brand" href="index.html">
+    <span class="side__mark"><canvas class="orb" width="40" height="40" aria-hidden="true"></canvas><svg class="mark mark-a" viewBox="0 0 32 32" fill="currentColor" fill-rule="evenodd" aria-hidden="true"><path d="M4 3l8.6 5.6a12 12 0 0 1 6.8 0L28 3v13c0 7.2-5.4 13-12 13S4 23.2 4 16zM9 17.5a3 3.4 0 1 0 6 0 3 3.4 0 1 0-6 0zM17 17.5a3 3.4 0 1 0 6 0 3 3.4 0 1 0-6 0z"/></svg><svg class="mark mark-b" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M3 29V8l3-6 3.5 4.5L16 16l6.5-9.5L26 2l3 6v21h-6V16l-7 10-7-10v13z"/></svg><svg class="mark mark-c" viewBox="0 0 32 32" fill="currentColor" fill-rule="evenodd" aria-hidden="true"><circle cx="5.5" cy="11" r="2.8"/><circle cx="12" cy="5" r="2.8"/><circle cx="20" cy="5" r="2.8"/><circle cx="26.5" cy="11" r="2.8"/><path d="M4 30V23a7 7 0 0 1 7-7h10a7 7 0 0 1 7 7v7h-6v-6a1.75 1.75 0 0 0-3.5 0v6h-5v-6a1.75 1.75 0 0 0-3.5 0v6z"/></svg></span><span class="side__domain">murph.rip</span></a>
+  <div class="side__rule"><div class="side-cat" id="sideCat" aria-hidden="true"></div></div>
+  <button class="side__menu" type="button" aria-expanded="false" aria-controls="sidepanel">Menu <svg viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12"/></svg></button>
+  <div class="side__panel" id="sidepanel">
+    <p class="side__intro"><span class="side__name">Murphy Malcolm</span><span class="side__line">Software &amp; platform engineer. CS student at the University of Michigan. Arch btw.</span></p>
+    <nav class="side__nav" aria-label="Site"><ul><li><a href="index.html">Home</a></li><li><a href="articles.html">Articles</a></li><li><a href="snippets.html">Snippets</a></li><li><a href="resources.html">Resources</a></li><li><a href="resume.html" aria-current="page">Resume</a></li></ul></nav>
+    <div class="side__spacer"></div>
+    <ul class="side__socials"><li><a href="https://github.com/murphlmao" aria-label="GitHub" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a></li><li><a href="https://open.spotify.com/user/bigseeexyman" aria-label="Spotify" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141 4.32-1.32 9.719-.66 13.437 1.621.361.181.54.78.301 1.2zm.12-3.36c-3.6-2.101-9.6-2.32-13.021-1.26-.6.18-1.2-.12-1.38-.719-.18-.601.12-1.201.72-1.381 3.96-1.2 10.561-.96 14.701 1.44.539.3.719 1.02.42 1.56-.299.421-1.02.6-1.44.36z"/></svg></a></li><li><a href="https://www.linkedin.com/in/murphymalcolm/" aria-label="LinkedIn" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a></li><li><a href="https://instagram.com/murphlmao" aria-label="Instagram" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.012-3.584.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.79-4 4-4 2.209 0 4 1.79 4 4 0 2.209-1.79 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a></li></ul>
+    <details class="tweak">
+      <summary>tweaks<span class="tweak__swatch" aria-hidden="true"></span></summary>
+      <form class="tweak__form">
+        <label class="tweak__row"><span>palette</span><select name="palette"><option value="alley">alley</option><option value="ember">ember</option><option value="space">space</option></select></label>
+        <label class="tweak__row"><span>logo</span><select name="logo"><option value="orb">orb</option><option value="mark-a">mark-a</option><option value="mark-b">mark-b</option><option value="mark-c">mark-c</option></select></label>
+        <label class="tweak__row"><span>orb spin</span><input type="checkbox" name="orb"></label>
+        <label class="tweak__row"><span>background</span><input type="checkbox" name="bg"></label>
+        <label class="tweak__row tweak__row--sub"><span>opacity</span><span class="tweak__ctl"><input type="range" name="bgOpacity" min="0" max="100"><output></output></span></label>
+        <label class="tweak__row tweak__row--sub"><span>strands</span><input type="checkbox" name="strands"></label>
+        <label class="tweak__row tweak__row--sub"><span>particles</span><input type="checkbox" name="motes"></label>
+        <label class="tweak__row tweak__row--sub"><span>dim on articles</span><span class="tweak__ctl"><input type="range" name="bgDim" min="0" max="100"><output></output></span></label>
+        <label class="tweak__row"><span>paw trail</span><input type="checkbox" name="paws"></label>
+        <label class="tweak__row"><span>footer cat</span><input type="checkbox" name="walker"></label>
+        <label class="tweak__row"><span>deer</span><input type="checkbox" name="deer"></label>
+        <label class="tweak__row"><span>raccoon</span><input type="checkbox" name="raccoon"></label>
+        <label class="tweak__row"><span>michigan</span><select name="mich"><option value="maize">maize</option><option value="accent">accent</option><option value="muted">muted</option></select></label>
+        <label class="tweak__row"><span>draw</span><select name="draw"><option value="pen">pen</option><option value="laser">laser</option></select></label>
+        <button type="button" class="tweak__reset">reset</button>
+      </form>
+    </details>
+    <a class="side__deer" href="#" title="Tragedy &amp; Pain.">Tragedy &amp; Pain.<span class="side__deer-count">7 deer &middot; 2 raccoons &middot; 3 cars</span></a>
+  </div>
+</aside>
+<div class="content">
+  <main class="page" id="main">
+<header class="page-head"><div class="page-head__text">
+  <p class="kicker">resume</p>
+  <h1>Murphy Malcolm</h1>
+  <p class="rs-contact"><a href="mailto:murphyjmalcolm@gmail.com">murphyjmalcolm@gmail.com</a> &middot; Ann Arbor, MI &middot; <a href="https://www.murph.rip">murph.rip</a></p>
+  <p class="rs-summary">Software Engineer with expertise in full-stack development, DevSecOps, and embedded development. Skilled in Python, Rust, C, and CI/CD automation. Strong systems thinker who excels at architectural planning, identifying integration points across complex projects, and driving solutions from concept to deployment.</p>
+  <a class="btn" href="../../../public/Murphy%20Malcolm%20-%20Resume%20(Public).pdf">Download PDF</a></div>
+  <canvas class="pen" data-scene="prompt" aria-hidden="true"></canvas></header>
+    <div class="rs">
+      <h2 class="sec" id="experience">experience</h2>
+
+      <article class="rs-entry" id="rs-prism">
+        <div class="rs-entry__meta">
+          <span class="rs-entry__dates">June 2022 &ndash; Current</span>
+          <span class="rs-entry__loc">Lowell, MI</span>
+        </div>
+        <div class="rs-entry__body">
+          <h3 class="rs-entry__org">Prism Controls</h3>
+          <p class="rs-entry__role">Software &amp; Platform Engineer</p>
+          <ul class="rs-entry__bullets">
+            <li>Led a team of <b>2</b> junior developers in rewriting the front-end &amp; back-end of our Responsive Egg Flow product.</li>
+            <li>Delivered product demonstrations to customers, translating technical capabilities into business value and gathering feedback for feature development.</li>
+            <li>Standardized Git workflows, coding standards, and CI/CD architecture across the engineering team.</li>
+            <li>Built configuration and package management infrastructure across <b>5+</b> projects with automated security analysis, saving <b>100+</b> hours in deployment and troubleshooting.</li>
+            <li>Led recruitment and technical interviews for the NPD team, successfully hiring <b>5</b> engineers.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="rs-entry" id="rs-kctc-work">
+        <div class="rs-entry__meta">
+          <span class="rs-entry__dates">August 2022 &ndash; June 2023</span>
+          <span class="rs-entry__loc">Grand Rapids, MI</span>
+        </div>
+        <div class="rs-entry__body">
+          <h3 class="rs-entry__org">Kent Career Technical Center</h3>
+          <p class="rs-entry__role">IT HelpDesk</p>
+          <ul class="rs-entry__bullets">
+            <li>Handled the majority of high complexity tickets from students &amp; staff while maintaining high user satisfaction.</li>
+            <li>Troubleshooted complex educational network infrastructure while minimizing downtime &amp; improving performance.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="rs-entry" id="rs-consulting">
+        <div class="rs-entry__meta">
+          <span class="rs-entry__dates">March 2015 &ndash; July 2023</span>
+          <span class="rs-entry__loc">Grand Rapids, MI</span>
+        </div>
+        <div class="rs-entry__body">
+          <h3 class="rs-entry__org">Self-Employed Consultant</h3>
+          <p class="rs-entry__role">Freelance Software &amp; IT Consultant</p>
+          <ul class="rs-entry__bullets">
+            <li>Delivered medium to large-scale coding projects, including web development, home automation, and IoT monitors.</li>
+            <li>Developed CLI utilities, web scrapers, full-stack project templates, and stress testing utilities.</li>
+            <li>Implemented secure network segmentation for IoT devices to enhance data privacy and limit telemetry exposure.</li>
+          </ul>
+        </div>
+      </article>
+
+      <h2 class="sec" id="education">education</h2>
+
+      <article class="rs-entry" id="rs-umich">
+        <div class="rs-entry__meta">
+          <span class="rs-entry__dates">September 2025 &ndash; Current</span>
+          <span class="rs-entry__loc">Ann Arbor, MI</span>
+        </div>
+        <div class="rs-entry__body">
+          <h3 class="rs-entry__org">University of Michigan</h3>
+          <p class="rs-entry__role">Computer Science, B.S</p>
+          <ul class="rs-entry__bullets">
+            <li>Tutored numerous students in introductory programming courses &amp; version control.</li>
+            <li>Identified &amp; reported <b>5+</b> security vulnerabilities in autograding build environments.</li>
+            <li>Leveraging prior industry experience to provide real-world context in academic team projects.</li>
+          </ul>
+          <ul class="rs-entry__courses"><li class="rs-entry__courses-label">notes on this site</li><li><a href="eecs280.html">EECS 280 <b>13</b></a></li><li><a href="articles.html#eecs281">EECS 281 <b>1</b></a></li><li><a href="articles.html#eecs298">EECS 298 <b>0</b></a></li><li><a href="articles.html#eecs370">EECS 370 <b>2</b></a></li></ul>
+        </div>
+      </article>
+
+      <article class="rs-entry" id="rs-grcc">
+        <div class="rs-entry__meta">
+          <span class="rs-entry__dates">January 2022 &ndash; April 2025</span>
+          <span class="rs-entry__loc">Grand Rapids, MI</span>
+          <span class="rs-entry__gpa">GPA 3.90 / 4.00</span>
+        </div>
+        <div class="rs-entry__body">
+          <h3 class="rs-entry__org">Grand Rapids Community College</h3>
+          <p class="rs-entry__role">Computer Support Specialist, A.A.A.S.</p>
+          <ul class="rs-entry__bullets">
+            <li>Tutored numerous courses in programming &amp; system administration.</li>
+            <li>Delivered volunteer lectures on technical coursework to high school students.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="rs-entry" id="rs-kctc">
+        <div class="rs-entry__meta">
+          <span class="rs-entry__dates">August 2021 &ndash; June 2023</span>
+          <span class="rs-entry__loc">Grand Rapids, MI</span>
+          <span class="rs-entry__gpa">GPA 4.00 / 4.00</span>
+        </div>
+        <div class="rs-entry__body">
+          <h3 class="rs-entry__org">Kent Career Technical Center</h3>
+          <p class="rs-entry__role">Career &amp; Technical Education (CTE) &mdash; Advanced IT, Networking, &amp; Cybersecurity</p>
+          <ul class="rs-entry__bullets">
+            <li>Coursework in IT HelpDesk, networking, domain administration, &amp; system deployments.</li>
+            <li>Earned professional certifications: ITF+, Network+, &amp; Python Specialist (Among others).</li>
+            <li>Served as a mentor and resource for dozens of first-year students.</li>
+          </ul>
+        </div>
+      </article>
+
+      <p class="rs-certs" id="rs-certs"><span class="rs-certs__label">certifications</span><span class="rs-certs__list">ITF+ &middot; Network+ &middot; Python Specialist</span></p>
+
+      <h2 class="sec" id="skills">skills</h2>
+      <div class="rs-skills">
+        <div class="rs-skills__head" aria-hidden="true"><span>work</span><span>school</span><span>projects</span></div>
+
+        <h3 class="rs-group__name">Programming Languages</h3>
+        <div class="rs-group__rows">
+          <details class="rs-skill" id="sk-python">
+            <summary class="rs-skill__row">
+              <span class="rs-skill__name">Python</span>
+              <span class="rs-skill__dot is-on" title="work"></span><span class="rs-skill__dot is-on" title="school"></span><span class="rs-skill__dot is-on" title="projects"></span>
+              <span class="rs-skill__n">5<span class="sr-only"> places used</span></span>
+            </summary>
+            <ul class="rs-ev">
+              <li><span class="rs-ev__where">work</span><span class="rs-ev__text">Developed CLI utilities, web scrapers, full-stack project templates, and stress testing utilities. <a class="rs-ev__src" href="#rs-consulting">Consulting</a></span></li>
+              <li><span class="rs-ev__where">school</span><span class="rs-ev__text">Tutored numerous students in introductory programming courses &amp; version control. <a class="rs-ev__src" href="#rs-umich">UMich</a></span></li>
+              <li><span class="rs-ev__where">school</span><span class="rs-ev__text">Tutored numerous courses in programming &amp; system administration. <a class="rs-ev__src" href="#rs-grcc">GRCC</a></span></li>
+              <li><span class="rs-ev__where">school</span><span class="rs-ev__text">Earned professional certifications: ITF+, Network+, &amp; Python Specialist (Among others). <a class="rs-ev__src" href="#rs-kctc">KCTC</a></span></li>
+              <li><span class="rs-ev__where">project</span><span class="rs-ev__text">CLI Tool to create a standard Python repository structure <a class="rs-ev__src" href="#rs-p-create-py-app">Create-Py-App</a></span></li>
+            </ul>
+          </details>
+          <details class="rs-skill" id="sk-rust">
+            <summary class="rs-skill__row">
+              <span class="rs-skill__name">Rust</span>
+              <span class="rs-skill__dot" title="work"></span><span class="rs-skill__dot" title="school"></span><span class="rs-skill__dot is-on" title="projects"></span>
+              <span class="rs-skill__n">1<span class="sr-only"> places used</span></span>
+            </summary>
+            <ul class="rs-ev">
+              <li><span class="rs-ev__where">project</span><span class="rs-ev__text">CLI Tool to create a standard Python repository structure <a class="rs-ev__src" href="#rs-p-create-py-app">Create-Py-App</a></span></li>
+            </ul>
+          </details>
+          <details class="rs-skill" id="sk-go">
+            <summary class="rs-skill__row">
+              <span class="rs-skill__name">Go</span>
+              <span class="rs-skill__dot" title="work"></span><span class="rs-skill__dot" title="school"></span><span class="rs-skill__dot is-on" title="projects"></span>
+              <span class="rs-skill__n">1<span class="sr-only"> places used</span></span>
+            </summary>
+            <ul class="rs-ev">
+              <li><span class="rs-ev__where">project</span><span class="rs-ev__text">Visual Studio [Code] File Split is a file system monitor &amp; file splitter for creating multiple files at once in VSCode. <a class="rs-ev__src" href="#rs-p-vs-file-split">VS File Split</a></span></li>
+            </ul>
+          </details>
+          <details class="rs-skill" id="sk-js-ts">
+            <summary class="rs-skill__row">
+              <span class="rs-skill__name">JavaScript/TypeScript (React, Next.js)</span>
+              <span class="rs-skill__dot is-on" title="work"></span><span class="rs-skill__dot" title="school"></span><span class="rs-skill__dot is-on" title="projects"></span>
+              <span class="rs-skill__n">3<span class="sr-only"> places used</span></span>
+            </summary>
+            <ul class="rs-ev">
+              <li><span class="rs-ev__where">work</span><span class="rs-ev__text">Led a team of <b>2</b> junior developers in rewriting the front-end &amp; back-end of our Responsive Egg Flow product. <a class="rs-ev__src" href="#rs-prism">Prism Controls</a></span></li>
+              <li><span class="rs-ev__where">work</span><span class="rs-ev__text">Delivered medium to large-scale coding projects, including web development, home automation, and IoT monitors. <a class="rs-ev__src" href="#rs-consulting">Consulting</a></span></li>
+              <li><span class="rs-ev__where">project</span><span class="rs-ev__text">A [Google Cloud Platform] extension to translate Wrike email addresses to Wrike task links by detecting them in email your active email threads. <a class="rs-ev__src" href="#rs-p-wrike">Wrike Email Link Translator</a></span></li>
+            </ul>
+          </details>
+          <details class="rs-skill" id="sk-c">
+            <summary class="rs-skill__row">
+              <span class="rs-skill__name">C</span>
+              <span class="rs-skill__dot" title="work"></span><span class="rs-skill__dot is-on" title="school"></span><span class="rs-skill__dot" title="projects"></span>
+              <span class="rs-skill__n">1<span class="sr-only"> places used</span></span>
+            </summary>
+            <ul class="rs-ev">
+              <li><span class="rs-ev__where">school</span><span class="rs-ev__text">UMich coursework (EECS 280, 281, 370 notes) <a class="rs-ev__src" href="#rs-umich">UMich</a></span></li>
+            </ul>
+          </details>
+          <details class="rs-skill" id="sk-cpp">
+            <summary class="rs-skill__row">
+              <span class="rs-skill__name">C++</span>
+              <span class="rs-skill__dot" title="work"></span><span class="rs-skill__dot is-on" title="school"></span><span class="rs-skill__dot" title="projects"></span>
+              <span class="rs-skill__n">1<span class="sr-only"> places used</span></span>
+            </summary>
+            <ul class="rs-ev">
+              <li><span class="rs-ev__where">school</span><span class="rs-ev__text">UMich coursework (EECS 280, 281, 370 notes) <a class="rs-ev__src" href="#rs-umich">UMich</a></span></li>
+            </ul>
+          </details>
+          <div class="rs-skill rs-skill--plain"><div class="rs-skill__row"><span class="rs-skill__name">C#</span><span class="rs-skill__dot"></span><span class="rs-skill__dot"></span><span class="rs-skill__dot"></span></div></div>
+        </div>
+
+        <h3 class="rs-group__name">Infrastructure</h3>
+        <div class="rs-group__rows">
+          <details class="rs-skill" id="sk-networking">
+            <summary class="rs-skill__row">
+              <span class="rs-skill__name">Networking</span>
+              <span class="rs-skill__dot is-on" title="work"></span><span class="rs-skill__dot is-on" title="school"></span><span class="rs-skill__dot" title="projects"></span>
+              <span class="rs-skill__n">4<span class="sr-only"> places used</span></span>
+            </summary>
+            <ul class="rs-ev">
+              <li><span class="rs-ev__where">work</span><span class="rs-ev__text">Troubleshooted complex educational network infrastructure while minimizing downtime &amp; improving performance. <a class="rs-ev__src" href="#rs-kctc-work">KCTC HelpDesk</a></span></li>
+              <li><span class="rs-ev__where">work</span><span class="rs-ev__text">Implemented secure network segmentation for IoT devices to enhance data privacy and limit telemetry exposure. <a class="rs-ev__src" href="#rs-consulting">Consulting</a></span></li>
+              <li><span class="rs-ev__where">school</span><span class="rs-ev__text">Coursework in IT HelpDesk, networking, domain administration, &amp; system deployments. <a class="rs-ev__src" href="#rs-kctc">KCTC</a></span></li>
+              <li><span class="rs-ev__where">school</span><span class="rs-ev__text">Earned professional certifications: ITF+, Network+, &amp; Python Specialist (Among others). <a class="rs-ev__src" href="#rs-kctc">KCTC</a></span></li>
+            </ul>
+          </details>
+          <details class="rs-skill" id="sk-cybersecurity">
+            <summary class="rs-skill__row">
+              <span class="rs-skill__name">Cybersecurity</span>
+              <span class="rs-skill__dot is-on" title="work"></span><span class="rs-skill__dot is-on" title="school"></span><span class="rs-skill__dot" title="projects"></span>
+              <span class="rs-skill__n">3<span class="sr-only"> places used</span></span>
+            </summary>
+            <ul class="rs-ev">
+              <li><span class="rs-ev__where">work</span><span class="rs-ev__text">Implemented secure network segmentation for IoT devices to enhance data privacy and limit telemetry exposure. <a class="rs-ev__src" href="#rs-consulting">Consulting</a></span></li>
+              <li><span class="rs-ev__where">school</span><span class="rs-ev__text">Identified &amp; reported <b>5+</b> security vulnerabilities in autograding build environments. <a class="rs-ev__src" href="#rs-umich">UMich</a></span></li>
+              <li><span class="rs-ev__where">school</span><span class="rs-ev__text">Coursework in IT HelpDesk, networking, domain administration, &amp; system deployments. <a class="rs-ev__src" href="#rs-kctc">KCTC</a></span></li>
+            </ul>
+          </details>
+          <div class="rs-skill rs-skill--plain"><div class="rs-skill__row"><span class="rs-skill__name">Azure</span><span class="rs-skill__dot"></span><span class="rs-skill__dot"></span><span class="rs-skill__dot"></span></div></div>
+          <details class="rs-skill" id="sk-git-vcs">
+            <summary class="rs-skill__row">
+              <span class="rs-skill__name">Git (VCS)</span>
+              <span class="rs-skill__dot is-on" title="work"></span><span class="rs-skill__dot is-on" title="school"></span><span class="rs-skill__dot" title="projects"></span>
+              <span class="rs-skill__n">2<span class="sr-only"> places used</span></span>
+            </summary>
+            <ul class="rs-ev">
+              <li><span class="rs-ev__where">work</span><span class="rs-ev__text">Standardized Git workflows, coding standards, and CI/CD architecture across the engineering team. <a class="rs-ev__src" href="#rs-prism">Prism Controls</a></span></li>
+              <li><span class="rs-ev__where">school</span><span class="rs-ev__text">Tutored numerous students in introductory programming courses &amp; version control. <a class="rs-ev__src" href="#rs-umich">UMich</a></span></li>
+            </ul>
+          </details>
+          <div class="rs-skill rs-skill--plain"><div class="rs-skill__row"><span class="rs-skill__name">Linux</span><span class="rs-skill__dot"></span><span class="rs-skill__dot"></span><span class="rs-skill__dot"></span></div></div>
+          <details class="rs-skill" id="sk-cicd">
+            <summary class="rs-skill__row">
+              <span class="rs-skill__name">CI/CD</span>
+              <span class="rs-skill__dot is-on" title="work"></span><span class="rs-skill__dot" title="school"></span><span class="rs-skill__dot is-on" title="projects"></span>
+              <span class="rs-skill__n">3<span class="sr-only"> places used</span></span>
+            </summary>
+            <ul class="rs-ev">
+              <li><span class="rs-ev__where">work</span><span class="rs-ev__text">Standardized Git workflows, coding standards, and CI/CD architecture across the engineering team. <a class="rs-ev__src" href="#rs-prism">Prism Controls</a></span></li>
+              <li><span class="rs-ev__where">project</span><span class="rs-ev__text">Visual Studio [Code] File Split is a file system monitor &amp; file splitter for creating multiple files at once in VSCode. <a class="rs-ev__src" href="#rs-p-vs-file-split">VS File Split</a></span></li>
+              <li><span class="rs-ev__where">project</span><span class="rs-ev__text">CLI Tool to create a standard Python repository structure <a class="rs-ev__src" href="#rs-p-create-py-app">Create-Py-App</a></span></li>
+            </ul>
+          </details>
+          <div class="rs-skill rs-skill--plain"><div class="rs-skill__row"><span class="rs-skill__name">Ansible</span><span class="rs-skill__dot"></span><span class="rs-skill__dot"></span><span class="rs-skill__dot"></span></div></div>
+          <div class="rs-skill rs-skill--plain"><div class="rs-skill__row"><span class="rs-skill__name">Terraform</span><span class="rs-skill__dot"></span><span class="rs-skill__dot"></span><span class="rs-skill__dot"></span></div></div>
+        </div>
+
+        <h3 class="rs-group__name">Principles</h3>
+        <div class="rs-group__rows">
+          <div class="rs-skill rs-skill--plain"><div class="rs-skill__row"><span class="rs-skill__name">Object-oriented programming &amp; design (OOP/OOD)</span><span class="rs-skill__dot"></span><span class="rs-skill__dot"></span><span class="rs-skill__dot"></span></div></div>
+          <div class="rs-skill rs-skill--plain"><div class="rs-skill__row"><span class="rs-skill__name">RESTful APIs</span><span class="rs-skill__dot"></span><span class="rs-skill__dot"></span><span class="rs-skill__dot"></span></div></div>
+          <div class="rs-skill rs-skill--plain"><div class="rs-skill__row"><span class="rs-skill__name">SOLID</span><span class="rs-skill__dot"></span><span class="rs-skill__dot"></span><span class="rs-skill__dot"></span></div></div>
+          <div class="rs-skill rs-skill--plain"><div class="rs-skill__row"><span class="rs-skill__name">KISS</span><span class="rs-skill__dot"></span><span class="rs-skill__dot"></span><span class="rs-skill__dot"></span></div></div>
+        </div>
+
+        <h3 class="rs-group__name">Other</h3>
+        <div class="rs-group__rows">
+          <div class="rs-skill rs-skill--plain"><div class="rs-skill__row"><span class="rs-skill__name">Research</span><span class="rs-skill__dot"></span><span class="rs-skill__dot"></span><span class="rs-skill__dot"></span></div></div>
+          <div class="rs-skill rs-skill--plain"><div class="rs-skill__row"><span class="rs-skill__name">Data analysis</span><span class="rs-skill__dot"></span><span class="rs-skill__dot"></span><span class="rs-skill__dot"></span></div></div>
+          <details class="rs-skill" id="sk-configuration-management">
+            <summary class="rs-skill__row">
+              <span class="rs-skill__name">Configuration management</span>
+              <span class="rs-skill__dot is-on" title="work"></span><span class="rs-skill__dot" title="school"></span><span class="rs-skill__dot" title="projects"></span>
+              <span class="rs-skill__n">1<span class="sr-only"> places used</span></span>
+            </summary>
+            <ul class="rs-ev">
+              <li><span class="rs-ev__where">work</span><span class="rs-ev__text">Built configuration and package management infrastructure across <b>5+</b> projects with automated security analysis, saving <b>100+</b> hours in deployment and troubleshooting. <a class="rs-ev__src" href="#rs-prism">Prism Controls</a></span></li>
+            </ul>
+          </details>
+          <details class="rs-skill" id="sk-system-administration">
+            <summary class="rs-skill__row">
+              <span class="rs-skill__name">System administration</span>
+              <span class="rs-skill__dot is-on" title="work"></span><span class="rs-skill__dot is-on" title="school"></span><span class="rs-skill__dot" title="projects"></span>
+              <span class="rs-skill__n">3<span class="sr-only"> places used</span></span>
+            </summary>
+            <ul class="rs-ev">
+              <li><span class="rs-ev__where">work</span><span class="rs-ev__text">Handled the majority of high complexity tickets from students &amp; staff while maintaining high user satisfaction. <a class="rs-ev__src" href="#rs-kctc-work">KCTC HelpDesk</a></span></li>
+              <li><span class="rs-ev__where">school</span><span class="rs-ev__text">Tutored numerous courses in programming &amp; system administration. <a class="rs-ev__src" href="#rs-grcc">GRCC</a></span></li>
+              <li><span class="rs-ev__where">school</span><span class="rs-ev__text">Coursework in IT HelpDesk, networking, domain administration, &amp; system deployments. <a class="rs-ev__src" href="#rs-kctc">KCTC</a></span></li>
+            </ul>
+          </details>
+          <div class="rs-skill rs-skill--plain"><div class="rs-skill__row"><span class="rs-skill__name">Technical documentation</span><span class="rs-skill__dot"></span><span class="rs-skill__dot"></span><span class="rs-skill__dot"></span></div></div>
+        </div>
+      </div>
+
+      <h2 class="sec" id="projects">projects</h2>
+
+      <article class="rs-proj" id="rs-p-vs-file-split">
+        <div class="rs-proj__meta">
+          <span class="rs-proj__status"><span class="rs-proj__dot"></span>live</span>
+          <ul class="rs-proj__stack"><li class="tag">Go</li><li class="tag">GitHub Actions</li></ul>
+        </div>
+        <div class="rs-proj__body">
+          <h3 class="rs-proj__name"><a href="https://github.com/murphlmao/vs-file-split" target="_blank" rel="noopener">VS File Split</a></h3>
+          <p class="rs-proj__desc">Visual Studio [Code] File Split is a file system monitor &amp; file splitter for creating multiple files at once in VSCode.</p>
+          <span class="rs-proj__host">github.com/murphlmao/vs-file-split</span>
+        </div>
+      </article>
+
+      <article class="rs-proj" id="rs-p-wrike">
+        <div class="rs-proj__meta">
+          <span class="rs-proj__status"><span class="rs-proj__dot"></span>live</span>
+          <ul class="rs-proj__stack"><li class="tag">JavaScript</li><li class="tag">Google Apps Script</li><li class="tag">GCP</li></ul>
+        </div>
+        <div class="rs-proj__body">
+          <h3 class="rs-proj__name"><a href="https://github.com/murphlmao/wrike-email-link-translator" target="_blank" rel="noopener">Wrike Email Link Translator</a></h3>
+          <p class="rs-proj__desc">A [Google Cloud Platform] extension to translate Wrike email addresses to Wrike task links by detecting them in email your active email threads.</p>
+          <span class="rs-proj__host">github.com/murphlmao/wrike-email-link-translator</span>
+        </div>
+      </article>
+
+      <article class="rs-proj" id="rs-p-create-py-app">
+        <div class="rs-proj__meta">
+          <span class="rs-proj__status"><span class="rs-proj__dot"></span>live</span>
+          <ul class="rs-proj__stack"><li class="tag">Rust</li><li class="tag">Askama</li><li class="tag">Python</li><li class="tag">GitHub Actions</li></ul>
+        </div>
+        <div class="rs-proj__body">
+          <h3 class="rs-proj__name"><a href="https://github.com/murphlmao/create-py-app" target="_blank" rel="noopener">Create-Py-App</a></h3>
+          <p class="rs-proj__desc">CLI Tool to create a standard Python repository structure</p>
+          <span class="rs-proj__host">github.com/murphlmao/create-py-app</span>
+        </div>
+      </article>
+    </div>
+  </main>
+  <footer class="foot">
+    <div class="foot__walk"><canvas class="critters" aria-hidden="true"></canvas></div>
+    <div class="foot__row"><ul class="foot__nav"><li><a href="articles.html">Articles</a></li><li><a href="snippets.html">Snippets</a></li><li><a href="resources.html">Resources</a></li><li><a href="resume.html">Resume</a></li></ul><p class="foot__copy">&copy; 2026 Murphy Malcolm. All rights reserved.</p></div>
+  </footer>
+</div>
+<audio id="chill" preload="none" src="../../../public/chill_guy_man.mp3"></audio>
+<script src="site.js"></script>
+<script src="critters.js" defer></script>
+<script src="walker.js" defer></script>
+<script src="sidecat.js" defer></script></body></html>

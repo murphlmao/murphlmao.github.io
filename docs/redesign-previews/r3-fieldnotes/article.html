@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Complexity Analysis &amp; Big(O) — murph.rip</title>
+<script>document.documentElement.dataset.palette=localStorage.getItem('palette')||'fieldnotes'</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Caveat:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="logo.svg">
+</head>
+<body data-page="article">
+<a class="skip" href="#main">Skip to content</a>
+<header class="band">
+  <canvas class="band-scene" data-scene="bigo" aria-hidden="true"></canvas>
+  <div class="band-inner">
+    <div class="band-row">
+      <a class="mark" href="index.html" aria-label="murph.rip home">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 3.6 C14 3.2 20 3.2 25.5 3.7 C28.4 4 28.7 7 28.5 11 C28.4 16 28.7 21 28.3 25.5 C28.1 28.3 26 28.6 22 28.4 C17 28.7 11 28.6 6.5 28.3 C3.8 28.1 3.4 26 3.5 22 C3.6 17 3.4 12 3.6 7.5 C3.7 4.5 5.2 3.7 11 3.6"/>
+          <path d="M8 22.5 V12.5 M8 15.5 C8.5 12 15.5 11.5 16 15 V22.5 M16 15.5 C16.5 12 23.5 11.5 24 15 V22.5"/>
+        </svg>
+        <span>murph.rip</span>
+      </a>
+      <button class="tool nav-toggle" type="button" aria-expanded="false" aria-controls="nav" aria-label="Menu">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <ul class="nav" id="nav">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="articles.html" aria-current="page">Articles</a></li>
+        <li><a href="snippets.html">Snippets</a></li>
+        <li><a href="resources.html">Resources</a></li>
+        <li><a href="projects.html">Projects</a></li>
+      </ul>
+      <div class="band-tools">
+        <label class="pal"><span class="pal-swatch" aria-hidden="true"></span><span class="visually-hidden">Palette</span>
+          <select id="palette">
+            <option value="fieldnotes">field notes</option>
+            <option value="reverie">reverie</option>
+            <option value="space">space</option>
+            <option value="arch">arch</option>
+          </select>
+        </label>
+        <a class="tool deer" href="#" title="Tragedy &amp; Pain.">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21V13M8 13h8M8 13C6 9 4 8 3 4M16 13C18 9 20 8 21 4M6 6h3M15 6h3"/></svg>
+        </a>
+        <button class="tool" type="button" aria-label="Theme (dark only)">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9a7 7 0 0 1-9-9"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+<main class="page" id="main">
+  <div class="article-layout">
+    <header class="article-head-wrap">
+      <div class="article-head">
+        <p class="eyebrow"><a href="articles.html">EECS 281</a> · January 10, 2026 · about 14 min read</p>
+        <h1>Complexity Analysis &amp; Big(O)</h1>
+        <div class="sticky"><p>That's a very Big O-oooooooh shit what the FUCK is this???? The worst part of computer science?? YESSSIRRRR.</p></div>
+      </div>
+    </header>
+
+    <article class="prose">
+      <h2 class="sec" id="why"><span class="marker" aria-hidden="true"><svg viewBox="0 0 40 24"><path class="marker-stroke" d="M3 13C12 9 22 9 32 12M26 6L33 12L26 18"/></svg></span>Why Should We Give A Shit?</h2>
+      <p>This is a question I've wanted to avoid for as long as humanly possible. Why? Because its math. Math, notoriously, blows. Why should you care? Will I use this in my day to day? Honestly, probably not. But the reality of the situation is that you need some way to represent these abstract ideas, even if you recognize, mentally, that some ways of writing code are just better (and more clever) than others.</p>
+      <p>For example, let's take a really simple problem: "How can I find a duplicate number in my array?" As simple as this question is, the consequences for how you solve this problem can be vast. I'll get into the nitty gritty of Big O later, so just bear with me through this example: To some people, this is how they would genuinely think to solve the issue:</p>
+
+      <figure class="code ascii">
+        <figcaption class="code-bar"><span class="code-lang">text</span><button class="code-copy" type="button">copy</button></figcaption>
+        <pre><code>Vector: [1, 2, 3, 4, 5]
+
+cursor1 = 0, checks against:
+   v
+  [1, 2, 3, 4, 5]
+      ^  ^  ^  ^  (cursor2 goes 1&rarr;4)
+
+cursor1 = 1, checks against:
+      v
+  [1, 2, 3, 4, 5]
+         ^  ^  ^  (cursor2 goes 2&rarr;4)</code></pre>
+      </figure>
+
+      <p>As code, this comes out as:</p>
+
+      <figure class="code">
+        <figcaption class="code-bar"><span class="code-lang">C++</span><button class="code-copy" type="button">copy</button></figcaption>
+        <pre><code class="lang-cpp"><span class="tk-kw">bool</span> <span class="tk-fn">duplicate_nested</span><span class="tk-pn">(</span><span class="tk-ty">std::vector</span><span class="tk-pn">&lt;</span><span class="tk-kw">int</span><span class="tk-pn">&gt;</span> vec<span class="tk-pn">)</span> <span class="tk-pn">{</span>
+  <span class="tk-kw">for</span><span class="tk-pn">(</span><span class="tk-kw">int</span> cursor1 = <span class="tk-num">0</span><span class="tk-pn">;</span> cursor1 <span class="tk-pn">&lt;</span> vec.<span class="tk-fn">size</span><span class="tk-pn">()</span><span class="tk-pn">;</span> cursor1++<span class="tk-pn">)</span> <span class="tk-pn">{</span>
+    <span class="tk-kw">for</span> <span class="tk-pn">(</span><span class="tk-kw">int</span> cursor2 = cursor1 + <span class="tk-num">1</span><span class="tk-pn">;</span> cursor2 <span class="tk-pn">&lt;</span> vec.<span class="tk-fn">size</span><span class="tk-pn">()</span><span class="tk-pn">;</span> cursor2++<span class="tk-pn">)</span>
+      <span class="tk-kw">if</span> <span class="tk-pn">(</span>vec[cursor1] == vec[cursor2]<span class="tk-pn">)</span> <span class="tk-pn">{</span> <span class="tk-kw">return</span> <span class="tk-kw">true</span><span class="tk-pn">;</span> <span class="tk-pn">}</span>
+  <span class="tk-pn">}</span>
+  <span class="tk-kw">return</span> <span class="tk-kw">false</span><span class="tk-pn">;</span>
+<span class="tk-pn">}</span>
+<span class="tk-cm">// time: ~0.510 seconds for 10,000 items</span></code></pre>
+      </figure>
+
+      <aside class="margin-note from-cat">
+        <svg class="doodle" viewBox="148 78 44 44" aria-hidden="true">
+          <path d="M158 100L154 82L165 90Q170 88 175 90L186 82L182 100Q188 110 178 117Q170 120 162 117Q152 110 158 100Z"/>
+          <path d="M164 103q2 -2 4 0M172 103q2 -2 4 0"/>
+          <path d="M168 108l2 2l2 -2"/>
+          <path d="M161 108l-8 -1M161 111l-8 1M179 108l8 -1M179 111l8 1"/>
+        </svg>
+        <p>meow: 0.510s &rarr; 0.0006s. she's fast.</p>
+      </aside>
+
+      <p>While this is a <em>valid</em> way to solve the problem, it's actually one of the <em>worst</em> ways to do so. Why? Because for every item in the array, you're checking it against <em>every other item</em> in the array. This means that if you have 10 items, you could be doing up to 100 checks. If you have 100 items, you could be doing up to 10,000 checks. This is a classic example of an algorithm with O(n&sup2;) time complexity.</p>
+
+      <p>"So, what's a better way?" Your Grandmother asks at the dinner table. Great question, Grandma! A better way to solve this problem is to use a data structure that A) Doesn't allow duplicates, and B) Has fast lookup times. A <code>std::unordered_set</code> in C++ is perfect for this:</p>
+
+      <figure class="code">
+        <figcaption class="code-bar"><span class="code-lang">C++</span><button class="code-copy" type="button">copy</button></figcaption>
+        <pre><code class="lang-cpp"><span class="tk-kw">bool</span> <span class="tk-fn">duplicate_simple</span><span class="tk-pn">(</span><span class="tk-ty">std::vector</span><span class="tk-pn">&lt;</span><span class="tk-kw">int</span><span class="tk-pn">&gt;</span> vec<span class="tk-pn">)</span> <span class="tk-pn">{</span>
+  <span class="tk-ty">std::unordered_set</span><span class="tk-pn">&lt;</span><span class="tk-kw">int</span><span class="tk-pn">&gt;</span> seen_values<span class="tk-pn">;</span>
+  <span class="tk-kw">for</span> <span class="tk-pn">(</span><span class="tk-kw">int</span> nums : vec<span class="tk-pn">)</span> <span class="tk-pn">{</span>
+    <span class="tk-kw">if</span> <span class="tk-pn">(</span>seen_values.<span class="tk-fn">count</span><span class="tk-pn">(</span>nums<span class="tk-pn">)</span><span class="tk-pn">)</span> <span class="tk-pn">{</span> <span class="tk-kw">return</span> <span class="tk-kw">true</span><span class="tk-pn">;</span> <span class="tk-pn">}</span>
+    seen_values.<span class="tk-fn">insert</span><span class="tk-pn">(</span>nums<span class="tk-pn">)</span><span class="tk-pn">;</span>
+  <span class="tk-pn">}</span>
+  <span class="tk-kw">return</span> <span class="tk-kw">false</span><span class="tk-pn">;</span>
+<span class="tk-pn">}</span>
+<span class="tk-cm">// time: ~0.0006 seconds for 10,000 items</span></code></pre>
+      </figure>
+
+      <div class="callout">
+        <svg class="callout-balance" viewBox="0 0 80 80" aria-hidden="true">
+          <path d="M40 70V22M24 70H56"/><circle class="pivot" cx="40" cy="22" r="3"/>
+          <g class="beam"><path d="M10 22H70M10 22L4 40M10 22L16 40M2 40H18M70 22L64 40M70 22L76 40M62 40H78"/>
+            <text x="10" y="54">time</text><text x="70" y="54">space</text></g>
+        </svg>
+        <h4 id="tradeoff">Time vs. Space: The Eternal Tradeoff</h4>
+        <p>Notice what we did here: our shitty nested loop solution used <strong>O(1) space</strong> (just two integer cursors, no matter how big the input), but <strong>O(n&sup2;) time</strong>. The hash set solution uses <strong>O(n) space</strong> (storing up to n elements) but only <strong>O(n) time</strong>. We traded memory for speed. This tradeoff shows up <em>constantly</em> in algorithm design - faster solutions often need more memory, and memory-efficient solutions are often slower.</p>
+      </div>
+
+      <h2 class="sec" id="algorithm"><span class="marker" aria-hidden="true"><svg viewBox="0 0 40 24"><path class="marker-stroke" d="M3 13C12 9 22 9 32 12M26 6L33 12L26 18"/></svg></span>What Is An Algorithm?</h2>
+      <p>An algorithm is a set of instructions. That's it. There is literally nothing else to it.</p>
+
+      <h2 class="sec" id="what"><span class="marker" aria-hidden="true"><svg viewBox="0 0 40 24"><path class="marker-stroke" d="M3 13C12 9 22 9 32 12M26 6L33 12L26 18"/></svg></span>What. The Fuck. Is. Complexity Analysis?</h2>
+      <p>If you've ever been in a college level computer science classroom before, or just tried to Google "What does <code>O(log(n(myparentsneverlovedme)^2*sqrt(15))</code> mean," one of the first pains you'll suffer will be some dumbass graph like this:</p>
+
+      <aside class="margin-note from-cat">
+        <svg class="doodle" viewBox="148 78 44 44" aria-hidden="true">
+          <path d="M158 100L154 82L165 90Q170 88 175 90L186 82L182 100Q188 110 178 117Q170 120 162 117Q152 110 158 100Z"/>
+          <path d="M164 103q2 -2 4 0M172 103q2 -2 4 0"/>
+          <path d="M168 108l2 2l2 -2"/>
+          <path d="M161 108l-8 -1M161 111l-8 1M179 108l8 -1M179 111l8 1"/>
+        </svg>
+        <p>meow: this is where I lost it</p>
+      </aside>
+
+      <figure class="fig">
+        <div class="fig-frame">
+          <svg class="bigo" id="bigo" viewBox="0 0 560 300" role="img" aria-label="Growth of six complexity classes"></svg>
+          <div class="fig-controls"><label for="bigo-n">max n</label><input id="bigo-n" type="range" min="2" max="20" value="10"><output for="bigo-n">10</output></div>
+          <ul class="bigo-legend">
+            <li><button type="button" data-k="c1">O(1)</button></li>
+            <li><button type="button" data-k="log">O(log n)</button></li>
+            <li><button type="button" data-k="n">O(n)</button></li>
+            <li><button type="button" data-k="nlog">O(n log n)</button></li>
+            <li><button type="button" data-k="n2">O(n&sup2;)</button></li>
+            <li><button type="button" data-k="exp">O(2&#8319;)</button></li>
+          </ul>
+        </div>
+        <figcaption class="fig-cap">some dumbass graph like this</figcaption>
+      </figure>
+
+      <p>If you also suck at math, this means very little to you. When I first saw this graph, this is the relationship I was able to identify: Based on the number of items going into something (indicated by the variable <code>n</code>), the number of operations will increase based on that amount.</p>
+
+      <h3 id="code">But <em>what does this mean</em>? How does this correlate to code?</h3>
+      <p>The relationship that complexity analysis is trying to create is that which tells you how an algorithm's time/space usage scales as input grows. In other words, you're measuring two main things: time (operations) and space (memory).</p>
+
+      <nav class="article-nav"><a class="back" href="articles.html#eecs281">Back to EECS 281</a></nav>
+    </article>
+
+    <nav class="toc" aria-label="On this page">
+      <p class="toc-title">On this page</p>
+      <ol>
+        <li><a href="#why">Why Should We Give A Shit?</a></li>
+        <li class="depth-3"><a href="#tradeoff">Time vs. Space: The Eternal Tradeoff</a></li>
+        <li><a href="#algorithm">What Is An Algorithm?</a></li>
+        <li><a href="#what">What. The Fuck. Is. Complexity Analysis?</a></li>
+        <li class="depth-3"><a href="#code">But what does this mean?</a></li>
+      </ol>
+    </nav>
+  </div>
+</main>
+<footer class="foot"><div class="foot-inner">
+  <a class="foot-mark" href="index.html" aria-label="murph.rip home">
+    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M9 3.6 C14 3.2 20 3.2 25.5 3.7 C28.4 4 28.7 7 28.5 11 C28.4 16 28.7 21 28.3 25.5 C28.1 28.3 26 28.6 22 28.4 C17 28.7 11 28.6 6.5 28.3 C3.8 28.1 3.4 26 3.5 22 C3.6 17 3.4 12 3.6 7.5 C3.7 4.5 5.2 3.7 11 3.6"/>
+      <path d="M8 22.5 V12.5 M8 15.5 C8.5 12 15.5 11.5 16 15 V22.5 M16 15.5 C16.5 12 23.5 11.5 24 15 V22.5"/>
+    </svg>
+  </a>
+  <ul class="foot-nav">
+    <li><a href="articles.html">Articles</a></li>
+    <li><a href="snippets.html">Snippets</a></li>
+    <li><a href="resources.html">Resources</a></li>
+    <li><a href="projects.html">Projects</a></li>
+  </ul>
+  <span class="foot-cat">=^.^= murph.rip</span>
+  <p class="foot-copy">© 2026 Murphy Malcolm. All rights reserved.</p>
+</div></footer>
+<script src="site.js"></script>
+</body>
+</html>

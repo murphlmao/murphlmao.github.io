@@ -1,0 +1,146 @@
+<!doctype html><html lang="en" data-palette="alley">
+<head>
+<meta charset="utf-8">
+<title>sidecat debug filmstrip</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  html,body{background:var(--bg);}
+  body{margin:0;padding:24px 28px 60px;font:400 14px/1.4 var(--sans);color:var(--text);}
+  h1{font-size:18px;margin:0 0 4px;}
+  h2{font-size:13px;font-weight:500;color:var(--muted);font-family:var(--mono);margin:30px 0 12px;text-transform:lowercase;}
+  .row{display:flex;flex-wrap:wrap;gap:20px;}
+  .cell{display:flex;flex-direction:column;align-items:flex-start;}
+  .box{position:relative;background:var(--bg-2);}
+  .hair{position:absolute;height:1px;background:var(--line);}
+  .cap{margin-top:6px;font:400 11px var(--mono);color:var(--muted);}
+
+  /* row A / B / D geometry: 200x110 box, hairline 12px up, insets 14px */
+  .box3{width:200px;height:110px;}
+  .box3 .hair{left:14px;right:14px;bottom:12px;}
+  .box3 .side-cat{right:14px!important;bottom:13px!important;}
+
+  /* row C geometry: 90x44 box, hairline 8px up, insets 6px */
+  .box1{width:90px;height:44px;}
+  .box1 .hair{left:6px;right:6px;bottom:8px;}
+  .box1 .side-cat{right:6px!important;bottom:9px!important;}
+
+  .sz3 svg.sc{width:144px!important;height:72px!important;}
+  .sz1 svg.sc{width:48px!important;height:24px!important;}
+  .lightened svg.sc{color:#cdc6da!important;}
+
+  .night-wrap,.night-overlay{position:absolute;right:14px;bottom:13px;}
+  .night-wrap svg,.night-overlay svg{width:144px;height:72px;display:block;}
+  .night-wrap{color:var(--cat);}
+  .night-overlay{color:#cdc6da;opacity:.4;}
+</style>
+</head>
+<body>
+<h1>sidecat — debug filmstrip</h1>
+
+<h2>row a — 3x poses</h2>
+<div class="row" id="rowA"></div>
+
+<h2>row b — night reference at 3x</h2>
+<div class="row" id="rowB"></div>
+
+<h2>row c — 1x actual size</h2>
+<div class="row" id="rowC"></div>
+
+<h2>row d — lightened</h2>
+<div class="row" id="rowD"></div>
+
+<script src="sidecat.js"></script>
+<script>
+(function () {
+  var S = window.SIDECAT;
+
+  function box(rowId, boxClass, caption) {
+    var row = document.getElementById(rowId);
+    var cell = document.createElement('div'); cell.className = 'cell';
+    var b = document.createElement('div'); b.className = 'box ' + boxClass;
+    var hair = document.createElement('div'); hair.className = 'hair';
+    b.appendChild(hair);
+    var cap = document.createElement('div'); cap.className = 'cap'; cap.textContent = caption;
+    cell.appendChild(b); cell.appendChild(cap);
+    row.appendChild(cell);
+    return b;
+  }
+
+  function poseCell(rowId, boxClass, sizeClass, caption, mut) {
+    var b = box(rowId, boxClass, caption);
+    var mount = document.createElement('div');
+    mount.className = 'side-cat ' + sizeClass;
+    b.appendChild(mount);
+    var refs = S.build(mount);
+    var st = S.state();
+    mut(st);
+    S.apply(refs, st);
+  }
+
+  var poses = [
+    ['rest', function (s) {}],
+    ['breathing peak', function (s) { s.breath = 1; }],
+    ['ears back', function (s) { s.ears = 1; }],
+    ['head turned', function (s) { s.ears = 1; s.turn = 1; }],
+    ['tail lifted', function (s) { s.lift = 1; }],
+    ['wag mid +', function (s) { s.lift = 1; s.swing = 0.8; }],
+    ['wag mid -', function (s) { s.lift = 1; s.swing = -0.8; }],
+    ['tail flick', function (s) { s.flick = 1; }],
+    ['ear twitch', function (s) { s.twL = 10; }],
+    ['perk / click', function (s) { s.perk = 1; }],
+    ['stretch 0%', function (s) { s.stretch = 0; }],
+    ['stretch 50%', function (s) { s.stretch = 0.5; s.lift = 0.25; s.ears = 0.22; }],
+    ['stretch 100%', function (s) { s.stretch = 1; s.lift = 0.5; s.ears = 0.45; }],
+    ['re-settle mid', function (s) { s.curl = 0.5; s.shift = -0.7; }],
+    ['re-settled', function (s) { s.curl = 1; }]
+  ];
+
+  poses.forEach(function (p) {
+    poseCell('rowA', 'box3', 'sz3', '(' + p[0] + ')', p[1]);
+  });
+
+  poses.forEach(function (p) {
+    poseCell('rowC', 'box1', 'sz1', '(' + p[0] + ')', p[1]);
+  });
+
+  var NIGHT_SVG = '<svg class="night" viewBox="0 0 48 24" style="overflow:visible"><path d="M9 16C3 16 2 8 8 9" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><ellipse cx="24" cy="16" rx="16" ry="7" fill="currentColor"/><circle cx="38" cy="11" r="6" fill="currentColor"/><path d="M33 8l2-6 3 5zM39 7l3-6 2 6z" fill="currentColor"/></svg>';
+
+  /* row B: night original */
+  (function () {
+    var b = box('rowB', 'box3', '(night original)');
+    var wrap = document.createElement('div'); wrap.className = 'night-wrap';
+    wrap.innerHTML = NIGHT_SVG;
+    b.appendChild(wrap);
+  })();
+
+  /* row B: rest pose, for comparison */
+  poseCell('rowB', 'box3', 'sz3', '(rest)', function (s) {});
+
+  /* row B: overlay, rest pose under, night original on top */
+  (function () {
+    var b = box('rowB', 'box3', '(overlay)');
+    var mount = document.createElement('div');
+    mount.className = 'side-cat sz3';
+    b.appendChild(mount);
+    var refs = S.build(mount);
+    var st = S.state();
+    S.apply(refs, st);
+    var overlay = document.createElement('div'); overlay.className = 'night-overlay';
+    overlay.innerHTML = NIGHT_SVG;
+    b.appendChild(overlay);
+  })();
+
+  /* row D: lightened, for shape reading */
+  var lighten = [
+    ['rest', function (s) {}],
+    ['ears back', function (s) { s.ears = 1; }],
+    ['head turned', function (s) { s.ears = 1; s.turn = 1; }],
+    ['stretch 100%', function (s) { s.stretch = 1; s.lift = 0.5; s.ears = 0.45; }],
+    ['re-settled', function (s) { s.curl = 1; }]
+  ];
+  lighten.forEach(function (p) {
+    poseCell('rowD', 'box3', 'sz3 lightened', '(' + p[0] + ')', p[1]);
+  });
+})();
+</script>
+</body></html>
