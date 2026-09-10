@@ -1,6 +1,10 @@
 import { initTweaks } from './tweaks';
 import { initOrb } from './orb';
+import { initScene } from './background';
 import { initPen } from './pen';
+import { initSidecat } from './sidecat';
+import { initCritters } from './critters';
+import { initWalker } from './walker';
 import { initMenu } from './menu';
 import { initCopy, initToc } from './article';
 import { initArticles } from './articles';
@@ -8,8 +12,11 @@ import { initArticles } from './articles';
 initTweaks();
 initMenu();
 initOrb();
+initScene();
 initPen();
+initSidecat();
+initCritters();
+initWalker();
 initCopy();
 initToc();
 initArticles();
-// later tasks append: initScene, initSidecat, initCritters, initWalker

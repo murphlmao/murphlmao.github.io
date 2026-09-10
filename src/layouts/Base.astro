@@ -83,7 +83,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   .skip { position: absolute; left: 8px; top: -48px; z-index: 100; padding: 8px 12px; background: var(--accent); color: var(--bg); font: 500 13px var(--mono); text-decoration: none; border-radius: var(--radius); }
   .skip:focus { top: 8px; }
 
-  /* background scene canvas (strands + motes + paws land here in a later task) */
+  /* background scene canvas (strands + motes + paws, drawn by background.ts) */
   .bg { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; opacity: var(--bg-opacity); }
   body.is-article .bg { opacity: calc(var(--bg-opacity) * var(--bg-dim)); }
 
