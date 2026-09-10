@@ -13,8 +13,8 @@ Date: 2026-09-10. Branch: `v2`. Reference build: `docs/redesign-previews/r4/` (s
 - "Enter my terminal" transition for the articles section.
 - Custom filter and ordering controls on the index beyond by-date and by-class.
 - Whether Snippets should exist as a section. It stays as is, restyled.
-- Light mode. Palettes are all dark. The theme toggle icon goes away.
-- The final logo. Murphy makes his own; the orb and three marks stay as placeholders in the picker.
+- Light mode. Killed. Palettes are all dark, the theme toggle icon goes away, no `prefers-color-scheme` handling.
+- Replacing the orb. Murphy said the orb nailed what he was going for, so it is the mark and the favicon. The three static marks stay in the picker as alternates.
 
 ## 3. Architecture
 
@@ -64,17 +64,17 @@ Rules kept: every loop pauses on `document.hidden`, draws a static frame under `
 
 ```ts
 export const tweaks = {
-  palette: 'alley', logo: 'orb', orbSpin: true, draw: 'pen',
+  palette: 'ember', logo: 'orb', orbSpin: true, draw: 'pen',
   background: true, bgOpacity: 55, strands: true, particles: true, dimOnArticles: 50,
   pawTrail: true, walker: true, deer: true, raccoon: true, mich: 'maize',
 };
 ```
 
-Murphy changes defaults here once he has dialed them in. The panel stays in the sidebar for visitors too (it is part of the site's character); a `showTweaks` flag can hide it.
+Murphy changes defaults here once he has dialed them in. The panel stays for visitors: a small, quiet gear button at the bottom of the sidebar (top bar on mobile) opens it as a popover anchored to the button, closed by the button, Escape, or a click outside; it is a `<dialog>` or a popover element with the same native controls as in r4. A `showTweaks` flag in the config removes the gear when he decides to retire it.
 
 ## 4. Layout and pages
 
-Shell (`src/layouts/Base.astro`): fixed 272px sidebar (mark + wordmark with the cat on the rule, name, one line, nav with current marker, socials, tweak panel, deer count), content column, footer with the critter strip and links. Below 900px the sidebar becomes a top bar with a menu sheet. Background canvas behind everything. Head: fonts, favicon swapped by the logo tweak, `<html data-*>` set by an inline anti-FOUC script that reads `localStorage.tweaks`.
+Shell (`src/layouts/Base.astro`): fixed 272px sidebar (mark + wordmark with the cat on the rule, name, one line, nav with current marker, socials, gear button that opens the settings popover, deer count), content column, footer with the critter strip and links. Below 900px the sidebar becomes a top bar with a menu sheet. Background canvas behind everything. Head: fonts, favicon swapped by the logo tweak, `<html data-*>` set by an inline anti-FOUC script that reads `localStorage.tweaks`.
 
 | Route | Source | Notes |
 |---|---|---|
@@ -108,7 +108,7 @@ Word count and read time come from the entry body at build time (`entry.body`), 
 
 - `pnpm build` must pass with zero warnings from content collections. `pnpm lint` stays.
 - A `scripts/check-pages.mjs` builds, serves `dist/`, and screenshots the seven main routes with headless Chrome at 1440 and 500 wide into `.check/` (gitignored), failing on console errors. This is the smoke test; no unit test framework.
-- Deploy workflow unchanged. It deploys from `main`, so `v2` merges to `main` when done; nothing deploys before that.
+- Deploy workflow unchanged; it deploys from `main`. `v2` does not merge to `main` after this port. Murphy iterates on the branch first; merging is his call, later. Preview locally with `pnpm dev` and `pnpm preview`.
 
 ## 8. Migration order (high level, the plan expands this)
 
@@ -118,10 +118,11 @@ Word count and read time come from the entry body at build time (`entry.body`), 
 4. Resume, resources, snippets, deer, 404, redirects.
 5. Animals and pen scenes ported as modules; check script; cleanup of dead dependencies.
 
-## 9. Decisions to confirm
+## 9. Decisions (confirmed 2026-09-10)
 
 1. Tailwind out, plain CSS in (3.2).
 2. Self-hosted Plex via fontsource, no Google Fonts (3.2).
-3. Tweak panel visible to visitors by default (3.4).
+3. Settings stay, opened from a soft gear button, default palette `ember`, mark is the orb (3.4).
 4. `/projects` becomes a redirect to `/resume` (4).
 5. Resume content lives in a typed TS file that Murphy edits by hand, PDF stays canonical (5).
+6. No light mode. `v2` stays unmerged after this first port (2, 7).
