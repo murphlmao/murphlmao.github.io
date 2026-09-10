@@ -1,8 +1,11 @@
 import { initTweaks } from './tweaks';
 import { initOrb } from './orb';
 import { initMenu } from './menu';
+import { initCopy, initToc } from './article';
 
 initTweaks();
 initMenu();
 initOrb();
-// later tasks append: initScene, initPen, initSidecat, initCritters, initWalker, initCopy, initToc, initArticles
+initCopy();
+initToc();
+// later tasks append: initScene, initPen, initSidecat, initCritters, initWalker, initArticles

@@ -1,315 +1,57 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import CategoryNav from '../../components/CategoryNav.astro';
-import BlogPagination from '../../components/BlogPagination';
-import { getCollection, render } from 'astro:content';
-import {
-  getAllPosts,
-  getPostContent,
-  getPostsByCategory,
-  isCategorySlug,
-  getCategoryBySlug,
-  getAllCategorySlugs,
-  getBlogStructure,
-  renderMarkdown,
-  getPostFilePath,
-  type Post,
-  type Category,
-} from '../../lib/content';
-import '../../styles/markdown.css';
+/* Article page. Markup and CSS ported from docs/redesign-previews/r4/article.html
+   and the .article / .article-meta / .article-nav rules of r4/style.css.
+   The /articles/<category> branch is filled in by Task 4. */
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Prose from '../../components/Prose.astro';
+import { getPosts, getPost, isoDate } from '../../lib/site';
+import { getAllCategorySlugs } from '../../lib/content';
 
 export async function getStaticPaths() {
-  const posts = getAllPosts();
-  const categorySlugs = getAllCategorySlugs();
-
-  const postPaths = posts.map((post) => ({
-    params: { slug: post.slug },
-    props: { type: 'post' as const, slug: post.slug },
-  }));
-
-  const categoryPaths = categorySlugs.map((slug) => ({
-    params: { slug },
-    props: { type: 'category' as const, slug },
-  }));
-
-  return [...postPaths, ...categoryPaths];
+  const posts = await getPosts();
+  return [
+    ...posts.map((p) => ({ params: { slug: p.slug }, props: { kind: 'post' } })),
+    ...getAllCategorySlugs().map((slug) => ({ params: { slug }, props: { kind: 'category' } })),
+  ];
 }
-
-const { slug, type } = Astro.props;
-
-// Get common data
-const headers = getBlogStructure();
-const allPosts = getAllPosts();
-const postCounts = allPosts.reduce((acc, post) => {
-  if (post.category) {
-    acc[post.category] = (acc[post.category] || 0) + 1;
-  }
-  return acc;
-}, {} as Record<string, number>);
-
-// Determine if this is a category or post page
-const isCategory = isCategorySlug(slug);
-
-// Get data for the appropriate page type
-let category: Category | null = null;
-let categoryPosts: Post[] = [];
-let post: Post | undefined;
-let postContent: { frontmatter: any; content: string } | null = null;
-let categoryInfo: Category | null = null;
-
-// Check if this is an MDX file for special rendering
-let isMdxPost = false;
-let MdxContent: any = null;
-
-if (isCategory) {
-  category = getCategoryBySlug(slug);
-  // Sort by date first (oldest first), then by order field as tiebreaker
-  // This ordering follows course structure for students
-  categoryPosts = getPostsByCategory(slug).sort((a, b) => {
-    // Primary: date (oldest first)
-    const dateCompare = new Date(a.date).getTime() - new Date(b.date).getTime();
-    if (dateCompare !== 0) return dateCompare;
-    // Secondary: order field (lower = earlier)
-    return (a.order || 999) - (b.order || 999);
-  });
-} else {
-  post = allPosts.find((p) => p.slug === slug);
-  postContent = getPostContent(slug);
-  if (post?.category) {
-    categoryInfo = getCategoryBySlug(post.category);
-  }
-
-  // Check if this is an MDX file and render with Astro's MDX renderer
-  const filePath = getPostFilePath(slug);
-  if (filePath?.endsWith('.mdx')) {
-    isMdxPost = true;
-    const blogPosts = await getCollection('blog');
-    // Entry IDs are lowercase and without extension
-    const slugLower = slug.toLowerCase();
-    const mdxEntry = blogPosts.find((entry) => entry.id.toLowerCase().endsWith(slugLower));
-    if (mdxEntry) {
-      const rendered = await render(mdxEntry);
-      MdxContent = rendered.Content;
-    }
-  }
-}
-
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    timeZone: 'UTC',
-  });
-}
-
-// Build metadata
-const title = isCategory
-  ? `${category?.name} - Articles`
-  : postContent?.frontmatter?.title || 'Article';
-const description = isCategory
-  ? category?.description || ''
-  : postContent?.frontmatter?.description || '';
-
-// JSON-LD for blog posts
-const jsonLd = !isCategory && postContent ? {
-  '@context': 'https://schema.org',
-  '@type': 'BlogPosting',
-  headline: postContent.frontmatter.title,
-  description: postContent.frontmatter.description,
-  author: {
-    '@type': 'Person',
-    name: 'Murphy Malcolm',
-    url: 'https://murph.rip',
-  },
-  datePublished: postContent.frontmatter.date,
-  dateModified: postContent.frontmatter.lastModified || postContent.frontmatter.date,
-  image: postContent.frontmatter.image || '/images/blog-default.jpg',
-  url: `https://murph.rip/articles/${slug}`,
-  keywords: postContent.frontmatter.tags?.join(', '),
-  publisher: {
-    '@type': 'Organization',
-    name: 'Murphy Malcolm',
-    logo: {
-      '@type': 'ImageObject',
-      url: 'https://murph.rip/images/logo.png',
-    },
-  },
-} : null;
+const { slug } = Astro.params;
+const { kind } = Astro.props;
+const post = kind === 'post' ? await getPost(slug!) : undefined;
+const rendered = post ? await render(post.entry) : null;
+const Content = rendered?.Content;
+const toc = rendered?.headings.filter((h) => h.depth >= 2 && h.depth <= 4) ?? [];
 ---
+{post && Content ? (
+  <Base title={post.entry.data.title} description={post.entry.data.description} scene="article" article toc={toc}>
+    <article class="article">
+      <header class="page-head"><div class="page-head__text">
+        <p class="article-meta"><a href={`/articles/${post.categorySlug}`}>{post.categorySlug}/</a> &middot; <time datetime={isoDate(post.date)}>{isoDate(post.date)}</time> &middot; {post.words.toLocaleString()} words &middot; about {post.minutes} min read</p>
+        <h1>{post.entry.data.title}</h1>
+      </div></header>
+      <Prose><Content /></Prose>
+      <nav class="article-nav"><a class="back" href={`/articles/${post.categorySlug}`}>&larr; Back to {post.category.name}</a></nav>
+    </article>
+  </Base>
+) : (
+  <Base title={slug} scene="articles"><h1>{slug}</h1></Base>
+)}
+<style>
+  .article { max-width: var(--w-prose); min-width: 0; }
+  .article .page-head { margin-bottom: 28px; }
+  .article-meta { margin: 0 0 10px; font: 13px/1.6 var(--mono); color: var(--muted); }
+  .page-head__text .article-meta a { color: var(--accent-2); text-decoration: none; }
+  .article-meta a:hover { text-decoration: underline; }
 
-<Layout
-  title={title}
-  description={description}
-  image={!isCategory && postContent?.frontmatter?.image ? postContent.frontmatter.image : undefined}
-  article={!isCategory && postContent ? {
-    publishedTime: postContent.frontmatter.date,
-    modifiedTime: postContent.frontmatter.lastModified || postContent.frontmatter.date,
-    author: 'Murphy Malcolm',
-    tags: postContent.frontmatter.tags,
-  } : undefined}
->
-  {!isCategory && jsonLd && (
-    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} slot="head" />
-  )}
+  .article-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--line); font: 13px var(--mono); }
+  .article-nav a { display: block; padding: 10px 12px; border: 1px solid var(--line); border-radius: 3px; color: var(--muted); text-decoration: none; }
+  .article-nav a:hover { color: var(--text); border-color: var(--accent); }
+  .article-nav .next { text-align: right; }
+  .article-nav .back { grid-column: 1 / -1; }
+  .article-nav small { display: block; margin-bottom: 4px; font-size: 11px; color: var(--muted); }
 
-  {isCategory && category ? (
-    <!-- Category Page -->
-    <div class="sm:px-8 mt-14 sm:mt-18">
-      <div class="mx-auto max-w-7xl lg:px-8">
-        <div class="relative px-4 sm:px-8 lg:px-12">
-          <div class="mx-auto max-w-2xl lg:max-w-6xl">
-            <!-- Back link -->
-            <a
-              href="/articles"
-              class="group mb-8 inline-flex items-center text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
-            >
-              <svg
-                viewBox="0 0 16 16"
-                fill="none"
-                aria-hidden="true"
-                class="mr-2 h-4 w-4 stroke-current"
-              >
-                <path
-                  d="M7.25 11.25 3.75 8m0 0 3.5-3.25M3.75 8h8.5"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-              Back to all posts
-            </a>
-
-            <!-- Header -->
-            <header class="max-w-full mb-12">
-              <p class="text-sm font-medium text-sky-500 dark:text-sky-400 mb-2">
-                {category.headerName}
-              </p>
-              <h1 class="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl flex items-center gap-3">
-                {category.showIconInHeader && category.icon && category.icon.startsWith('/') && (
-                  <img src={category.icon} alt="" width="40" height="40" class="inline-block" />
-                )}
-                {category.showIconInHeader && category.icon && !category.icon.startsWith('/') && (
-                  <span>{category.icon}</span>
-                )}
-                {category.name}
-              </h1>
-              {category.description && (
-                <p class="mt-4 text-base text-zinc-600 dark:text-zinc-400">
-                  {category.description}
-                </p>
-              )}
-            </header>
-
-            <!-- Two-column layout -->
-            <div class="lg:flex lg:gap-12">
-              <!-- Posts list - show ALL articles, no pagination -->
-              <div class="lg:flex-1 lg:min-w-0">
-                {categoryPosts.length > 0 ? (
-                  <BlogPagination client:load articles={categoryPosts} articlesPerPage={999} />
-                ) : (
-                  <p class="text-zinc-600 dark:text-zinc-400">
-                    No posts in this category yet.
-                  </p>
-                )}
-              </div>
-
-              <!-- Sidebar -->
-              <aside class="hidden lg:block lg:w-64 lg:flex-shrink-0">
-                <div class="sticky top-8">
-                  <CategoryNav headers={headers} postCounts={postCounts} />
-                </div>
-              </aside>
-            </div>
-
-            <!-- Mobile category nav -->
-            <div class="mt-12 lg:hidden">
-              <CategoryNav headers={headers} postCounts={postCounts} />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  ) : postContent ? (
-    <!-- Blog Post Page -->
-    <div class="sm:px-8 mt-14 sm:mt-18">
-      <div class="mx-auto max-w-7xl lg:px-8">
-        <div class="relative px-4 sm:px-8 lg:px-12">
-          <div class="mx-auto max-w-2xl lg:max-w-5xl">
-            <div class="xl:relative">
-              <div class="mx-auto max-w-2xl">
-                <a
-                  href="/articles"
-                  aria-label="Go back to articles"
-                  class="group mb-8 flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-md shadow-zinc-800/5 ring-1 ring-zinc-900/5 transition dark:border dark:border-zinc-700/50 dark:bg-zinc-800 dark:ring-0 dark:ring-white/10 dark:hover:border-zinc-700 dark:hover:ring-white/20 lg:absolute lg:-left-5 lg:mb-0 lg:-mt-2 xl:-top-1.5 xl:left-0 xl:mt-0"
-                >
-                  <svg
-                    viewBox="0 0 16 16"
-                    fill="none"
-                    aria-hidden="true"
-                    class="h-4 w-4 stroke-zinc-500 transition group-hover:stroke-zinc-700 dark:stroke-zinc-500 dark:group-hover:stroke-zinc-400"
-                  >
-                    <path
-                      d="M7.25 11.25 3.75 8m0 0 3.5-3.25M3.75 8h8.5"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </a>
-
-                <article class="prose prose-zinc dark:prose-invert lg:prose-xl mx-auto px-4 prose-headings:font-medium prose-p:leading-relaxed">
-                  <header class="mb-8">
-                    <div class="order-first flex items-center gap-3 text-base text-zinc-400 dark:text-zinc-500 mb-4">
-                      <span class="h-4 w-0.5 rounded-full bg-zinc-200 dark:bg-zinc-500"></span>
-                      {postContent.frontmatter.date && (
-                        <time datetime={postContent.frontmatter.date}>
-                          {formatDate(postContent.frontmatter.date)}
-                        </time>
-                      )}
-                      {categoryInfo && (
-                        <>
-                          <span class="text-zinc-300 dark:text-zinc-600">·</span>
-                          <a
-                            href={`/articles/${categoryInfo.slug}`}
-                            class="text-sky-500 hover:text-sky-600 dark:text-sky-400 dark:hover:text-sky-300 no-underline"
-                          >
-                            {categoryInfo.name}
-                          </a>
-                        </>
-                      )}
-                    </div>
-                    <h1 class="mb-2 !mt-0">{postContent.frontmatter.title}</h1>
-                  </header>
-                  <div class="markdown-content">
-                    {isMdxPost && MdxContent ? (
-                      <MdxContent />
-                    ) : (
-                      <Fragment set:html={await renderMarkdown(postContent.content)} />
-                    )}
-                  </div>
-                </article>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  ) : (
-    <div class="sm:px-8 mt-14 sm:mt-18">
-      <div class="mx-auto max-w-7xl lg:px-8">
-        <div class="relative px-4 sm:px-8 lg:px-12">
-          <div class="mx-auto max-w-2xl lg:max-w-5xl">
-            <h1 class="text-4xl font-bold">Post Not Found</h1>
-            <p class="mt-4 text-zinc-600 dark:text-zinc-400">
-              The requested article could not be found.
-            </p>
-            <a href="/articles" class="mt-4 inline-block text-sky-500 hover:text-sky-600">
-              Back to articles
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  )}
-</Layout>
+  @media (max-width: 899px) {
+    .article-nav { grid-template-columns: 1fr; }
+    .article-nav .next { text-align: left; }
+  }
+</style>

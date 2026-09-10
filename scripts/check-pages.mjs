@@ -5,6 +5,10 @@ import { readFileSync, existsSync } from 'node:fs';
 /** [dist path, [substrings that must appear]] — tasks append rows. */
 const checks = [
   ['dist/index.html', ['Murphy Malcolm', 'class="side', 'id="tweaks"', 'id="orb"', 'id="critters"', 'id="footWalk"', 'id="sideCat"', 'data-palette="ember"']],
+  ['dist/articles/complexity_analysis_big_Oshit/index.html', ['Complexity Analysis', 'code-block-wrapper', 'class="toc', 'about 8 min read', 'class="prose"']],
+  ['dist/articles/what-is-the-stack/index.html', ['What is the Stack?', 'code-block-wrapper']],
+  ['dist/blog/index.html', ['/articles']],
+  ['dist/blog/what-is-the-stack/index.html', ['/articles/what-is-the-stack']],
 ];
 
 let failures = 0;

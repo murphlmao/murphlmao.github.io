@@ -22,8 +22,8 @@
 
 /* Astro/shiki "css-variables" theme, follows the palette */
 :root {
-  --astro-code-color-text: var(--text);
-  --astro-code-color-background: var(--bg-2);
+  --astro-code-foreground: var(--text);
+  --astro-code-background: var(--bg-2);
   --astro-code-token-constant: var(--accent-2);
   --astro-code-token-string: var(--accent-2);
   --astro-code-token-comment: var(--muted);

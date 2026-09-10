@@ -21,8 +21,15 @@ export default defineConfig({
   },
   markdown: {
     shikiConfig: {
-      theme: 'dracula',
+      // css-variables lets the palette (tokens.css --astro-code-*) drive the colors.
+      theme: 'css-variables',
       wrap: true,
     },
+    rehypePlugins: [rehypeCodeWrapper],
+  },
+  redirects: {
+    '/projects': '/resume',
+    '/blog': '/articles',
+    '/blog/[slug]': '/articles/[slug]',
   },
 });

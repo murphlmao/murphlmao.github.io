@@ -56,14 +56,6 @@ export function rehypeCodeWrapper() {
           (node.properties?.['data-language'] as string) || 'text';
         const displayName = languageNames[lang] || lang.toUpperCase();
 
-        // Override background color to match custom theme
-        if (node.properties?.style) {
-          node.properties.style = (node.properties.style as string).replace(
-            /background-color:[^;]+;?/,
-            'background-color:#090915;'
-          );
-        }
-
         // Create wrapper div
         const wrapper: Element = {
           type: 'element',
