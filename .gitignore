@@ -51,3 +51,6 @@ codebase.md
 docs/redesign-previews/_shots/
 docs/redesign-previews/_inspo/
 .playwright-mcp/
+
+# page check output
+.check/

@@ -1,0 +1,36 @@
+/* Palette tokens, ported from docs/redesign-previews/r4/style.css.
+   ember is the default (bare :root); alley and space are opt-in via data-palette. */
+:root {
+  --bg: #121016; --bg-2: #1A171F; --line: #2B2634; --text: #EDE7DF; --muted: #9B939E;
+  --accent: #D7263D; --accent-text: #E8546A; --accent-2: #D9A441; --cat: #3A3344;
+  --orb-1: #D7263D; --orb-2: #7A1220; --orb-3: #FF7A88;
+}
+:root[data-palette="alley"] {
+  --bg: #121016; --bg-2: #1A171F; --line: #2B2634; --text: #EDE7DF; --muted: #9B939E;
+  --accent: #F5A742; --accent-text: #F5A742; --accent-2: #8FC7B5; --cat: #3A3344;
+  --orb-1: #F5A742; --orb-2: #C4561E; --orb-3: #FFD489;
+}
+:root[data-palette="space"] {
+  --bg: #000000; --bg-2: #0B0B0E; --line: #22242B; --text: #F4F4F8; --muted: #8E93A3;
+  --accent: #FF3B3B; --accent-text: #FF3B3B; --accent-2: #C5CCD8; --cat: #26262F;
+  --orb-1: #FF3B3B; --orb-2: #8A0F1A; --orb-3: #FF9A9A;
+}
+
+:root { --mich: #FFCB05; }
+:root[data-mich="accent"] { --mich: var(--accent); }
+:root[data-mich="muted"] { --mich: var(--muted); }
+
+/* Astro/shiki "css-variables" theme, follows the palette */
+:root {
+  --astro-code-color-text: var(--text);
+  --astro-code-color-background: var(--bg-2);
+  --astro-code-token-constant: var(--accent-2);
+  --astro-code-token-string: var(--accent-2);
+  --astro-code-token-comment: var(--muted);
+  --astro-code-token-keyword: var(--accent-text);
+  --astro-code-token-parameter: var(--text);
+  --astro-code-token-function: var(--text);
+  --astro-code-token-string-expression: var(--accent-2);
+  --astro-code-token-punctuation: var(--muted);
+  --astro-code-token-link: var(--accent-text);
+}
