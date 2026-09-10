@@ -101,8 +101,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   /* page head: title left, pen scene right */
   .page-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px 32px; align-items: end; margin: 0 0 36px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
   .page-head__text { min-width: 0; }
-  .page-head__scene { justify-self: end; }
-  .pen { display: block; width: 220px; height: 160px; }
+  .pen { display: block; width: 220px; height: 160px; justify-self: end; }
   body.is-article .pen { width: 160px; height: 116px; }
 
   @media (max-width: 1100px) { :root { --gutter: 32px; --w-rail: 160px; } }

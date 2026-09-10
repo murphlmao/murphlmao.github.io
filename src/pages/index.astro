@@ -1,95 +1,158 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import ProfileHeader from '../components/ProfileHeader.astro';
-import WorkSection from '../components/WorkSection.astro';
-import { getAllPosts } from '../lib/content';
+/* Home. Markup ported from docs/redesign-previews/r4/index.html as amended by
+   spec-v2.md §1 (page-head, then .home = .home__main + aside.rail). CSS from
+   r4/style.css (.kicker, .hero-title, .hl, .sec, .more, .bio*) and r4/pages.css
+   section 1 (.home, .home__main, .rail*). The rail is data-driven: work from
+   src/content/resume.ts, courses from the blog structure, writing from getStats(). */
+import Base from '../layouts/Base.astro';
+import PostRow from '../components/PostRow.astro';
+import { getPosts, getStats, courseCounts } from '../lib/site';
+import { getBlogStructure } from '../lib/content';
+import { experience, type Entry } from '../content/resume';
 
-// Get all blog posts and sort by date (newest first), then by order
-const blogPosts = getAllPosts()
-  .sort((a, b) => {
-    const dateCompare = new Date(b.date).getTime() - new Date(a.date).getTime();
-    if (dateCompare !== 0) return dateCompare;
-    return (b.order || 0) - (a.order || 0);
-  })
-  .slice(0, 3);
+const posts = (await getPosts()).slice(0, 5);
+const stats = await getStats();
+const counts = await courseCounts();
+const categories = getBlogStructure().flatMap((h) => h.categories);
 
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    timeZone: 'UTC',
-  });
-}
+/* rail work: the two jobs held most recently — "Current" sorts first. Same pair r4
+   shows at index.html:70-71 (Prism Controls, the consulting entry). */
+const endsAt = (e: Entry) => (e.end === 'Current' ? Infinity : Date.parse(e.end));
+const jobs = [...experience].sort((a, b) => endsAt(b) - endsAt(a)).slice(0, 2);
 ---
-
-<Layout>
-  <div class="sm:px-8 mt-14 sm:mt-18">
-    <div class="mx-auto max-w-7xl lg:px-8">
-      <div class="relative px-4 sm:px-8 lg:px-12">
-        <div class="mx-auto max-w-2xl lg:max-w-5xl">
-          <ProfileHeader />
-          <div class="mx-auto lg:max-w-5xl">
-            <!-- Two Column Layout -->
-            <div class="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-12">
-              <!-- Blog Posts Column -->
-              <div>
-                <h2 class="text-base font-semibold text-zinc-800 dark:text-zinc-100 mb-6">
-                  Latest Posts
-                </h2>
-                <div class="space-y-12">
-                  {blogPosts.map((post) => (
-                    <article class="group relative flex flex-col items-start">
-                      <h2 class="text-base font-semibold tracking-tight text-zinc-800 dark:text-zinc-100">
-                        <a href={`/articles/${post.slug}`}>
-                          <span class="absolute -inset-x-4 -inset-y-6 z-20 sm:-inset-x-6 sm:rounded-2xl" />
-                          <span class="relative z-10">{post.title}</span>
-                        </a>
-                      </h2>
-                      <time
-                        class="relative z-10 order-first mb-3 flex items-center text-sm text-zinc-400 dark:text-zinc-500 pl-3.5"
-                        datetime={post.date}
-                      >
-                        <span class="absolute inset-y-0 left-0 flex items-center">
-                          <span class="h-4 w-0.5 rounded-full bg-zinc-200 dark:bg-zinc-500" />
-                        </span>
-                        {formatDate(post.date)}
-                      </time>
-                      <p class="relative z-10 mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-                        {post.description}
-                      </p>
-                      <div
-                        aria-hidden="true"
-                        class="relative z-10 mt-4 flex items-center text-sm font-medium text-sky-500"
-                      >
-                        Read article
-                        <svg
-                          viewBox="0 0 16 16"
-                          fill="none"
-                          aria-hidden="true"
-                          class="ml-1 h-4 w-4 stroke-current"
-                        >
-                          <path
-                            d="M6.75 5.75 9.25 8l-2.5 2.25"
-                            stroke-width="1.5"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                        </svg>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              </div>
-
-              <!-- Work Section -->
-              <div>
-                <WorkSection />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+<Base scene="home" wide>
+  <header class="page-head">
+    <div class="page-head__text">
+      <p class="kicker">Prism Controls &middot; University of Michigan &middot; Arch btw</p>
+      <h1 class="hero-title">Murphy <span class="hl">Malcolm</span></h1>
     </div>
+    <canvas class="pen" data-scene="home" aria-hidden="true"></canvas>
+  </header>
+  <div class="home">
+    <div class="home__main">
+      <section class="bio">
+        <figure class="bio__photo">
+          <img src="/profile.jpeg" alt="Murphy asleep with a cat" width="300" height="277" />
+          <figcaption>me, asleep, with a cat.</figcaption>
+        </figure>
+        <div class="bio__text">
+          <p>I'm a software & platform engineer at Prism Controls and a Computer Science student at the University of Michigan, specializing in full-stack development, DevSecOps, and embedded systems. I've a deep passion for all of the above, but also Linux (Arch btw), networking, cybersecurity, and cats!</p>
+          <p>I'm opinionated about technology&mdash;but those opinions come from a genuine love of the game and a drive to continuously learn and improve. Always happy to connect and talk.</p>
+        </div>
+      </section>
+      <h2 class="sec">latest</h2>
+      <ol class="post-list">{posts.map((p) => <PostRow post={p} chip />)}</ol>
+      <p class="more"><a href="/articles">all {stats.total} articles &rarr;</a></p>
+    </div>
+    <aside class="rail" aria-label="At a glance">
+      <section class="rail__block">
+        <h2 class="rail__label">work</h2>
+        {jobs.map((job) => (
+          <p class="rail__job">
+            <span class="rail__co">{job.org}</span>
+            <span class="rail__role">{job.title}</span>
+            <span class="rail__dates">{job.start} &mdash; {job.end}</span>
+          </p>
+        ))}
+        <p class="more"><a href="/resume">resume &rarr;</a></p>
+      </section>
+      <section class="rail__block">
+        <h2 class="rail__label">courses</h2>
+        <ul class="rail__list">
+          {categories.map((c) => (
+            <li><a href={`/articles/${c.slug}`}>{c.name}</a><span class="rail__count">{counts[c.slug] || 0}</span></li>
+          ))}
+        </ul>
+      </section>
+      <section class="rail__block">
+        <h2 class="rail__label">writing</h2>
+        <p class="rail__stat"><strong class="rail__num">{stats.total}</strong>articles</p>
+        <p class="rail__stat"><strong class="rail__num">{stats.words.toLocaleString()}</strong>words</p>
+        <p class="rail__stat"><strong class="rail__num">{stats.since}</strong>since</p>
+      </section>
+    </aside>
   </div>
-</Layout>
+</Base>
+<style>
+  /* r4/style.css 167-169 + the swipe keyframes */
+  .kicker { margin: 0 0 14px; font: 500 12px/1.5 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--accent-text); }
+  .hero-title { font-size: 44px; letter-spacing: -.02em; margin: 0 0 6px; }
+  .hl { padding: 0 .1em; background: linear-gradient(var(--hl), var(--hl)) no-repeat 0 78% / 0% .5em; animation: swipe .6s ease-out .4s forwards; }
+  @keyframes swipe { to { background-size: 100% .5em; } }
+  /* r4/style.css 385. styles/base.css carries the same override, but this scoped rule
+     outranks it, so the swiped-in state has to be restated here. */
+  @media (prefers-reduced-motion: reduce) { .hl { background-size: 100% .5em; } }
+
+  /* r4/style.css 177-180 */
+  .sec { margin: 44px 0 14px; padding-bottom: 8px; border-bottom: 1px solid var(--line); font: 500 13px/1 var(--mono); color: var(--muted); }
+  .sec::before { content: "## "; color: var(--accent-text); }
+  .page-head + .sec { margin-top: 0; }
+  .more { margin: 14px 0 0; font: 13px var(--mono); }
+  .more a { color: var(--muted); text-decoration: none; }
+  .more a:hover { color: var(--accent-text); }
+
+  /* r4/style.css 187-192 */
+  .bio { display: grid; grid-template-columns: 120px 1fr; gap: 24px; align-items: start; margin: 0 0 8px; }
+  .bio__photo { margin: 0; }
+  .bio__photo img { width: 120px; border: 1px solid var(--line); border-radius: var(--radius); }
+  .bio__photo figcaption { margin-top: 6px; font: 12px/1.4 var(--mono); color: var(--muted); }
+  .bio__text { max-width: 62ch; }
+  .bio__text p { margin: 0 0 1.1em; }
+  /* r4/style.css 184-185, the .bio share of the shared link rule */
+  .bio a { color: var(--text); text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: .18em; }
+  .bio a:hover { color: var(--accent-text); }
+
+  /* r4/style.css 204 */
+  .post-list { list-style: none; margin: 0; padding: 0; }
+
+  /* r4's home rows showed the course as a .post-tags chip under the description; ours use
+     PostRow's `chip` (.post-course), so the row needs a third, content-sized column for it.
+     It folds onto its own line at the widths where PostRow already moves .post-course. */
+  .home__main .post-list :global(.post-row) { grid-template-columns: auto 10ch minmax(0, 1fr); }
+
+  /* r4/pages.css section 1 — main column + quiet right rail */
+  .home { display: block; }
+  .home__main { min-width: 0; }
+  .rail { min-width: 0; color: var(--muted); }
+  .rail__block { min-width: 0; }
+  .rail__label { margin: 0 0 10px; font: 500 11px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+
+  /* work block: company / role / dates, then "resume →" (reuses .more) */
+  .rail__job { margin: 0 0 12px; }
+  .rail__co { display: block; font-size: 14.5px; font-weight: 500; line-height: 1.4; color: var(--text); }
+  .rail__role { display: block; font-size: 13px; line-height: 1.4; color: var(--muted); }
+  .rail__dates { display: block; margin-top: 1px; font: 12px/1.5 var(--mono); color: var(--accent-2); white-space: nowrap; }
+  .rail .more { margin-top: 4px; }
+
+  /* courses block: code left, count right */
+  .rail__list { list-style: none; margin: 0; padding: 0; }
+  .rail__list li { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 3px 0; font: 13px/1.5 var(--mono); }
+  .rail__list a { color: var(--text); text-decoration: none; }
+  .rail__list a:hover { color: var(--accent-text); }
+  .rail__count { color: var(--accent-text); font-variant-numeric: tabular-nums; }
+
+  /* writing block: big number, small label */
+  .rail__stat { display: flex; align-items: baseline; gap: 8px; margin: 0 0 4px; font: 12.5px/1.5 var(--mono); color: var(--muted); }
+  .rail__num { font: 500 20px/1.2 var(--sans); letter-spacing: -.01em; color: var(--text); font-variant-numeric: tabular-nums; }
+
+  /* folded (< 1280px): the three blocks sit in one row under the latest list */
+  .rail { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px 32px; margin-top: 44px; padding-top: 20px; border-top: 1px solid var(--line); }
+
+  @media (min-width: 1280px) {
+    .home { display: grid; grid-template-columns: minmax(0, 1fr) var(--w-rail); gap: 0 48px; align-items: start; }
+    .rail { display: block; margin-top: 0; padding-top: 0; border-top: 0; }
+    .rail__block + .rail__block { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--line); }
+  }
+  @media (max-width: 899px) {
+    /* r4/style.css 357 */
+    .hero-title { font-size: 34px; }
+    .home__main .post-list :global(.post-row) { grid-template-columns: 10ch minmax(0, 1fr); }
+  }
+  @media (max-width: 560px) {
+    /* r4/style.css 364-365, r4/pages.css */
+    .bio { grid-template-columns: 96px 1fr; gap: 14px; }
+    .bio__photo img { width: 96px; }
+    .rail { grid-template-columns: 1fr; gap: 20px; }
+    .home__main .post-list :global(.post-row) { grid-template-columns: 1fr; }
+  }
+</style>
