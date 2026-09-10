@@ -1,5 +1,10 @@
-export const projects = [
+/* Project data. `id` gives the resume page its anchors (`rs-p-<id>`) and the
+   skill-evidence links their targets (R28). */
+export interface Project { id: string; title: string; description: string; link: string; tech: string[]; status: string }
+
+export const projects: Project[] = [
   {
+    id: "vs-file-split",
     title: "VS File Split",
     description:
       "Visual Studio [Code] File Split is a file system monitor & file splitter for creating multiple files at once in VSCode.",
@@ -11,6 +16,7 @@ export const projects = [
     status: "Live",
   },
   {
+    id: "wrike",
     title: "Wrike Email Link Translator",
     description: "A [Google Cloud Platform] extension to translate Wrike email addresses to Wrike task links by detecting them in email your active email threads.",
     link: "https://github.com/murphlmao/wrike-email-link-translator",
@@ -18,6 +24,7 @@ export const projects = [
     status: "Live",
   },
   {
+    id: "create-py-app",
     title: "Create-Py-App",
     description:
       "CLI Tool to create a standard Python repository structure",
@@ -27,7 +34,7 @@ export const projects = [
   },
 ];
 
-export const techStack = {
+export const techStack: Record<string, string[]> = {
   Languages: [
     "Python",
     "Rust",

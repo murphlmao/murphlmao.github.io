@@ -1,0 +1,242 @@
+---
+/* Resume. Markup ported from docs/redesign-previews/r4/resume.html (spec-resume.md
+   §1–§3), CSS from r4/resume.css plus the .sec/.kicker/.btn/.tag rules it borrows
+   from r4/style.css. Content comes from src/content/resume.ts and
+   src/content/projects/data.ts; the UMich course line is built from the blog
+   structure. No JS: native <details> does the expanding. */
+import Base from '../layouts/Base.astro';
+import { site } from '../site.config';
+import { summary, contact, experience, education, certifications, skillGroups, type Where } from '../content/resume';
+import { projects } from '../content/projects/data';
+import { getBlogStructure } from '../lib/content';
+import { courseCounts } from '../lib/site';
+
+const counts = await courseCounts();
+const categories = getBlogStructure().flatMap((h) => h.categories);
+
+/* r4 gives weight to the five numbers he wrote in the bullets, and repeats them in
+   the evidence lines. The data stays plain text, so the <b> is added here: escape
+   first, then wrap digit runs. Only bullet text goes through it, so the C/C++ line
+   ("UMich coursework (EECS 280, 281, 370 notes)") stays unbolded, as in r4. */
+const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const bold = (s: string) => esc(s).replace(/\d+\+?/g, '<b>$&</b>');
+const bullets = new Set([...experience, ...education].flatMap((e) => e.bullets));
+const evText = (s: string) => (bullets.has(s) ? bold(s) : esc(s));
+
+const sections = [{ id: 'experience', list: experience }, { id: 'education', list: education }];
+const dots: { where: Where; label: string }[] = [
+  { where: 'work', label: 'work' },
+  { where: 'school', label: 'school' },
+  { where: 'project', label: 'projects' },
+];
+const host = (link: string) => link.replace(/^https?:\/\//, '');
+---
+<Base title="Resume" description={summary} scene="resume">
+  <header class="page-head">
+    <div class="page-head__text">
+      <p class="kicker">resume</p>
+      <h1>Murphy Malcolm</h1>
+      <p class="rs-contact"><a href={`mailto:${contact.email}`}>{contact.email}</a> &middot; {contact.place} &middot; <a href={`https://www.${contact.site}`}>{contact.site}</a></p>
+      <p class="rs-summary">{summary}</p>
+      <a class="btn" href={site.resumePdf}>Download PDF</a>
+    </div>
+    <canvas class="pen" data-scene="resume" aria-hidden="true"></canvas>
+  </header>
+  <div class="rs">
+    {sections.map((s) => (
+      <Fragment>
+        <h2 class="sec" id={s.id}>{s.id}</h2>
+        {s.list.map((e) => (
+          <article class="rs-entry" id={e.id}>
+            <div class="rs-entry__meta">
+              <span class="rs-entry__dates">{e.start} &ndash; {e.end}</span>
+              <span class="rs-entry__loc">{e.place}</span>
+              {e.gpa && <span class="rs-entry__gpa">GPA {e.gpa}</span>}
+            </div>
+            <div class="rs-entry__body">
+              <h3 class="rs-entry__org">{e.org}</h3>
+              <p class="rs-entry__role">{e.title}</p>
+              <ul class="rs-entry__bullets">{e.bullets.map((b) => <li set:html={bold(b)} />)}</ul>
+              {e.note && (
+                <ul class="rs-entry__courses">
+                  <li class="rs-entry__courses-label">{e.note}</li>
+                  {categories.map((c) => <li><a href={`/articles/${c.slug}`}>{c.name} <b>{counts[c.slug] || 0}</b></a></li>)}
+                </ul>
+              )}
+            </div>
+          </article>
+        ))}
+      </Fragment>
+    ))}
+    <p class="rs-certs" id="rs-certs"><span class="rs-certs__label">certifications</span><span class="rs-certs__list" set:html={certifications.join(' &middot; ')} /></p>
+
+    <h2 class="sec" id="skills">skills</h2>
+    <div class="rs-skills">
+      <div class="rs-skills__head" aria-hidden="true"><span>work</span><span>school</span><span>projects</span></div>
+      {skillGroups.map((g) => (
+        <Fragment>
+          <h3 class="rs-group__name">{g.name}</h3>
+          <div class="rs-group__rows">
+            {g.skills.map((sk) => (sk.evidence.length ? (
+              <details class="rs-skill" id={sk.id}>
+                <summary class="rs-skill__row">
+                  <span class="rs-skill__name">{sk.name}</span>
+                  {dots.map((d) => <span class:list={['rs-skill__dot', { 'is-on': sk.evidence.some((x) => x.where === d.where) }]} title={d.label} />)}
+                  <span class="rs-skill__n">{sk.evidence.length}<span class="sr-only"> places used</span></span>
+                </summary>
+                <ul class="rs-ev">
+                  {sk.evidence.map((x) => (
+                    <li><span class="rs-ev__where">{x.where}</span><span class="rs-ev__text"><Fragment set:html={evText(x.text)} /> <a class="rs-ev__src" href={x.href}>{x.source}</a></span></li>
+                  ))}
+                </ul>
+              </details>
+            ) : (
+              <div class="rs-skill rs-skill--plain"><div class="rs-skill__row"><span class="rs-skill__name">{sk.name}</span>{dots.map(() => <span class="rs-skill__dot" />)}</div></div>
+            )))}
+          </div>
+        </Fragment>
+      ))}
+    </div>
+
+    <h2 class="sec" id="projects">projects</h2>
+    {projects.map((p) => (
+      <article class="rs-proj" id={`rs-p-${p.id}`}>
+        <div class="rs-proj__meta">
+          <span class="rs-proj__status"><span class="rs-proj__dot" />{p.status.toLowerCase()}</span>
+          <ul class="rs-proj__stack">{p.tech.map((t) => <li class="tag">{t}</li>)}</ul>
+        </div>
+        <div class="rs-proj__body">
+          <h3 class="rs-proj__name"><a href={p.link} target="_blank" rel="noopener">{p.title}</a></h3>
+          <p class="rs-proj__desc">{p.description}</p>
+          <span class="rs-proj__host">{host(p.link)}</span>
+        </div>
+      </article>
+    ))}
+  </div>
+</Base>
+<style>
+  /* r4/style.css 167-169, 177-180, 200-201, 216-218 — the shared bits this page uses */
+  .kicker { margin: 0 0 14px; font: 500 12px/1.5 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--accent-text); }
+  .sec { margin: 44px 0 14px; padding-bottom: 8px; border-bottom: 1px solid var(--line); font: 500 13px/1 var(--mono); color: var(--muted); }
+  .sec::before { content: "## "; color: var(--accent-text); }
+  .btn { display: inline-flex; align-items: center; gap: 8px; margin-top: 16px; padding: 7px 14px; border: 1px solid var(--line); border-radius: 3px; background: var(--bg-2); font: 13px var(--mono); color: var(--text); text-decoration: none; }
+  .btn:hover { border-color: var(--accent); }
+  .tag { list-style: none; font: 11.5px var(--mono); color: var(--muted); }
+  .tag::before { content: "["; }
+  .tag::after { content: "]"; }
+
+  /* ---------- r4/resume.css 0. head ---------- */
+  .rs { --rs-meta: 176px; --rs-gap: 40px; --rs-cell: 56px; --rs-row-w: 620px; --rs-body-w: 660px; }
+  .rs > .sec:first-child { margin-top: 0; }
+
+  .rs-contact { margin: 6px 0 0; font: 13px/1.6 var(--mono); color: var(--muted); }
+  .rs-contact a { color: var(--text); text-decoration: none; }
+  .rs-contact a:hover { color: var(--accent-text); }
+  .rs-summary { margin: 14px 0 0; max-width: 66ch; font-size: 15.5px; line-height: 1.55; color: var(--text); }
+
+  /* ---------- 1. two columns everywhere: mono meta left, text right ---------- */
+  .rs-entry, .rs-proj, .rs-certs, .rs-skills { display: grid; grid-template-columns: var(--rs-meta) minmax(0, 1fr); gap: 0 var(--rs-gap); align-items: start; }
+  .rs-entry + .rs-entry, .rs-proj + .rs-proj { margin-top: 26px; }
+  .rs-entry, .rs-proj { scroll-margin-top: 24px; }
+  .rs-entry__meta, .rs-proj__meta { display: flex; flex-direction: column; gap: 1px; padding-top: 3px; font: 12.5px/1.6 var(--mono); color: var(--muted); }
+  .rs-entry__dates { color: var(--accent-2); }
+  .rs-entry__body, .rs-proj__body { min-width: 0; max-width: var(--rs-body-w); }
+  .rs-entry__org, .rs-proj__name { margin: 0; font-size: 17px; font-weight: 600; line-height: 1.35; }
+  .rs-entry__role { margin: 1px 0 0; font-size: 15px; line-height: 1.5; }
+  .rs-entry__bullets { margin: 8px 0 0; padding-left: 1.1em; }
+  .rs-entry__bullets li { margin: 0 0 4px; font-size: 15px; line-height: 1.5; }
+  .rs-entry__bullets li::marker { color: var(--muted); }
+  /* the <b> comes from set:html, so it carries no scope attribute */
+  .rs-entry__bullets :global(b), .rs-ev :global(b) { font-weight: 600; }
+  .rs-entry:target .rs-entry__org, .rs-proj:target .rs-proj__name a { color: var(--accent-text); }
+
+  /* UMich: course-notes line under the bullets */
+  .rs-entry__courses { display: flex; flex-wrap: wrap; gap: 4px 18px; list-style: none; margin: 8px 0 0; padding: 0; font: 12.5px/1.6 var(--mono); }
+  .rs-entry__courses-label { color: var(--muted); }
+  .rs-entry__courses a { color: var(--text); text-decoration: none; }
+  .rs-entry__courses a:hover { color: var(--accent-text); }
+  .rs-entry__courses b { font-weight: 500; color: var(--accent-text); font-variant-numeric: tabular-nums; }
+
+  /* certifications: one line after education, same two columns */
+  .rs-certs { margin: 26px 0 0; }
+  .rs-certs__label { padding-top: 3px; font: 12.5px/1.6 var(--mono); color: var(--accent-2); }
+  .rs-certs__list { font-size: 15px; line-height: 1.6; }
+
+  /* ---------- 2. skills: group name left; rows "name | work school projects | count | chevron" right ---------- */
+  .rs-skills__head, .rs-skill__row { display: grid; grid-template-columns: minmax(0, 1fr) repeat(3, var(--rs-cell)) 3ch 14px; gap: 0 6px; align-items: center; max-width: var(--rs-row-w); }
+  .rs-skills__head { grid-column: 2; padding-bottom: 6px; border-bottom: 1px solid var(--line); font: 500 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); text-align: center; }
+  .rs-skills__head::before { content: ""; }               /* empty name cell keeps the labels over the dots */
+  .rs-group__name { margin: 0; padding-top: 24px; font: 13px/1.6 var(--mono); font-weight: 400; color: var(--accent-2); }
+  .rs-group__rows { min-width: 0; padding-top: 18px; }
+  .rs-skill { max-width: var(--rs-row-w); border-bottom: 1px solid var(--line); }
+  .rs-skill__row { padding: 6px 0; }
+  .rs-skill__name { font-size: 15px; line-height: 1.5; }
+  .rs-skill__dot { justify-self: center; width: 8px; height: 8px; border-radius: 50%; border: 1px solid var(--line); }
+  .rs-skill__dot.is-on { background: var(--text); border-color: var(--text); }
+  .rs-skill__n { text-align: right; font: 12.5px/1 var(--mono); color: var(--accent-text); font-variant-numeric: tabular-nums; }
+
+  /* expandable rows are native <details>; the summary is the row */
+  summary.rs-skill__row { list-style: none; cursor: pointer; }
+  summary.rs-skill__row::-webkit-details-marker { display: none; }
+  summary.rs-skill__row::after { content: "\25B8"; justify-self: center; font-size: 11px; color: var(--muted); transition: transform .15s; }
+  .rs-skill[open] > summary::after { transform: rotate(90deg); }
+  summary.rs-skill__row:hover .rs-skill__name, summary.rs-skill__row:hover::after { color: var(--accent-text); }
+
+  /* expanded: "WHERE   bullet verbatim → source" */
+  .rs-ev { list-style: none; margin: 2px 0 10px; padding: 0 0 0 12px; border-left: 1px solid var(--line); }
+  .rs-ev li { display: grid; grid-template-columns: 7ch minmax(0, 1fr); gap: 0 10px; align-items: baseline; padding: 4px 0; font-size: 14px; line-height: 1.5; }
+  .rs-ev__where { font: 11px/1.5 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .rs-ev__src { margin-left: 6px; font: 12.5px var(--mono); color: var(--accent-2); text-decoration: none; white-space: nowrap; }
+  .rs-ev__src::before { content: "\2192 "; }
+  .rs-ev__src:hover { color: var(--accent-text); }
+
+  /* ---------- 3. projects: status + stack left; name, description, host right ---------- */
+  .rs-proj__status { display: inline-flex; align-items: center; gap: 6px; }
+  .rs-proj__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+  .rs-proj__stack { display: flex; flex-wrap: wrap; gap: 2px 8px; list-style: none; margin: 4px 0 0; padding: 0; }
+  .rs-proj__name a { color: var(--text); text-decoration: none; }
+  .rs-proj__name a:hover { color: var(--accent-text); }
+  .rs-proj__desc { margin: 2px 0 0; font-size: 15px; line-height: 1.5; }
+  .rs-proj__host { display: block; margin-top: 4px; font: 12.5px/1.6 var(--mono); color: var(--muted); }
+
+  /* ---------- 4. responsive ---------- */
+  @media (max-width: 899px) { .rs { --rs-meta: 136px; --rs-gap: 24px; } }
+
+  @media (max-width: 640px) {
+    .rs { --rs-cell: 50px; }
+    .rs-entry, .rs-proj, .rs-certs, .rs-skills { grid-template-columns: 1fr; gap: 0; }
+    .rs-entry__meta, .rs-proj__meta { flex-direction: row; flex-wrap: wrap; gap: 0 12px; padding: 0 0 3px; }
+    .rs-certs__label { padding: 0; }
+    .rs-proj__stack { margin: 0; }
+    .rs-skills__head { grid-column: 1; font-size: 10px; letter-spacing: 0; }
+    .rs-group__name { padding-top: 20px; }
+    .rs-group__rows { padding-top: 2px; }
+  }
+
+  /* ---------- 5. print: black on white, one column of document, no chrome.
+     The palette override, @page, body and the .side/.foot/canvas hiding are in
+     styles/base.css; what is left is this page's own scale. ---------- */
+  @media print {
+    .btn, .kicker { display: none !important; }
+    :global(.page) { margin: 0; padding: 0; max-width: none; min-height: 0; }
+    .page-head { grid-template-columns: 1fr; margin-bottom: 14pt; padding-bottom: 10pt; }
+    h1 { font-size: 20pt; }
+    .rs-contact { font-size: 9pt; }
+    .rs-summary { max-width: none; font-size: 10.5pt; }
+    .rs { --rs-meta: 40mm; --rs-gap: 8mm; --rs-cell: 14mm; --rs-row-w: 140mm; --rs-body-w: none; }
+    .sec { margin: 14pt 0 6pt; font-size: 9pt; break-after: avoid; }
+    .rs-entry, .rs-proj, .rs-skill, .rs-certs { break-inside: avoid; }
+    .rs-entry + .rs-entry, .rs-proj + .rs-proj { margin-top: 9pt; }
+    .rs-certs { margin-top: 9pt; }
+    .rs-entry__org, .rs-proj__name { font-size: 11.5pt; }
+    .rs-entry__role, .rs-entry__bullets li, .rs-proj__desc, .rs-skill__name, .rs-certs__list { font-size: 10pt; }
+    .rs-entry__bullets li { margin-bottom: 2pt; }
+    .rs-entry__meta, .rs-proj__meta, .rs-entry__courses, .rs-proj__host, .rs-group__name, .rs-certs__label, .rs-skill__n, .rs-ev__src { font-size: 8.5pt; }
+    .rs-group__name { padding-top: 10pt; }
+    .rs-group__rows { padding-top: 6pt; }
+    .rs-skill__row { padding: 2pt 0; }
+    summary.rs-skill__row::after { content: none; }
+    .rs-ev li { padding: 1pt 0; font-size: 9pt; }
+    a { color: inherit; text-decoration: none; }
+  }
+</style>

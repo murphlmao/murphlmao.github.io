@@ -11,6 +11,8 @@ const checks = [
   ['dist/articles/eecs280/index.html', ['EECS 280', 'What is the Stack?', 'oldest first']],
   ['dist/blog/index.html', ['/articles']],
   ['dist/blog/what-is-the-stack/index.html', ['/articles/what-is-the-stack']],
+  ['dist/resume/index.html', ['Murphy Malcolm', 'Responsive Egg Flow', 'GPA 3.90', 'ITF+', '<details', 'rs-p-create-py-app', 'Download PDF']],
+  ['dist/projects/index.html', ['resume']],
 ];
 
 let failures = 0;
