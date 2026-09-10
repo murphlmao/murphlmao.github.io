@@ -1,4 +1,11 @@
-export const resources = {
+export interface Resource {
+  link: string;
+  title: string;
+  description: string;
+  hostname: string;
+}
+
+export const resources: Record<string, Resource[]> = {
   Development: [
     {
       link: "https://www.conventionalcommits.org/en/v1.0.0/#summary",

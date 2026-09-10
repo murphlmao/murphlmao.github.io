@@ -1,62 +1,58 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import { getAllSnippets } from '../../lib/content';
+/* Snippets index. Markup and CSS ported from docs/redesign-previews/r4/snippets.html
+   and r4/style.css (.post-list, .post-row, .post-date, .post-title, .post-desc,
+   .post-tags, .tag). Rows are rendered here rather than through PostRow.astro,
+   which is typed to the blog collection. */
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { isoDate, parseHumanDate } from '../../lib/site';
 
-// Icons mapping using devicon classes
-const icons: Record<string, string> = {
-  clang: 'devicon-c-plain-wordmark colored',
-  cpp: 'devicon-cplusplus-plain',
-};
-
-// Get all snippets
-const snippets = getAllSnippets();
+/* frontmatter dates are human strings ("December 1, 2025"), so parse them to UTC
+   midnight — otherwise isoDate reads the UTC day off a local-midnight instant and
+   a build host east of UTC renders the previous day. */
+const snippets = (await getCollection('snippets'))
+  .map((entry) => ({ entry, date: parseHumanDate(entry.data.date) }))
+  .sort((a, b) => (b.date?.getTime() ?? 0) - (a.date?.getTime() ?? 0));
 ---
-
-<Layout title="Code Snippets" description="A collection of code snippets for developers">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" slot="head" />
-
-  <div class="mt-14 sm:mt-18">
-    <div class="mx-auto max-w-7xl">
-      <div class="relative px-4 sm:px-8 lg:px-12">
-        <div class="mx-auto max-w-2xl lg:max-w-5xl">
-          <header class="max-w-2xl">
-            <h1 class="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-              Code snippets for developers
-            </h1>
-            <p class="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-              A collection of code snippets that may or may not have some utility... somewhere.
-            </p>
-          </header>
-
-          <div class="mt-16 sm:mt-20">
-            <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-              {snippets.map((snippet) => (
-                <article
-                  class="group relative flex flex-col items-start rounded-2xl border border-zinc-100 p-6 dark:border-zinc-700/40"
-                >
-                  <div class="relative z-10 flex h-12 w-12 items-center justify-center rounded-xl bg-sky-50 shadow-lg shadow-sky-500/10 ring-1 ring-sky-500/20 dark:bg-sky-500/10 dark:ring-sky-400/20 transform transition-all duration-300 group-hover:scale-110 group-hover:shadow-sky-500/20">
-                    {snippet.icon && icons[snippet.icon] && (
-                      <i class={`${icons[snippet.icon]} text-2xl text-sky-500 dark:text-sky-400 transition-transform group-hover:scale-110`}></i>
-                    )}
-                  </div>
-                  <h2 class="mt-6 text-base font-semibold text-zinc-800 dark:text-zinc-100">
-                    <div class="absolute inset-0 z-0 scale-95 bg-zinc-50 opacity-0 transition group-hover:scale-100 group-hover:opacity-100 dark:bg-zinc-800/50 rounded-2xl"></div>
-                    <a href={`/snippets/${snippet.slug}`}>
-                      <span class="absolute inset-0 z-20 rounded-2xl"></span>
-                      <span class="relative z-10">{snippet.title}</span>
-                    </a>
-                  </h2>
-                  <p class="relative z-10 mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-                    {snippet.description}
-                  </p>
-                  <span class="absolute inset-x-1 -bottom-px h-px bg-gradient-to-r from-sky-500/0 via-sky-500/40 to-sky-500/0 dark:from-sky-400/0 dark:via-sky-400/40 dark:to-sky-400/0"></span>
-                  <span class="absolute inset-y-1 left-0 w-px bg-gradient-to-b from-sky-500/0 via-sky-500/40 to-sky-500/0 dark:from-sky-400/0 dark:via-sky-400/40 dark:to-sky-400/0"></span>
-                </article>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
+<Base
+  title="Snippets"
+  description="A collection of code snippets that may or may not have some utility... somewhere."
+  scene="snippets"
+>
+  <header class="page-head">
+    <div class="page-head__text">
+      <h1>Code snippets for developers</h1>
+      <p class="page-sub">A collection of code snippets that may or may not have some utility... somewhere.</p>
     </div>
-  </div>
-</Layout>
+    <canvas class="pen" data-scene="snippets" aria-hidden="true"></canvas>
+  </header>
+  <ol class="post-list">{snippets.map(({ entry, date }) => (
+    <li class="post-row">
+      {date && <time class="post-date" datetime={isoDate(date)}>{isoDate(date)}</time>}
+      <a class="post-title" href={`/snippets/${entry.id}`}>{entry.data.title}</a>
+      <p class="post-desc">{entry.data.description}</p>
+      {entry.data.type === 'interactive' && (
+        <span class="post-tags"><span class="tag">interactive</span></span>
+      )}
+    </li>
+  ))}</ol>
+</Base>
+<style>
+  /* r4/style.css 171, 204-218 */
+  .page-sub { margin: 8px 0 0; font: 13px/1.6 var(--mono); color: var(--muted); }
+  .post-list { list-style: none; margin: 0; padding: 0; }
+  .post-row { display: grid; grid-template-columns: 10ch 1fr; gap: 2px 16px; align-items: baseline; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .post-date { font: 12.5px/1.6 var(--mono); color: var(--accent-2); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .post-title { font-weight: 500; color: var(--text); text-decoration: none; }
+  .post-title:hover { color: var(--accent-text); }
+  .post-desc { grid-column: -2 / -1; margin: 0; color: var(--muted); font-size: 14.5px; line-height: 1.5; }
+  .post-tags { grid-column: -2 / -1; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
+  .tag { font: 11.5px var(--mono); color: var(--muted); }
+  .tag::before { content: "["; }
+  .tag::after { content: "]"; }
+
+  @media (max-width: 560px) {
+    .post-row { grid-template-columns: 1fr; gap: 2px; }
+    .post-desc, .post-tags { grid-column: 1; }
+  }
+</style>

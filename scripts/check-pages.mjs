@@ -13,6 +13,11 @@ const checks = [
   ['dist/blog/what-is-the-stack/index.html', ['/articles/what-is-the-stack']],
   ['dist/resume/index.html', ['Murphy Malcolm', 'Responsive Egg Flow', 'GPA 3.90', 'ITF+', '<details', 'rs-p-create-py-app', 'Download PDF']],
   ['dist/projects/index.html', ['resume']],
+  ['dist/resources/index.html', ['Conventional Commits', 'class="res__tile']],
+  ['dist/snippets/index.html', ['Divisible Cat', 'Premature Optimization Triangle']],
+  ['dist/snippets/premature-optimization/index.html', ['optimization_triangle']],
+  ['dist/deer/index.html', ['2008 Jeep Liberty']],
+  ['dist/404.html', ['404']],
 ];
 
 let failures = 0;

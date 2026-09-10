@@ -1,93 +1,42 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import { getAllSnippets, getSnippetContent, renderMarkdown } from '../../lib/content';
+/* Snippet page. Same head/prose shape as the article page
+   (docs/redesign-previews/r4/article.html); interactive snippets keep the wide
+   column so the WASM demo fits, markdown snippets read at prose width. */
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Prose from '../../components/Prose.astro';
 import OptimizationTriangle from '../../components/wasm/OptimizationTriangle.astro';
-import '../../styles/markdown.css';
+import { fmtDate, isoDate, parseHumanDate } from '../../lib/site';
 
 export async function getStaticPaths() {
-  const snippets = getAllSnippets();
-  return snippets.map((snippet) => ({
-    params: { slug: snippet.slug },
-    props: { snippetType: snippet.type, assetPath: snippet.assetPath },
-  }));
+  const snippets = await getCollection('snippets');
+  return snippets.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
 }
 
-const { slug } = Astro.params;
-const { snippetType, assetPath } = Astro.props;
-const snippetContent = getSnippetContent(slug!);
-
-if (!snippetContent) {
-  return Astro.redirect('/snippets');
-}
-
-const { frontmatter, content } = snippetContent;
-const htmlContent = await renderMarkdown(content);
-const isInteractive = snippetType === 'interactive';
+type Props = { entry: CollectionEntry<'snippets'> };
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const interactive = entry.data.type === 'interactive';
+const date = parseHumanDate(entry.data.date); // human string in frontmatter, parsed to UTC midnight
 ---
-
-<Layout title={frontmatter.title as string} description={frontmatter.description as string}>
-  <div class="sm:px-8 mt-14 sm:mt-18">
-    <div class="mx-auto max-w-7xl lg:px-8">
-      <div class="relative px-4 sm:px-8 lg:px-12">
-        <div class:list={[
-          "mx-auto",
-          isInteractive ? "max-w-5xl" : "max-w-2xl lg:max-w-5xl"
-        ]}>
-          <div class="xl:relative">
-            <div class:list={[
-              "mx-auto",
-              isInteractive ? "max-w-5xl" : "max-w-2xl"
-            ]}>
-              <a
-                href="/snippets"
-                aria-label="Go back to snippets"
-                class="group mb-8 flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-md shadow-zinc-800/5 ring-1 ring-zinc-900/5 transition dark:border dark:border-zinc-700/50 dark:bg-zinc-800 dark:ring-0 dark:ring-white/10 dark:hover:border-zinc-700 dark:hover:ring-white/20 lg:absolute lg:-left-5 lg:mb-0 lg:-mt-2 xl:-top-1.5 xl:left-0 xl:mt-0"
-              >
-                <svg
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  aria-hidden="true"
-                  class="h-4 w-4 stroke-zinc-500 transition group-hover:stroke-zinc-700 dark:stroke-zinc-500 dark:group-hover:stroke-zinc-400"
-                >
-                  <path
-                    d="M7.25 11.25 3.75 8m0 0 3.5-3.25M3.75 8h8.5"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-              </a>
-
-              <article>
-                <header class="flex flex-col">
-                  <h1 class="mt-6 text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-                    {frontmatter.title}
-                  </h1>
-                  {frontmatter.date && (
-                    <time
-                      datetime={frontmatter.date as string}
-                      class="order-first flex items-center text-base text-zinc-400 dark:text-zinc-500"
-                    >
-                      <span class="h-4 w-0.5 rounded-full bg-zinc-200 dark:bg-zinc-500" />
-                      <span class="ml-3">{frontmatter.date}</span>
-                    </time>
-                  )}
-                </header>
-
-                {isInteractive && slug === 'premature-optimization' && (
-                  <div class="mt-8">
-                    <OptimizationTriangle assetPath={assetPath} />
-                  </div>
-                )}
-
-                <div class="mt-8 prose dark:prose-invert markdown-content">
-                  <Fragment set:html={htmlContent} />
-                </div>
-              </article>
-            </div>
-          </div>
-        </div>
+<Base title={entry.data.title} description={entry.data.description} scene="snippets" article={!interactive}>
+  <article>
+    <header class="page-head">
+      <div class="page-head__text">
+        <a class="crumb" href="/snippets">&larr; All snippets</a>
+        <h1>{entry.data.title}</h1>
+        {date && <p class="page-sub"><time datetime={isoDate(date)}>{fmtDate(date)}</time></p>}
       </div>
-    </div>
-  </div>
-</Layout>
+      <canvas class="pen" data-scene="snippets" aria-hidden="true"></canvas>
+    </header>
+    {interactive && <OptimizationTriangle assetPath={entry.data.assetPath} />}
+    <div class="snippet-body"><Prose><Content /></Prose></div>
+  </article>
+</Base>
+<style>
+  /* r4/style.css 171, 176 */
+  .crumb { display: inline-block; margin-bottom: 14px; font: 13px var(--mono); color: var(--muted); text-decoration: none; }
+  .crumb:hover { color: var(--accent-text); }
+  .page-sub { margin: 8px 0 0; font: 13px/1.6 var(--mono); color: var(--muted); }
+  .snippet-body { max-width: var(--w-prose); min-width: 0; margin-top: 28px; }
+</style>

@@ -51,3 +51,19 @@ export async function courseCounts(): Promise<Record<string, number>> {
 
 export const fmtDate = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
 export const isoDate = (d: Date) => d.toISOString().slice(0, 10);
+
+/** Sidebar + /deer totals: counts summed per animal, cars counted distinct. */
+export async function deerCounts(): Promise<{ deer: number; raccoon: number; other: number; cars: number }> {
+  const entries = await getCollection('deer');
+  const sum = (animal: string) => entries.filter((e) => e.data.animal === animal).reduce((n, e) => n + e.data.count, 0);
+  return { deer: sum('deer'), raccoon: sum('raccoon'), other: sum('other'), cars: new Set(entries.map((e) => e.data.car)).size };
+}
+
+/** Frontmatter dates like "December 1, 2025" -> a UTC-midnight Date; undefined when missing/invalid.
+    `new Date(str)` parses as local midnight, so shift by the offset before isoDate reads the UTC day. */
+export function parseHumanDate(s?: string): Date | undefined {
+  if (!s) return undefined;
+  const d = new Date(s);
+  if (Number.isNaN(d.getTime())) return undefined;
+  return new Date(d.getTime() - d.getTimezoneOffset() * 60_000);
+}

@@ -6,11 +6,13 @@
 import Orb from './Orb.astro';
 import Settings from './Settings.astro';
 import { site } from '../site.config';
+import { deerCounts } from '../lib/site';
 
 interface Props {
   toc?: { depth: number; slug: string; text: string }[];
 }
 const { toc = [] } = Astro.props;
+const d = await deerCounts();
 
 const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
 const isCurrent = (href: string) => (href === '/' ? path === '/' : path === href || path.startsWith(href + '/'));
@@ -47,7 +49,7 @@ const icons: Record<string, string> = {
       <li><a href={s.href} aria-label={s.name} target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={icons[s.name]}/></svg></a></li>
     ))}</ul>
     <Settings />
-    <p class="side__deer">Tragedy &amp; Pain.<br /><span>7 deer &middot; 8 raccoons &middot; 3 cars</span></p>
+    <a class="side__deer" href="/deer" title="Tragedy &amp; Pain.">Tragedy &amp; Pain.<span class="side__deer-count">{d.deer} deer &middot; {d.raccoon} raccoons &middot; {d.cars} cars</span></a>
   </div>
 </aside>
 <style>
@@ -97,9 +99,10 @@ const icons: Record<string, string> = {
   .side__socials a:hover { color: var(--accent-text); background: var(--hover); }
   .side__socials svg { width: 17px; height: 17px; fill: currentColor; }
 
-  /* deer count line (counts become real in a later task) */
-  .side__deer { display: block; margin: 0; font: 12px/1.5 var(--mono); color: var(--muted); }
-  .side__deer span { display: block; color: var(--accent-text); }
+  /* deer count line — r4/style.css 153-155 */
+  .side__deer { display: block; font: 12px/1.5 var(--mono); color: var(--muted); text-decoration: none; }
+  .side__deer:hover { color: var(--text); }
+  .side__deer-count { display: block; color: var(--accent-text); }
 
   @media (max-width: 899px) {
     .side { position: sticky; top: 0; height: 56px; align-self: stretch; flex-direction: row; align-items: center; gap: 12px; padding: 0 16px; border-right: 0; border-bottom: 1px solid var(--line); overflow: visible; }
