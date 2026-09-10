@@ -1,68 +1,51 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import CategoryNav from '../../components/CategoryNav.astro';
-import BlogPagination from '../../components/BlogPagination';
-import { getAllPosts, getBlogStructure, getBlogStats } from '../../lib/content';
+/* Articles index. Markup ported from docs/redesign-previews/r4/articles.html,
+   CSS from r4/style.css (.stats) and r4/pages.css (.view-bar, .view, .view__btn,
+   .view__hint). The rows exist once, in #flat; scripts/articles.ts moves them into
+   #groups for the "by class" view. */
+import Base from '../../layouts/Base.astro';
+import PostRow from '../../components/PostRow.astro';
+import CourseGroups from '../../components/CourseGroups.astro';
+import { getPosts, getStats, courseCounts } from '../../lib/site';
 
-// Get blog structure (headers and categories)
-const headers = getBlogStructure();
-
-// Get blog stats
-const stats = getBlogStats();
-
-// Get all posts sorted by date
-const allArticles = getAllPosts()
-  .sort((a, b) => {
-    const dateCompare = new Date(b.date).getTime() - new Date(a.date).getTime();
-    if (dateCompare !== 0) return dateCompare;
-    return (b.order || 0) - (a.order || 0);
-  });
-
-// Calculate post counts per category
-const postCounts = allArticles.reduce((acc, article) => {
-  if (article.category) {
-    acc[article.category] = (acc[article.category] || 0) + 1;
-  }
-  return acc;
-}, {} as Record<string, number>);
+const posts = await getPosts();
+const stats = await getStats();
+const counts = await courseCounts();
 ---
-
-<Layout title="Article Archive" description={`Since ${stats.earliestYear} I've written ${stats.totalArticles.toLocaleString()} articles and ${stats.totalWords.toLocaleString()} words.`}>
-  <div class="sm:px-8 mt-14 sm:mt-18">
-    <div class="mx-auto max-w-7xl lg:px-8">
-      <div class="relative px-4 sm:px-8 lg:px-12">
-        <div class="mx-auto max-w-2xl lg:max-w-6xl">
-          <header class="max-w-full">
-            <h1 class="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-              Article Archive
-            </h1>
-            <p class="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-              Since {stats.earliestYear} I've written {stats.totalArticles.toLocaleString()} articles and {stats.totalWords.toLocaleString()} words. Please enjoy my strong opinions, feelings, and some of my study material here!
-            </p>
-          </header>
-
-          <!-- Two-column layout -->
-          <div class="mt-16 sm:mt-20 lg:flex lg:gap-12">
-            <!-- Recent posts (left column) -->
-            <div class="lg:flex-1 lg:min-w-0">
-              <h2 class="sr-only">Recent Posts</h2>
-              <BlogPagination client:load articles={allArticles} articlesPerPage={10} />
-            </div>
-
-            <!-- Category navigation (right column) -->
-            <aside class="hidden lg:block lg:w-64 lg:flex-shrink-0">
-              <div class="sticky top-8">
-                <CategoryNav headers={headers} postCounts={postCounts} />
-              </div>
-            </aside>
-          </div>
-
-          <!-- Mobile category nav -->
-          <div class="mt-12 lg:hidden">
-            <CategoryNav headers={headers} postCounts={postCounts} />
-          </div>
-        </div>
-      </div>
+<Base title="Articles" description={`Since ${stats.since} I've written ${stats.total} articles and ${stats.words.toLocaleString()} words.`} scene="articles" wide>
+  <header class="page-head">
+    <div class="page-head__text">
+      <h1>Articles</h1>
+      <p class="stats">Since {stats.since} I've written {stats.total} articles and {stats.words.toLocaleString()} words. Please enjoy my strong opinions, feelings, and some of my study material here!</p>
     </div>
+    <div class="page-head__scene"><canvas class="pen" data-scene="articles" aria-hidden="true"></canvas></div>
+  </header>
+  <div class="view-bar">
+    <div class="view" role="radiogroup" aria-label="Sort articles">
+      <button class="view__btn" type="button" role="radio" data-view="date" aria-checked="true">by date</button>
+      <button class="view__btn" type="button" role="radio" data-view="class" aria-checked="false">by class</button>
+    </div>
+    <span class="view__hint">{stats.total} articles</span>
   </div>
-</Layout>
+  <ol class="post-list is-flat" id="flat">{posts.map((p) => <PostRow post={p} chip />)}</ol>
+  <CourseGroups counts={counts} />
+</Base>
+<style>
+  /* r4/style.css 172 */
+  .stats { margin: 8px 0 0; max-width: 60ch; color: var(--muted); font-size: 15.5px; line-height: 1.5; }
+
+  /* r4/style.css 204 */
+  .post-list { list-style: none; margin: 0; padding: 0; }
+
+  /* r4/pages.css section 2 (aria-pressed -> aria-checked: the switch is a radiogroup) */
+  .view-bar { display: flex; align-items: center; gap: 14px; margin: -8px 0 28px; }
+  .view { display: inline-flex; padding: 2px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-2); }
+  .view__btn { padding: 4px 10px; border-radius: 2px; font: 12.5px/1.4 var(--mono); color: var(--muted); }
+  .view__btn:hover { color: var(--text); }
+  .view__btn[aria-checked="true"] { color: var(--text); background: color-mix(in srgb, var(--text) 10%, transparent); }
+  .view__hint { font: 12.5px var(--mono); color: var(--muted); }
+
+  @media (max-width: 560px) {
+    .view-bar { flex-wrap: wrap; }
+  }
+</style>

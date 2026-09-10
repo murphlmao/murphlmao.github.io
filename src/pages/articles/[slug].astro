@@ -1,12 +1,14 @@
 ---
-/* Article page. Markup and CSS ported from docs/redesign-previews/r4/article.html
-   and the .article / .article-meta / .article-nav rules of r4/style.css.
-   The /articles/<category> branch is filled in by Task 4. */
+/* Article page (/articles/<post>) and course page (/articles/<category>).
+   Markup and CSS ported from docs/redesign-previews/r4/article.html and
+   r4/eecs280.html, plus the .article / .article-meta / .article-nav / .crumb /
+   .page-sub rules of r4/style.css. */
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import Prose from '../../components/Prose.astro';
-import { getPosts, getPost, isoDate } from '../../lib/site';
-import { getAllCategorySlugs } from '../../lib/content';
+import PostRow from '../../components/PostRow.astro';
+import { getPosts, getPost, getCategoryPosts, isoDate } from '../../lib/site';
+import { getAllCategorySlugs, getCategoryBySlug } from '../../lib/content';
 
 export async function getStaticPaths() {
   const posts = await getPosts();
@@ -21,6 +23,9 @@ const post = kind === 'post' ? await getPost(slug!) : undefined;
 const rendered = post ? await render(post.entry) : null;
 const Content = rendered?.Content;
 const toc = rendered?.headings.filter((h) => h.depth >= 2 && h.depth <= 4) ?? [];
+
+const category = kind === 'category' ? getCategoryBySlug(slug!) : null;
+const list = category ? await getCategoryPosts(slug!) : [];
 ---
 {post && Content ? (
   <Base title={post.entry.data.title} description={post.entry.data.description} scene="article" article toc={toc}>
@@ -33,6 +38,22 @@ const toc = rendered?.headings.filter((h) => h.depth >= 2 && h.depth <= 4) ?? []
       <nav class="article-nav"><a class="back" href={`/articles/${post.categorySlug}`}>&larr; Back to {post.category.name}</a></nav>
     </article>
   </Base>
+) : category ? (
+  <Base title={`${category.name} - Articles`} description={category.description} scene="articles" wide>
+    <header class="page-head">
+      <div class="page-head__text">
+        <a class="crumb" href="/articles">&larr; All articles</a>
+        <h1>{category.name}</h1>
+        <p class="page-sub">{`${slug}/ · ${category.description} · ${list.length} ${list.length === 1 ? 'article' : 'articles'}, oldest first`}</p>
+      </div>
+      <div class="page-head__scene"><canvas class="pen" data-scene="articles" aria-hidden="true"></canvas></div>
+    </header>
+    {list.length ? (
+      <ol class="post-list is-ordered">{list.map((p, i) => <PostRow post={p} n={i + 1} />)}</ol>
+    ) : (
+      <p class="empty">No posts in this category yet.</p>
+    )}
+  </Base>
 ) : (
   <Base title={slug} scene="articles"><h1>{slug}</h1></Base>
 )}
@@ -42,6 +63,13 @@ const toc = rendered?.headings.filter((h) => h.depth >= 2 && h.depth <= 4) ?? []
   .article-meta { margin: 0 0 10px; font: 13px/1.6 var(--mono); color: var(--muted); }
   .page-head__text .article-meta a { color: var(--accent-2); text-decoration: none; }
   .article-meta a:hover { text-decoration: underline; }
+
+  /* course page — r4/style.css 171, 173-174, 204, 239 */
+  .page-sub { margin: 8px 0 0; font: 13px/1.6 var(--mono); color: var(--muted); }
+  .post-list { list-style: none; margin: 0; padding: 0; }
+  .empty { margin: 0; padding: 4px 0 16px; font: 13px var(--mono); color: var(--muted); }
+  .crumb { display: inline-block; margin-bottom: 14px; font: 13px var(--mono); color: var(--muted); text-decoration: none; }
+  .crumb:hover { color: var(--accent-text); }
 
   .article-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--line); font: 13px var(--mono); }
   .article-nav a { display: block; padding: 10px 12px; border: 1px solid var(--line); border-radius: 3px; color: var(--muted); text-decoration: none; }

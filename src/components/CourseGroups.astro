@@ -1,0 +1,90 @@
+---
+/* #groups — one section per content header, one .course per category.
+   Markup ported from docs/redesign-previews/r4/articles.html, CSS from
+   r4/style.css (the .group, .course and .empty rules, lines 221-239, 358-359, 378).
+
+   Index-only: the course lists ship EMPTY and the block ships hidden, because the rows
+   live once in #flat and scripts/articles.ts moves them in. The section id is the header
+   slug and each course id is the category slug, so /articles#<slug> jumps to either.
+   Course pages render their own flat .is-ordered list, not this block (R27). */
+import { getBlogStructure } from '../lib/content';
+
+interface Props {
+  counts: Record<string, number>;
+}
+const { counts } = Astro.props;
+
+// public/icons/umich-m.svg is inlined below so --mich can color it; any other header icon
+// is rendered as a plain image.
+const MICH_ICON = '/icons/umich-m.svg';
+const MICH_PATH = 'M396.89,370.68l-56.95-77.86v56.67h22.65v56H257.75v-56H279V262.42H257.75v-56h82.39l56.75,78.43,56.76-78.43H536v56H514.67v87.07H536v56H431.27v-56h22.57V292.82Z';
+
+const headers = getBlogStructure();
+---
+<div class="groups" id="groups" hidden>
+  {headers.map((header) => (
+    <section class:list={['group', { 'is-empty': !header.categories.length }]} id={header.slug}>
+      <div class="group-head">
+        {header.icon === MICH_ICON ? (
+          <svg class="group-icon mich-mark" viewBox="0 0 278.28 199" width="36" height="36" fill="currentColor" aria-hidden="true"><path d={MICH_PATH} transform="translate(-257.75 -206.46)" /></svg>
+        ) : header.icon && (
+          <img class="group-icon" src={header.icon} alt="" width="36" height="36" />
+        )}
+        <div>
+          <h2 class="group-name">{header.name}</h2>
+          <p class="group-desc">{header.description}</p>
+        </div>
+      </div>
+      <div class="group-body">
+        {!header.categories.length && <p class="empty">Nothing filed here yet.</p>}
+        {header.categories.map((category) => {
+          const count = counts[category.slug] ?? 0;
+          return (
+            <div class="course" id={category.slug}>
+              <div class="course-head">
+                {category.icon && <img class="course-icon" src={category.icon} alt="" width="44" height="44" />}
+                <p class="course-code"><a href={`/articles/${category.slug}`}>{category.name}</a></p>
+                <p class="course-name">{category.description}</p>
+                <p class="course-count">{count} {count === 1 ? 'article' : 'articles'}</p>
+              </div>
+              {count === 0 ? (
+                <p class="empty">No posts in this category yet.</p>
+              ) : (
+                <ol class="post-list" data-course={category.slug}></ol>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  ))}
+</div>
+<style>
+  /* r4/style.css 204, 221-239 */
+  .post-list { list-style: none; margin: 0; padding: 0; }
+  .group { margin: 0 0 56px; }
+  .group-head { position: relative; z-index: 1; display: flex; align-items: center; gap: 14px; width: fit-content; max-width: 100%; margin-bottom: -1px; padding: 12px 18px 12px 14px; background: var(--bg-2); border: 1px solid var(--line); border-bottom: 0; border-radius: var(--radius) var(--radius) 0 0; }
+  .group-icon { width: 36px; height: 36px; object-fit: contain; }
+  .group-name { margin: 0; font-size: 20px; line-height: 1.3; }
+  .group-desc { margin: 0; color: var(--muted); font-size: 14px; }
+  .group-body { border-top: 1px solid var(--line); }
+  .group.is-empty .group-body { padding: 16px 0 0; }
+  .course { display: grid; grid-template-columns: var(--w-rail) minmax(0, 1fr); gap: 0 32px; padding: 28px 0 8px; border-top: 1px solid var(--line); }
+  .course:first-child { border-top: 0; }
+  .course-head { position: sticky; top: 24px; align-self: start; display: grid; grid-template-columns: 44px 1fr; gap: 4px 12px; align-items: center; }
+  .course-icon { grid-row: span 2; width: 44px; height: 44px; border: 1px solid var(--line); border-radius: var(--radius); object-fit: cover; }
+  .course-code { margin: 0; font: 500 15px/1.2 var(--mono); }
+  .course-head .course-code a { color: var(--text); text-decoration: none; }
+  .course-head .course-code a:hover { color: var(--accent-text); }
+  .course-name { margin: 0; color: var(--muted); font-size: 13.5px; line-height: 1.35; }
+  .course-count { grid-column: 2; margin: 0; font: 12.5px/1.4 var(--mono); color: var(--accent-text); }
+  .empty { margin: 0; padding: 4px 0 16px; font: 13px var(--mono); color: var(--muted); }
+
+  @media (max-width: 899px) {
+    .course { grid-template-columns: 1fr; gap: 12px 0; }
+    .course-head { position: static; }
+  }
+  @media (max-width: 560px) {
+    .group-head { width: 100%; }
+  }
+</style>

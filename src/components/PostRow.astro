@@ -1,0 +1,64 @@
+---
+/* One article row. Markup ported from docs/redesign-previews/r4/articles.html,
+   CSS from r4/style.css (.post-* , lines 204-215, 366-368) and r4/pages.css
+   (.post-list.is-flat .post-row, .post-course, .groups .post-course).
+   data-course + data-id are what the by-date/by-class FLIP moves rows by. */
+import { isoDate, type Post } from '../lib/site';
+
+interface Props {
+  post: Post;
+  chip?: boolean;
+  /** 1-based position, rendered as r4's .post-n in an .is-ordered list (course pages). */
+  n?: number;
+}
+const { post, chip = false, n } = Astro.props;
+const iso = isoDate(post.date);
+---
+<li class="post-row" data-course={post.categorySlug} data-id={post.slug}>
+  {n != null && <span class="post-n">{String(n).padStart(2, '0')}</span>}
+  {chip && (
+    <span class="post-course">
+      {post.category.icon && <img src={post.category.icon} alt="" width="16" height="16" />}
+      {post.categorySlug}
+    </span>
+  )}
+  <time class="post-date" datetime={iso}>{iso}</time>
+  <a class="post-title" href={`/articles/${post.slug}`}>{post.entry.data.title}</a>
+  <p class="post-desc">{post.entry.data.description}</p>
+</li>
+<style>
+  /* r4/style.css 205-215 */
+  .post-row { display: grid; grid-template-columns: 10ch 1fr; gap: 2px 16px; align-items: baseline; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  :global(.post-list.is-ordered) .post-row { grid-template-columns: 3ch 10ch 1fr; }
+  .post-n { font: 12.5px var(--mono); color: var(--accent-text); }
+  .post-date { font: 12.5px/1.6 var(--mono); color: var(--accent-2); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .post-title { font-weight: 500; color: var(--text); text-decoration: none; }
+  .post-title:hover { color: var(--accent-text); }
+  .post-desc { grid-column: -2 / -1; margin: 0; color: var(--muted); font-size: 14.5px; line-height: 1.5; }
+  .post-tags { grid-column: -2 / -1; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
+
+  /* r4/style.css 237-238 — the list wrapper is rendered by CourseGroups. */
+  :global(.course) .post-row:first-child { padding-top: 0; }
+  :global(.course) .post-row:last-child { border-bottom: 0; }
+
+  /* r4/pages.css: by date the course chip sits in a margin column exactly as wide as the
+     course rail in grouped view, so date/title/description keep the same x and width in
+     both views and the FLIP is a pure translate. */
+  :global(.post-list.is-flat) .post-row { grid-template-columns: calc(var(--w-rail) + 16px) 10ch minmax(0, 1fr); }
+  :global(.post-list.is-flat) .post-row:first-child { padding-top: 0; }
+  .post-course { display: inline-flex; align-items: center; gap: 6px; min-width: 0; font: 12px/1.6 var(--mono); color: var(--muted); white-space: nowrap; }
+  .post-course img { width: 16px; height: 16px; border: 1px solid var(--line); border-radius: 2px; object-fit: cover; }
+  :global(.groups) .post-course { display: none; }  /* by class: the course head carries it */
+
+  @media (max-width: 899px) {
+    :global(.post-list.is-flat) .post-row { grid-template-columns: 10ch minmax(0, 1fr); }
+    .post-course { grid-column: -2 / -1; order: 1; margin-top: 2px; }
+  }
+  @media (max-width: 560px) {
+    .post-row, :global(.post-list.is-ordered) .post-row { grid-template-columns: 1fr; gap: 2px; }
+    :global(.post-list.is-flat) .post-row { grid-template-columns: 1fr; }
+    .post-desc, .post-tags { grid-column: 1; }
+    .post-course { grid-column: 1; }
+    .post-n { display: none; }
+  }
+</style>
