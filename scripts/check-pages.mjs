@@ -4,7 +4,7 @@ import { readFileSync, existsSync } from 'node:fs';
 
 /** [dist path, [substrings that must appear]] — tasks append rows. */
 const checks = [
-  ['dist/index.html', ['Murphy Malcolm']],
+  ['dist/index.html', ['Murphy Malcolm', 'class="side', 'id="tweaks"', 'id="orb"', 'id="critters"', 'id="footWalk"', 'id="sideCat"', 'data-palette="ember"']],
 ];
 
 let failures = 0;

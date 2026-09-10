@@ -1,0 +1,120 @@
+---
+import '@fontsource/ibm-plex-sans/400.css';
+import '@fontsource/ibm-plex-sans/500.css';
+import '@fontsource/ibm-plex-sans/600.css';
+import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/500.css';
+import '../styles/tokens.css';
+import '../styles/base.css';
+import Sidebar from '../components/Sidebar.astro';
+import Footer from '../components/Footer.astro';
+import { site, tweakDefaults } from '../site.config';
+
+interface Props {
+  title?: string; description?: string;
+  scene?: 'home' | 'articles' | 'article' | 'resume' | 'resources' | 'snippets' | 'deer' | 'none';
+  wide?: boolean; article?: boolean;
+  toc?: { depth: number; slug: string; text: string }[];
+}
+const {
+  title = site.name,
+  description = 'Software & platform engineer. CS student at the University of Michigan.',
+  scene = 'none', wide = false, article = false, toc = [],
+} = Astro.props;
+const fullTitle = title === site.name ? title : `${title} · ${site.domain}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+<!doctype html>
+<html lang="en" data-palette={tweakDefaults.palette} data-logo={tweakDefaults.logo} data-mich={tweakDefaults.mich} data-draw={tweakDefaults.draw}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link id="favicon" rel="icon" type="image/svg+xml" href="/logo-a.svg" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <script is:inline define:vars={{ defaults: tweakDefaults }}>
+      try {
+        var s = Object.assign({}, defaults, JSON.parse(localStorage.getItem('tweaks') || '{}'));
+        var d = document.documentElement.dataset;
+        d.palette = s.palette; d.logo = s.logo; d.mich = s.mich; d.draw = s.draw;
+        ['orb','bg','strands','motes','paws','walker','deer','raccoon'].forEach(function (k) { d[k] = s[k] ? 'on' : 'off'; });
+        document.documentElement.style.setProperty('--bg-opacity', String(s.bgOpacity / 100));
+        document.documentElement.style.setProperty('--bg-dim', String(s.bgDim / 100));
+      } catch (e) {}
+    </script>
+    <slot name="head" />
+  </head>
+  <body class:list={[{ 'is-article': article, 'is-wide': wide }]}>
+    <a class="skip" href="#main">Skip to content</a>
+    <canvas class="bg" id="bg" aria-hidden="true"></canvas>
+    <Sidebar toc={toc} />
+    <main id="main" class="page" data-scene={scene}>
+      <slot />
+    </main>
+    <Footer />
+    <audio id="chill" src="/chill_guy_man.mp3" preload="none"></audio>
+    <script src="../scripts/main.ts"></script>
+  </body>
+</html>
+<style is:global>
+  /* Layout-wide rules, ported from docs/redesign-previews/r4/style.css.
+     Palettes live in styles/tokens.css, the reset in styles/base.css; the rest
+     of r4's :root tokens and element rules are here. */
+  :root {
+    --hl: color-mix(in srgb, var(--accent) 55%, transparent);
+    --hover: color-mix(in srgb, var(--text) 6%, transparent);
+    --side-w: 272px; --gutter: 48px; --w-index: 1040px; --w-prose: 70ch; --w-rail: 200px; --radius: 4px;
+    --bg-opacity: .55; --bg-dim: .5; /* overwritten inline on <html> by the tweaks module */
+    color-scheme: dark;
+  }
+  .mich-mark { color: var(--mich); }
+
+  img { display: block; max-width: 100%; height: auto; }
+  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+  h1, h2, h3, h4 { margin: 0; line-height: 1.2; font-weight: 600; letter-spacing: -.01em; }
+  h1 { font-size: 30px; }
+  p { margin: 0 0 1em; }
+  .muted { color: var(--muted); }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .skip { position: absolute; left: 8px; top: -48px; z-index: 100; padding: 8px 12px; background: var(--accent); color: var(--bg); font: 500 13px var(--mono); text-decoration: none; border-radius: var(--radius); }
+  .skip:focus { top: 8px; }
+
+  /* background scene canvas (strands + motes + paws land here in a later task) */
+  .bg { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; opacity: var(--bg-opacity); }
+  body.is-article .bg { opacity: calc(var(--bg-opacity) * var(--bg-dim)); }
+
+  /* shell: sidebar column + content column, footer pinned to the bottom */
+  body { display: grid; grid-template-columns: var(--side-w) minmax(0, 1fr); grid-template-rows: 1fr auto; }
+  .side { grid-column: 1; grid-row: 1 / -1; }
+  .page, .foot { position: relative; z-index: 1; grid-column: 2; min-width: 0; max-width: calc(var(--w-index) + var(--gutter) * 2); }
+  .page { grid-row: 1; padding: 48px var(--gutter) 0; }
+  .foot { grid-row: 2; padding-left: var(--gutter); padding-right: var(--gutter); }
+  body.is-article .page, body.is-article .foot { max-width: calc(var(--w-prose) + var(--gutter) * 2); }
+  @media (min-width: 1280px) {
+    body.is-wide .page, body.is-wide .foot { max-width: calc(var(--w-index) + var(--w-rail) + 48px + var(--gutter) * 2); }
+  }
+
+  /* page head: title left, pen scene right */
+  .page-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px 32px; align-items: end; margin: 0 0 36px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+  .page-head__text { min-width: 0; }
+  .page-head__scene { justify-self: end; }
+  .pen { display: block; width: 220px; height: 160px; }
+  body.is-article .pen { width: 160px; height: 116px; }
+
+  @media (max-width: 1100px) { :root { --gutter: 32px; --w-rail: 160px; } }
+
+  @media (max-width: 899px) {
+    :root { --gutter: 16px; }
+    body { display: flex; flex-direction: column; }
+    .side { flex: none; }
+    .page { flex: 1; padding-top: 28px; }
+    body.is-locked { overflow: hidden; }
+    .page-head { gap: 12px 16px; margin-bottom: 28px; }
+    .pen, body.is-article .pen { width: 110px; height: 80px; }
+    h1 { font-size: 26px; }
+  }
+</style>
