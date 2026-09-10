@@ -28,10 +28,10 @@ const category = kind === 'category' ? getCategoryBySlug(slug!) : null;
 const list = category ? await getCategoryPosts(slug!) : [];
 ---
 {post && Content ? (
-  <Base title={post.entry.data.title} description={post.entry.data.description} scene="article" article toc={toc}>
+  <Base title={post.entry.data.title} description={post.entry.data.description || undefined} scene="article" article toc={toc}>
     <article class="article">
       <header class="page-head"><div class="page-head__text">
-        <p class="article-meta"><a href={`/articles/${post.categorySlug}`}>{post.categorySlug}/</a> &middot; <time datetime={isoDate(post.date)}>{isoDate(post.date)}</time> &middot; {post.words.toLocaleString()} words &middot; about {post.minutes} min read</p>
+        <p class="article-meta"><a href={`/articles/${post.categorySlug}`}>{post.categorySlug}/</a> &middot; <time datetime={isoDate(post.date)}>{isoDate(post.date)}</time> &middot; {post.words.toLocaleString('en-US')} words &middot; about {post.minutes} min read</p>
         <h1>{post.entry.data.title}</h1>
       </div>
       <canvas class="pen" data-scene="article" aria-hidden="true"></canvas></header>
@@ -64,12 +64,8 @@ const list = category ? await getCategoryPosts(slug!) : [];
   .page-head__text .article-meta a { color: var(--accent-2); text-decoration: none; }
   .article-meta a:hover { text-decoration: underline; }
 
-  /* course page — r4/style.css 171, 173-174, 204, 239 */
-  .page-sub { margin: 8px 0 0; font: 13px/1.6 var(--mono); color: var(--muted); }
-  .post-list { list-style: none; margin: 0; padding: 0; }
+  /* course page — r4/style.css 239 */
   .empty { margin: 0; padding: 4px 0 16px; font: 13px var(--mono); color: var(--muted); }
-  .crumb { display: inline-block; margin-bottom: 14px; font: 13px var(--mono); color: var(--muted); text-decoration: none; }
-  .crumb:hover { color: var(--accent-text); }
 
   .article-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--line); font: 13px var(--mono); }
   .article-nav a { display: block; padding: 10px 12px; border: 1px solid var(--line); border-radius: 3px; color: var(--muted); text-decoration: none; }

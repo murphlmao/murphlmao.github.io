@@ -12,11 +12,11 @@ const posts = await getPosts();
 const stats = await getStats();
 const counts = await courseCounts();
 ---
-<Base title="Articles" description={`Since ${stats.since} I've written ${stats.total} articles and ${stats.words.toLocaleString()} words.`} scene="articles" wide>
+<Base title="Articles" description={`Since ${stats.since} I've written ${stats.total} articles and ${stats.words.toLocaleString('en-US')} words.`} scene="articles" wide>
   <header class="page-head">
     <div class="page-head__text">
       <h1>Articles</h1>
-      <p class="stats">Since {stats.since} I've written {stats.total} articles and {stats.words.toLocaleString()} words. Please enjoy my strong opinions, feelings, and some of my study material here!</p>
+      <p class="stats">Since {stats.since} I've written {stats.total} articles and {stats.words.toLocaleString('en-US')} words. Please enjoy my strong opinions, feelings, and some of my study material here!</p>
     </div>
     <canvas class="pen" data-scene="articles" aria-hidden="true"></canvas>
   </header>
@@ -31,12 +31,6 @@ const counts = await courseCounts();
   <CourseGroups counts={counts} />
 </Base>
 <style>
-  /* r4/style.css 172 */
-  .stats { margin: 8px 0 0; max-width: 60ch; color: var(--muted); font-size: 15.5px; line-height: 1.5; }
-
-  /* r4/style.css 204 */
-  .post-list { list-style: none; margin: 0; padding: 0; }
-
   /* r4/pages.css section 2 (aria-pressed -> aria-checked: the switch is a radiogroup) */
   .view-bar { display: flex; align-items: center; gap: 14px; margin: -8px 0 28px; }
   .view { display: inline-flex; padding: 2px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-2); }

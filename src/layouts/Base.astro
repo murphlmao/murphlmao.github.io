@@ -32,7 +32,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <link id="favicon" rel="icon" type="image/svg+xml" href="/logo-a.svg" />
+    <link id="favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%20fill%3D%22%23E8546A%22%20fill-rule%3D%22evenodd%22%3E%3Cpath%20d%3D%22M4%203l8.6%205.6a12%2012%200%200%201%206.8%200L28%203v13c0%207.2-5.4%2013-12%2013S4%2023.2%204%2016zM9%2017.5a3%203.4%200%201%200%206%200%203%203.4%200%201%200-6%200zM17%2017.5a3%203.4%200%201%200%206%200%203%203.4%200%201%200-6%200z%22%2F%3E%3C%2Fsvg%3E" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
@@ -103,6 +103,15 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   .page-head__text { min-width: 0; }
   .pen { display: block; width: 220px; height: 160px; justify-self: end; }
   body.is-article .pen { width: 160px; height: 116px; }
+
+  /* shared page furniture, used by most pages (r4/style.css) */
+  .page-sub { margin: 8px 0 0; font: 13px/1.6 var(--mono); color: var(--muted); }
+  .stats { margin: 8px 0 0; max-width: 60ch; color: var(--muted); font-size: 15.5px; line-height: 1.5; }
+  .crumb { display: inline-block; margin-bottom: 14px; font: 13px var(--mono); color: var(--muted); text-decoration: none; }
+  .crumb:hover { color: var(--accent-text); }
+  .sec { margin: 44px 0 14px; padding-bottom: 8px; border-bottom: 1px solid var(--line); font: 500 13px/1 var(--mono); color: var(--muted); }
+  .sec::before { content: "## "; color: var(--accent-text); }
+  .post-list { list-style: none; margin: 0; padding: 0; }
 
   @media (max-width: 1100px) { :root { --gutter: 32px; --w-rail: 160px; } }
 

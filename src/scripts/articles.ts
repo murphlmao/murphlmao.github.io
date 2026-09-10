@@ -69,7 +69,7 @@ export function initArticles(): void {
   try { saved = localStorage.getItem('articlesView'); } catch { /* storage blocked: saved stays null */ }
 
   // A hash pointing at a group or a course forces the grouped view for this load only.
-  const hash = decodeURIComponent(location.hash.slice(1));
+  const hash = location.hash.slice(1);
   const target = hash ? document.getElementById(hash) : null;
   const jump = !!target && groups.contains(target);
   // ?view=class|date previews a view without a hash jump or a localStorage write.

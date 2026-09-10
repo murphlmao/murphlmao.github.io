@@ -65,11 +65,9 @@ const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
   ))}
 </Base>
 <style>
-  /* r4/style.css 171-172, 177-179 */
-  .page-sub { margin: 8px 0 0; font: 13px/1.6 var(--mono); color: var(--accent-text); }
-  .stats { margin: 8px 0 0; max-width: 60ch; color: var(--muted); font-size: 15.5px; line-height: 1.5; }
-  .sec { margin: 44px 0 14px; padding-bottom: 8px; border-bottom: 1px solid var(--line); font: 500 13px/1 var(--mono); color: var(--muted); }
-  .sec::before { content: "## "; color: var(--accent-text); }
+  /* the deer page tints its sub-line with the accent; the rest of .page-sub is global. */
+  .page-sub { color: var(--accent-text); }
+  /* r4/style.css 179 */
   .page-head + .car .sec { margin-top: 0; }
 
   .inc { max-width: var(--w-prose); padding: 0 0 28px; }

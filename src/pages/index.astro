@@ -67,7 +67,7 @@ const jobs = [...experience].sort((a, b) => endsAt(b) - endsAt(a)).slice(0, 2);
       <section class="rail__block">
         <h2 class="rail__label">writing</h2>
         <p class="rail__stat"><strong class="rail__num">{stats.total}</strong>articles</p>
-        <p class="rail__stat"><strong class="rail__num">{stats.words.toLocaleString()}</strong>words</p>
+        <p class="rail__stat"><strong class="rail__num">{stats.words.toLocaleString('en-US')}</strong>words</p>
         <p class="rail__stat"><strong class="rail__num">{stats.since}</strong>since</p>
       </section>
     </aside>
@@ -83,9 +83,7 @@ const jobs = [...experience].sort((a, b) => endsAt(b) - endsAt(a)).slice(0, 2);
      outranks it, so the swiped-in state has to be restated here. */
   @media (prefers-reduced-motion: reduce) { .hl { background-size: 100% .5em; } }
 
-  /* r4/style.css 177-180 */
-  .sec { margin: 44px 0 14px; padding-bottom: 8px; border-bottom: 1px solid var(--line); font: 500 13px/1 var(--mono); color: var(--muted); }
-  .sec::before { content: "## "; color: var(--accent-text); }
+  /* r4/style.css 179-182 */
   .page-head + .sec { margin-top: 0; }
   .more { margin: 14px 0 0; font: 13px var(--mono); }
   .more a { color: var(--muted); text-decoration: none; }
@@ -101,9 +99,6 @@ const jobs = [...experience].sort((a, b) => endsAt(b) - endsAt(a)).slice(0, 2);
   /* r4/style.css 184-185, the .bio share of the shared link rule */
   .bio a { color: var(--text); text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: .18em; }
   .bio a:hover { color: var(--accent-text); }
-
-  /* r4/style.css 204 */
-  .post-list { list-style: none; margin: 0; padding: 0; }
 
   /* r4's home rows showed the course as a .post-tags chip under the description; ours use
      PostRow's `chip` (.post-course), so the row needs a third, content-sized column for it.
