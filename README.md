@@ -7,7 +7,7 @@ TypeScript modules in `src/scripts/`.
 
 ## Dev
 
-Uses **pnpm 10** (CI installs it with `pnpm/action-setup`).
+Uses **pnpm 12** (CI installs it with `pnpm/action-setup`).
 
 ```bash
 pnpm install

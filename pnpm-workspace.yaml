@@ -1,0 +1,4 @@
+# Build scripts denied on purpose: both packages ship prebuilt platform binaries and worked without them.
+allowBuilds:
+  esbuild: false
+  sharp: false
