@@ -82,6 +82,14 @@ const { assetPath = '/snippets/premature-optimization' } = Astro.props;
 <style>
   .optimization-triangle {
     width: 100%;
+    /* ponytail: fixed estimate of the loaded layout's height (canvas + sidebar
+       stacked below 900px, side-by-side above), so swapping #ot-loading for
+       #ot-container doesn't shift the rest of the page (CLS). Bump these if
+       the container's content grows. */
+    min-height: 620px;
+  }
+  @media (min-width: 900px) {
+    .optimization-triangle { min-height: 460px; }
   }
 
   .loading, .error {
@@ -251,7 +259,7 @@ const { assetPath = '/snippets/premature-optimization' } = Astro.props;
     text-align: center;
     font-style: italic;
     font-size: 0.875rem;
-    color: var(--color-text-muted, #71717a);
+    color: var(--muted);
     margin-top: 1rem;
   }
 </style>

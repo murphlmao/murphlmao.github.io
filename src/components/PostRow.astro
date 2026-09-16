@@ -18,7 +18,7 @@ const iso = isoDate(post.date);
   {n != null && <span class="post-n">{String(n).padStart(2, '0')}</span>}
   {chip && (
     <span class="post-course">
-      {post.category.icon && <img src={post.category.icon} alt="" width="16" height="16" />}
+      {post.category.icon && <img src={post.category.icon} alt="" width="16" height="16" loading="lazy" decoding="async" />}
       {post.categorySlug}
     </span>
   )}

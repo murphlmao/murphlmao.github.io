@@ -56,7 +56,7 @@ const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
           <Prose><Content /></Prose>
           {entry.data.images.length > 0 && (
             <div class="inc__shots">{entry.data.images.map((src) => (
-              <img src={src} alt={`${entry.data.title} — damage photo`} width="280" height="210" loading="lazy" />
+              <img src={src} alt={`${entry.data.title} — damage photo`} width="280" height="210" loading="lazy" decoding="async" />
             ))}</div>
           )}
         </article>

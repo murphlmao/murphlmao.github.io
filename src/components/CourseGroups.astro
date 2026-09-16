@@ -28,7 +28,7 @@ const headers = getBlogStructure();
         {header.icon === MICH_ICON ? (
           <svg class="group-icon mich-mark" viewBox="0 0 278.28 199" width="36" height="36" fill="currentColor" aria-hidden="true"><path d={MICH_PATH} transform="translate(-257.75 -206.46)" /></svg>
         ) : header.icon && (
-          <img class="group-icon" src={header.icon} alt="" width="36" height="36" />
+          <img class="group-icon" src={header.icon} alt="" width="36" height="36" loading="lazy" decoding="async" />
         )}
         <div>
           <h2 class="group-name">{header.name}</h2>
@@ -42,7 +42,7 @@ const headers = getBlogStructure();
           return (
             <div class="course" id={category.slug}>
               <div class="course-head">
-                {category.icon && <img class="course-icon" src={category.icon} alt="" width="44" height="44" />}
+                {category.icon && <img class="course-icon" src={category.icon} alt="" width="44" height="44" loading="lazy" decoding="async" />}
                 <p class="course-code"><a href={`/articles/${category.slug}`}>{category.name}</a></p>
                 <p class="course-name">{category.description}</p>
                 <p class="course-count">{count} {count === 1 ? 'article' : 'articles'}</p>

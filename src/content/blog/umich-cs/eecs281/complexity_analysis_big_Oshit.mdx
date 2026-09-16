@@ -62,7 +62,7 @@ bool duplicate_simple(std::vector<int> vec) {
 // time: ~0.0006 seconds for 10,000 items
 ```
 
-#### How does an unordered_set work tho?
+### How does an unordered_set work tho?
 
 Hash Sets (unordered_set) uses a hash table. When you insert a number, it runs it through a hash function that converts it to an index (like `hash(42) = 7`). It stores the number at that index in an internal array. When you check `if (seen.count(num))`, it hashes num again, jumps directly to that index, and checks if it's there.
 
@@ -77,7 +77,7 @@ bool duplicate_cast(vector<int>& nums) {
 
 This method also runs in O(n) time, but is just cleaner code. It's not necessarily better for space, since you're still using extra space for the set, but it's a nice one-liner.
 
-#### Time vs. Space: The Eternal Tradeoff
+### Time vs. Space: The Eternal Tradeoff
 
 Notice what we did here: our shitty nested loop solution used **O(1) space** (just two integer cursors, no matter how big the input), but **O(n²) time**. The hash set solution uses **O(n) space** (storing up to n elements) but only **O(n) time**. We traded memory for speed. This tradeoff shows up *constantly* in algorithm design - faster solutions often need more memory, and memory-efficient solutions are often slower. When someone asks about complexity, make sure you know if they mean time or space.
 
@@ -91,10 +91,10 @@ An algorithm is a set of instructions. That's it. There is literally nothing els
 
 If you've ever been in a college level computer science classroom before, or just tried to Google "What does `O(log(n(myparentsneverlovedme)^2*sqrt(15))` mean," one of the first pains you'll suffer will be some dumbass graph like this:
 
-<BigOGraph client:load />
+<BigOGraph client:visible />
 
 {/* You can customize which functions to show: */}
-{/* <BigOGraph client:load functions={['O(1)', 'O(n)', 'O(n²)']} maxN={15} /> */}
+{/* <BigOGraph client:visible functions={['O(1)', 'O(n)', 'O(n²)']} maxN={15} /> */}
 
 If you also suck at math, this means very little to you. When I first saw this graph, this is the relationship I was able to identify: Based on the number of items going into something (indicated by the variable `n`), the number of operations will increase based on that amount.
 
