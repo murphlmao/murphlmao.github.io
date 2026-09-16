@@ -24,6 +24,11 @@ a { color: inherit; }
 .side__icon { display: inline-flex; width: 30px; height: 30px; align-items: center; justify-content: center; color: var(--muted); border-radius: var(--radius); text-decoration: none; }
 .side__icon:hover, .side__icon:focus-visible { color: var(--accent-text); background: var(--hover); }
 
+/* mobile sheet + icon row: 40px tap targets instead of the 30px mouse-sized box */
+@media (max-width: 899px) {
+  .side__icon { width: 40px; height: 40px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }

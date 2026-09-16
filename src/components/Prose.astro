@@ -17,7 +17,9 @@
   .prose h2::before { content: "##"; font-size: .571em; }
   .prose h3::before { content: "###"; font-size: .714em; }
   .prose h4::before { content: "####"; font-size: .8em; }
-  .prose code { font: .88em var(--mono); background: color-mix(in srgb, var(--text) 8%, transparent); padding: .1em .35em; border-radius: 2px; }
+  /* long unbroken inline code (e.g. a one-word O(...) expression) breaks instead
+     of running off the edge of narrow viewports. */
+  .prose code { font: .88em var(--mono); background: color-mix(in srgb, var(--text) 8%, transparent); padding: .1em .35em; border-radius: 2px; overflow-wrap: break-word; }
   .prose pre code { font: inherit; background: none; padding: 0; }
   .prose strong { font-weight: 600; }
   .prose em { font-style: italic; }
@@ -27,7 +29,11 @@
   .prose a:hover { color: var(--accent-text); }
   .prose img { max-width: 100%; height: auto; }
   .prose hr { margin: 32px 0; border: 0; border-top: 1px solid var(--line); }
-  .prose table { width: 100%; margin: 0 0 1.2em; border-collapse: collapse; font-size: .88em; }
+  /* tables are wrapped in .table-scroll by rehype-code-wrapper.ts so a wide table
+     (e.g. the binary/hex reference tables) scrolls in its own box instead of
+     widening the page on narrow viewports. */
+  .table-scroll { margin: 0 0 1.2em; overflow-x: auto; }
+  .prose table { width: 100%; margin: 0; border-collapse: collapse; font-size: .88em; }
   .prose th, .prose td { padding: 6px 10px; border: 1px solid var(--line); text-align: left; }
   .prose th { font: 500 .87em var(--mono); color: var(--accent-2); }
 
@@ -36,7 +42,13 @@
      through the --astro-code-* variables in styles/tokens.css. */
   .code-block-wrapper { position: relative; margin: 24px 0; border: 1px solid var(--line); border-radius: 3px; background: var(--bg-2); overflow: hidden; }
   .code-block-lang { display: block; padding: 5px 12px; border-bottom: 1px solid var(--line); font: .7em var(--mono); color: var(--accent-2); }
-  .code-block-wrapper pre { margin: 0; padding: 14px 16px; overflow: auto; font: .85em/1.6 var(--mono); tab-size: 2; }
+  /* astro's shiki `wrap: true` sets white-space: pre-wrap inline; on lines padded
+     with long runs of spaces (comment-aligned code), browsers let the trailing
+     spaces "hang" past the wrap point, which quietly widens the whole page on
+     narrow viewports. break-spaces keeps the same soft-wrap but makes trailing
+     spaces take up real (contained) space instead of hanging. !important beats
+     the inline style. */
+  .code-block-wrapper pre { margin: 0; padding: 14px 16px; overflow: auto; font: .85em/1.6 var(--mono); tab-size: 2; white-space: break-spaces !important; }
   .code-copy { position: absolute; top: 4px; right: 8px; padding: 2px 8px; border: 1px solid transparent; border-radius: 2px; font: .7em var(--mono); color: var(--muted); opacity: 0; transition: opacity .15s; }
   .code-block-wrapper:hover .code-copy, .code-copy:focus-visible { opacity: 1; }
   .code-copy:hover { color: var(--text); border-color: var(--line); }

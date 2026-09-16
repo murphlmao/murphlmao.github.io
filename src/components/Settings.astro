@@ -46,5 +46,8 @@ import { palettes, logos, showTweaks } from '../site.config';
   .settings { position: relative; }
   .settings__gear svg { width: 17px; height: 17px; }
   .tweak:popover-open { display: grid; gap: 5px; position: fixed; inset: auto auto 16px 16px; margin: 0; width: 248px; max-height: calc(100vh - 32px); overflow: auto; background: var(--bg-2); border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
-  @media (max-width: 899px) { .tweak:popover-open { inset: 56px 16px auto auto; } }
+  /* below the top bar, top is pinned to 56px instead of bottom to 16px, so the
+     max-height inherited from the rule above (100vh - 32px) would run past the
+     bottom of short viewports; recompute it from the actual top offset. */
+  @media (max-width: 899px) { .tweak:popover-open { inset: 56px 16px auto auto; max-height: calc(100vh - 56px - 16px); } }
 </style>

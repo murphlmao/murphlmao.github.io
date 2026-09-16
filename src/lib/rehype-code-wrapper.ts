@@ -49,6 +49,21 @@ const languageNames: Record<string, string> = {
 export function rehypeCodeWrapper() {
   return (tree: Root) => {
     visit(tree, 'element', (node: Element, index, parent) => {
+      // Wide tables (e.g. the binary/hex reference tables) get the same
+      // treatment as code blocks: scroll horizontally in their own box
+      // instead of widening the page on narrow viewports.
+      if (node.tagName === 'table') {
+        const wrapper: Element = {
+          type: 'element',
+          tagName: 'div',
+          properties: { className: ['table-scroll'] },
+          children: [node],
+        };
+        if (parent && typeof index === 'number') {
+          (parent.children as Element[])[index] = wrapper;
+        }
+        return;
+      }
       // Look for any pre element that might contain code
       if (node.tagName === 'pre') {
         // Extract language from data-language attribute or try other sources

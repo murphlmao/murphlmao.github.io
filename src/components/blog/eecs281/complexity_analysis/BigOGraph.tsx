@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   LineChart,
   Line,
@@ -46,24 +46,7 @@ export default function BigOGraph({
   maxN = 20,
   height = 300,
 }: BigOGraphProps) {
-  const [isDark, setIsDark] = useState(false);
   const [hidden, setHidden] = useState<Set<ComplexityType>>(new Set());
-
-  useEffect(() => {
-    const checkDark = () => {
-      setIsDark(document.documentElement.classList.contains('dark'));
-    };
-
-    checkDark();
-
-    const observer = new MutationObserver(checkDark);
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class'],
-    });
-
-    return () => observer.disconnect();
-  }, []);
 
   const toggleLine = (fn: ComplexityType) => {
     setHidden((prev) => {
@@ -89,10 +72,12 @@ export default function BigOGraph({
     data.push(point);
   }
 
-  const axisColor = isDark ? '#71717a' : '#a1a1aa';
-  const gridColor = isDark ? '#27272a' : '#e4e4e7';
-  const bgColor = isDark ? '#18181b' : '#ffffff';
-  const textColor = isDark ? '#fafafa' : '#18181b';
+  // The site is dark-only (no `.dark` class ever gets toggled), so this always
+  // rendered its light-mode branch — a white card on an all-dark page.
+  const axisColor = '#71717a';
+  const gridColor = '#27272a';
+  const bgColor = '#18181b';
+  const textColor = '#fafafa';
 
   return (
     <div

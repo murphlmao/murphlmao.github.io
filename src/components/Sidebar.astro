@@ -105,11 +105,15 @@ const icons: Record<string, string> = {
     .side__brand { flex: 1; min-width: 0; gap: 10px; }
     .side__domain { font-size: 17px; }
     .side__rule { order: 1; position: static; height: auto; margin: 0; background: none; }
-    .side__menu { order: 2; display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border: 1px solid var(--line); border-radius: var(--radius); font: 500 13px var(--mono); color: var(--text); }
+    .side__menu { order: 2; display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 6px 10px; border: 1px solid var(--line); border-radius: var(--radius); font: 500 13px var(--mono); color: var(--text); }
     .side__menu svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
     .side__menu[aria-expanded="true"] { border-color: var(--accent); color: var(--accent-text); }
     .side__panel { display: none; position: fixed; left: 0; right: 0; top: 56px; bottom: 0; z-index: 3; flex-direction: column; gap: 20px; padding: 20px 16px 40px; background: var(--bg-2); overflow-y: auto; }
     .side.is-open .side__panel { display: flex; }
     .side__spacer { display: none; }
+    /* tap target: the sheet's nav rows need to clear 40px tall (the icon row's
+       shared .side__icon box gets the same treatment in styles/base.css, since
+       Settings.astro's gear button shares that class from outside this scope) */
+    .side__nav a { padding-top: 9px; padding-bottom: 9px; }
   }
 </style>
