@@ -2,14 +2,16 @@
    (initOrb, lines 128-240). Reads its colors from the palette CSS variables,
    re-reads them on `tweakchange`, allocates nothing per frame, pauses when the
    tab is hidden, and draws a single static frame under reduced motion. */
-const reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+import { capDPR, prefersReducedMotion } from './util';
+
+const reduce = prefersReducedMotion();
 
 export function initOrb(): void {
   const canvas = document.querySelector<HTMLCanvasElement>('canvas.orb');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const dpr = capDPR();
   canvas.width = 40 * dpr; canvas.height = 40 * dpr;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
@@ -17,7 +19,7 @@ export function initOrb(): void {
   function hexA(hex: string, a: number): string {
     let h = (hex || '#888888').replace('#', '');
     if (h.length === 3) h = h.split('').map((c) => c + c).join('');
-    const r = parseInt(h.substr(0, 2), 16) || 0, g = parseInt(h.substr(2, 2), 16) || 0, b = parseInt(h.substr(4, 2), 16) || 0;
+    const r = parseInt(h.substring(0, 2), 16) || 0, g = parseInt(h.substring(2, 4), 16) || 0, b = parseInt(h.substring(4, 6), 16) || 0;
     return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
   }
   function readColors(): void {

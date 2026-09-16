@@ -124,7 +124,7 @@ export default function BigOGraph({
               fontSize: '0.875rem',
             }}
             labelStyle={{ color: textColor, fontWeight: 500 }}
-            formatter={(value: number) => value.toFixed(2)}
+            formatter={(value) => Number(value).toFixed(2)}
           />
           {functions.map((fn) => (
             <Line

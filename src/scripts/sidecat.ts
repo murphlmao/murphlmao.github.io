@@ -16,11 +16,13 @@
    Contract: click (or Enter/Space) toggles the #chill audio — opt-in, never
    autoplay; the cat acknowledges with an ear perk and a faint accent glow
    while playing. Hovering `.side__deer` makes him listen that way. */
+import { prefersReducedMotion } from './util';
+
 export function initSidecat(): void {
 
   var TAU = Math.PI * 2;
   var NEAR = 200;                       // px: pointer proximity that wakes him
-  var reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var reduce = prefersReducedMotion();
 
   /* ---------------------------------------------------------------- styles */
   var CSS =

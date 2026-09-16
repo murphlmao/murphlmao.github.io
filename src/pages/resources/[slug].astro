@@ -10,7 +10,7 @@ import OptimizationTriangle from '../../components/wasm/OptimizationTriangle.ast
 import { fmtDate, isoDate, parseHumanDate } from '../../lib/site';
 
 export async function getStaticPaths() {
-  const snippets = await getCollection('snippets');
+  const snippets: CollectionEntry<'snippets'>[] = await getCollection('snippets');
   return snippets.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
 }
 

@@ -7,13 +7,15 @@
    - the hash jump accepts any id inside #groups instead of r4's /^(umich|off-syllabus|eecs\d{3})$/,
      so header and course slugs work without editing this file. */
 
+import { prefersReducedMotion } from './util';
+
 export function initArticles(): void {
   const flat = document.getElementById('flat');
   const groups = document.getElementById('groups');
   if (!flat || !groups) return;
 
   const btns = Array.from(document.querySelectorAll<HTMLButtonElement>('.view__btn'));
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reduce = prefersReducedMotion();
 
   const key = (row: Element) => row.querySelector('time')?.getAttribute('datetime') ?? '';
 

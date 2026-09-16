@@ -14,14 +14,18 @@ pnpm install
 pnpm dev        # dev server on http://localhost:3000
 pnpm build      # static build into dist/
 pnpm preview    # serve dist/ on http://localhost:3000
-pnpm check      # build, then assert built pages contain expected markers
+pnpm typecheck  # astro check (types across .astro/.ts/.tsx)
+pnpm check      # typecheck, then build, then assert built pages/links are correct
 pnpm lint       # eslint (flat config: js + typescript-eslint + astro)
 ```
 
-`pnpm check` is the one to run before pushing: it is `astro build && node
-scripts/check-pages.mjs`, and that script asserts real strings appear in the built HTML.
-When you add a page worth guarding, append a row to the `checks` table in
-`scripts/check-pages.mjs`.
+`pnpm check` is the one to run before pushing: it is `astro check && astro build && node
+scripts/check-pages.mjs && node scripts/check-links.mjs`. `check-pages.mjs` asserts real
+strings appear in the built HTML; when you add a page worth guarding, append a row to its
+`checks` table. `check-links.mjs` crawls the built HTML for broken internal links.
+
+Ad-hoc debug builds (e.g. `astro build --outDir .check/...` to diff output against a
+previous build) can write into `.check/`; it is gitignored and excluded from lint.
 
 ## Where content lives
 

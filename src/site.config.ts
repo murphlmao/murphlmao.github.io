@@ -1,7 +1,7 @@
-export type Palette = 'ember' | 'alley' | 'space';
-export type Logo = 'orb' | 'mark-a' | 'mark-b' | 'mark-c';
-export type Draw = 'pen' | 'laser';
-export type Mich = 'maize' | 'accent' | 'muted';
+type Palette = 'ember' | 'alley' | 'space';
+type Logo = 'orb' | 'mark-a' | 'mark-b' | 'mark-c';
+type Draw = 'pen' | 'laser';
+type Mich = 'maize' | 'accent' | 'muted';
 
 export interface Tweaks {
   palette: Palette;

@@ -56,7 +56,7 @@ export const isoDate = (d: Date) => d.toISOString().slice(0, 10);
 
 /** Sidebar + /deer totals: counts summed per animal, cars counted distinct. */
 export async function deerCounts(): Promise<{ deer: number; raccoon: number; other: number; cars: number }> {
-  const entries = await getCollection('deer');
+  const entries: CollectionEntry<'deer'>[] = await getCollection('deer');
   const sum = (animal: string) => entries.filter((e) => e.data.animal === animal).reduce((n, e) => n + e.data.count, 0);
   return { deer: sum('deer'), raccoon: sum('raccoon'), other: sum('other'), cars: new Set(entries.map((e) => e.data.car)).size };
 }

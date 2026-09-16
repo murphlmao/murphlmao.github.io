@@ -14,7 +14,9 @@
    colors (`still()`); only `draw` (pen/laser mode) re-traces, since that is the only
    way to preview the mode. */
 
-const reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+import { capDPR, prefersReducedMotion } from './util';
+
+const reduce = prefersReducedMotion();
 
 const CAT: any[] = [
   { d: 'M158 100L154 82L165 90Q170 88 175 90L186 82L182 100Q188 110 178 117Q170 120 162 117Q152 110 158 100Z' },
@@ -27,7 +29,7 @@ const CAT: any[] = [
 const CAT_SMALL_HEAD = { d: CAT[0].d, x: 100, y: 20, s: .6 };
 const CAT_SMALL_EYES = { d: CAT[3].d, x: 100, y: 20, s: .6 };
 const CAT_SMALL_NOSE = { d: CAT[4].d, x: 100, y: 20, s: .6 };
-const CAT_OFFSET = CAT.map(function (s) { return { d: s.d, x: -70 }; });
+const CAT_OFFSET = CAT.map(function (s): any { return { d: s.d, x: -70 }; });
 const BLOCK_M = { d: 'M139.14 164.22l-56.95 -77.86v56.67h22.65v56H0v-56H21.25V55.96H0v-56h82.39l56.75 78.43 56.76 -78.43H278.25v56H256.92v87.07H278.25v56H173.52v-56h22.57V86.36Z', x: 4, y: 50, s: .5, c: 'mich' };
 
 const SCENES: Record<string, any[]> = {
@@ -139,7 +141,7 @@ export function makePen(canvas: HTMLCanvasElement, manual?: boolean): any {
     const cw = canvas.clientWidth || 1, ch = canvas.clientHeight || 1;
     const k = cw / 220;
     box = { bx: 4 * k, by: -30 * k, k: k };
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = capDPR();
     canvas.width = Math.round(cw * dpr);
     canvas.height = Math.round(ch * dpr);
   }
@@ -148,7 +150,7 @@ export function makePen(canvas: HTMLCanvasElement, manual?: boolean): any {
 
   /* e: trace-time ms (pen: eased, laser: linear). g: laser completion glow 0..1. */
   function render(laser: boolean, e: number, g: number) {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = capDPR();
     ctx.save();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.scale(dpr, dpr);

@@ -25,9 +25,11 @@
      - positions() returns a preallocated array for walker.js to glance at
      - renderAt(g, kind, state, t, x, groundY, dir) is a deterministic pose
        renderer used only by _animals-debug.html */
+import { capDPR, prefersReducedMotion } from './util';
+
 export function initCritters(): void {
 
-  var reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var reduce = prefersReducedMotion();
 
   /* ---------------- math ---------------- */
   var PI = Math.PI, TAU = PI * 2;
@@ -445,7 +447,7 @@ export function initCritters(): void {
     function resize() {
       var r = measure();
       W = r.width; H = r.height || 56; GY = H - 4;
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      dpr = capDPR();
       canvas.width = Math.max(1, Math.round(W * dpr));
       canvas.height = Math.max(1, Math.round(H * dpr));
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);

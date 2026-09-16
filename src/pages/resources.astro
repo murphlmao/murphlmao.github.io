@@ -6,7 +6,7 @@
    Snippets (formerly /snippets) are folded in as the first section; that row
    markup/CSS (.post-list, .post-row, ...) is ported from the old snippets index. */
 import Base from '../layouts/Base.astro';
-import { getCollection } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 import { resources } from '../content/resources/data';
 import { isoDate, parseHumanDate } from '../lib/site';
 
@@ -19,7 +19,8 @@ const hue = (host: string) => {
 /* frontmatter dates are human strings ("December 1, 2025"), so parse them to UTC
    midnight — otherwise isoDate reads the UTC day off a local-midnight instant and
    a build host east of UTC renders the previous day. */
-const snippets = (await getCollection('snippets'))
+const snippetEntries: CollectionEntry<'snippets'>[] = await getCollection('snippets');
+const snippets = snippetEntries
   .map((entry) => ({ entry, date: parseHumanDate(entry.data.date) }))
   .sort((a, b) => (b.date?.getTime() ?? 0) - (a.date?.getTime() ?? 0));
 ---

@@ -16,9 +16,11 @@
      - window.Walker.position() -> {x, dir, visible} in strip pixels
      - window.Walker.renderAt(ctx, state, t, x, groundY, dir) is a deterministic
        pose renderer for _animals-debug.html (frame() kept as a thin alias) */
+import { capDPR, prefersReducedMotion } from './util';
+
 export function initWalker(): void {
 
-  var reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var reduce = prefersReducedMotion();
   var PI = Math.PI, TAU = PI * 2, sin = Math.sin, cos = Math.cos, sqrt = Math.sqrt, abs = Math.abs;
   function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
   function lerp(a, b, t) { return a + (b - a) * t; }
@@ -236,7 +238,7 @@ export function initWalker(): void {
     function resize() {
       var r = measure();
       W = r.width; H = r.height || 56; GY = H - 4;
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      dpr = capDPR();
       canvas.width = Math.max(1, Math.round(W * dpr));
       canvas.height = Math.max(1, Math.round(H * dpr));
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);

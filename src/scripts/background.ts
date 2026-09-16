@@ -11,7 +11,9 @@
    Reads its colors from the palette CSS variables, re-reads them on
    `tweakchange`, allocates nothing per frame, pauses when the tab is hidden,
    and draws a single static frame under reduced motion. */
-const reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+import { capDPR, prefersReducedMotion } from './util';
+
+const reduce = prefersReducedMotion();
 
 export function initScene(): void {
   const canvas = document.querySelector('#bg');
@@ -70,7 +72,7 @@ export function initScene(): void {
 
   function resize() {
     w = window.innerWidth; h = window.innerHeight;
-    dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    dpr = capDPR(1.5);
     canvas.width = w * dpr; canvas.height = h * dpr;
     canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
