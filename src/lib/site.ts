@@ -1,5 +1,6 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { getBlogStructure, type Category, type Header } from './content';
+import { isHiddenArticle } from '../content/publish';
 
 export interface Post {
   entry: CollectionEntry<'blog'>; slug: string; headerSlug: string; categorySlug: string;
@@ -21,6 +22,7 @@ export async function getPosts(): Promise<Post[]> {
     const header = structure.find((h) => h.slug === headerSlug);
     const category = header?.categories.find((c) => c.slug === categorySlug);
     if (!header || !category || rest.length !== 1) continue; // files outside header/category folders are ignored
+    if (isHiddenArticle(rest[0])) continue; // blacklisted in src/content/publish.ts
     const words = countWords(entry.body);
     posts.push({ entry, slug: rest[0], headerSlug, categorySlug, category, header, date: entry.data.date, words, minutes: Math.max(1, Math.round(words / 220)) });
   }

@@ -7,6 +7,8 @@ export default [
   {
     ignores: [
       'dist/**',
+      // page check output (scripts/check-pages.mjs, ad-hoc `astro build --outDir .check/...`)
+      '.check/**',
       '.astro/**',
       'docs/**',
       '.superpowers/**',

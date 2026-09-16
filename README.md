@@ -55,6 +55,10 @@ Articles are served at `/articles/<slug>` and courses at `/articles/<course>`, s
 must be unique across all courses. Old `/blog/...` URLs are handled by the `redirects` map
 in `astro.config.mjs`.
 
+**Unpublishing:** `src/content/publish.ts` is a blacklist of header, course, and article
+slugs. Anything listed is left out of the build entirely (no page, no link, no count).
+`PUBLISH_ALL=1 pnpm dev` ignores the list so drafts can be previewed locally.
+
 **Adding a header that is not a course:** make `src/content/blog/<name>/` with a
 `_header.md`, then at least one subdirectory with a `_category.md`. Nothing else needs
 editing — the nav, the articles page groups, and the home page counts all derive from the

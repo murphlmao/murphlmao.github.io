@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
+import { isHiddenHeader, isHiddenCategory } from '../content/publish';
 
 // Filesystem readers for the blog folder structure: src/content/blog/<header>/<category>/.
 // A directory is a header when it has _header.md, a category when it has _category.md.
@@ -44,8 +45,8 @@ export function getBlogStructure(): Header[] {
     const headerPath = path.join(blogDir, entry.name);
     const headerMetaPath = path.join(headerPath, '_header.md');
 
-    // Skip directories without _header.md
-    if (!fs.existsSync(headerMetaPath)) continue;
+    // Skip directories without _header.md, and headers blacklisted in src/content/publish.ts
+    if (!fs.existsSync(headerMetaPath) || isHiddenHeader(entry.name)) continue;
 
     const { data: headerMeta, content: headerContent } = matter(
       fs.readFileSync(headerMetaPath, 'utf8')
@@ -69,8 +70,8 @@ export function getBlogStructure(): Header[] {
       const categoryPath = path.join(headerPath, catEntry.name);
       const categoryMetaPath = path.join(categoryPath, '_category.md');
 
-      // Skip directories without _category.md
-      if (!fs.existsSync(categoryMetaPath)) continue;
+      // Skip directories without _category.md, and categories blacklisted in src/content/publish.ts
+      if (!fs.existsSync(categoryMetaPath) || isHiddenCategory(catEntry.name)) continue;
 
       const { data: catMeta, content: catContent } = matter(
         fs.readFileSync(categoryMetaPath, 'utf8')
