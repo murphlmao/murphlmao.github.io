@@ -1,7 +1,8 @@
 ---
-/* Snippet page. Same head/prose shape as the article page
-   (docs/redesign-previews/r4/article.html); interactive snippets keep the wide
-   column so the WASM demo fits, markdown snippets read at prose width. */
+/* Snippet detail page, now served under /resources/<id>. Same head/prose shape
+   as the article page (docs/redesign-previews/r4/article.html); interactive
+   snippets keep the wide column so the WASM demo fits, markdown snippets read
+   at prose width. */
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import Prose from '../../components/Prose.astro';
@@ -23,7 +24,7 @@ const date = parseHumanDate(entry.data.date); // human string in frontmatter, pa
   <article>
     <header class="page-head">
       <div class="page-head__text">
-        <a class="crumb" href="/snippets">&larr; All snippets</a>
+        <a class="crumb" href="/resources">&larr; All resources</a>
         <h1>{entry.data.title}</h1>
         {date && <p class="page-sub"><time datetime={isoDate(date)}>{fmtDate(date)}</time></p>}
       </div>

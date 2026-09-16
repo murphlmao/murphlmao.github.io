@@ -22,8 +22,8 @@ export interface Tweaks {
 
 export const tweakDefaults: Tweaks = {
   palette: 'ember', logo: 'orb', mich: 'maize', draw: 'pen',
-  orb: 1, bg: 1, bgOpacity: 55, strands: 1, motes: 1, bgDim: 50,
-  paws: 1, walker: 1, deer: 1, raccoon: 1,
+  orb: 1, bg: 1, bgOpacity: 25, strands: 1, motes: 1, bgDim: 50,
+  paws: 0, walker: 1, deer: 1, raccoon: 1,
 };
 
 export const palettes: Palette[] = ['ember', 'alley', 'space'];
@@ -36,7 +36,7 @@ export const site = {
   name: 'Murphy Malcolm',
   domain: 'murph.rip',
   url: 'https://murph.rip',
-  intro: 'Software & platform engineer. CS student at the University of Michigan. Arch btw.',
+  intro: 'Software & platform engineer. CS student at the University of Michigan.',
   socials: [
     { name: 'GitHub', href: 'https://github.com/murphlmao' },
     { name: 'Spotify', href: 'https://open.spotify.com/user/bigseeexyman' },
@@ -46,7 +46,6 @@ export const site = {
   nav: [
     { name: 'Home', href: '/' },
     { name: 'Articles', href: '/articles' },
-    { name: 'Snippets', href: '/snippets' },
     { name: 'Resources', href: '/resources' },
     { name: 'Resume', href: '/resume' },
   ],

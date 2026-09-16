@@ -137,6 +137,8 @@ const { assetPath = '/snippets/premature-optimization' } = Astro.props;
     flex-direction: column;
     align-items: center;
     gap: 0.5rem;
+    width: 100%;
+    max-width: 500px;
   }
 
   .label {
@@ -161,8 +163,12 @@ const { assetPath = '/snippets/premature-optimization' } = Astro.props;
     border-radius: 0.5rem;
     background: #18181b;
     cursor: crosshair;
-    max-width: 100%;
+    width: 100%;
     height: auto;
+    aspect-ratio: 5 / 4;
+    display: block;
+    /* Let the canvas own touch gestures so page scroll is untouched. */
+    touch-action: none;
   }
 
   .sidebar {
@@ -252,8 +258,14 @@ const { assetPath = '/snippets/premature-optimization' } = Astro.props;
 
 <script>
   import { loadWasmModule } from '../../lib/wasm/loader';
-  import { createOptimizationTriangle, getPriorityInfo } from '../../lib/wasm/optimization-triangle';
+  import { createOptimizationTriangle, getPriorityInfo, clampToTriangle } from '../../lib/wasm/optimization-triangle';
   import type { OptimizationTriangleModule, TriangleVertices } from '../../lib/wasm/optimization-triangle';
+
+  // Logical drawing space the WASM math and all draw() coordinates use.
+  // The canvas bitmap is sized to the element's display size * devicePixelRatio,
+  // and scaled back down to this space via a canvas transform.
+  const LOGICAL_WIDTH = 500;
+  const LOGICAL_HEIGHT = 400;
 
   class OptimizationTriangleController {
     private canvas: HTMLCanvasElement;
@@ -262,6 +274,7 @@ const { assetPath = '/snippets/premature-optimization' } = Astro.props;
     private triangle: TriangleVertices | null = null;
     private assetPath: string;
     private rafId: number | null = null;
+    private resizeObserver: ResizeObserver | null = null;
 
     // UI elements
     private elements = {
@@ -299,6 +312,9 @@ const { assetPath = '/snippets/premature-optimization' } = Astro.props;
 
         this.setupEventListeners();
         this.show();
+        this.resizeCanvas();
+        this.resizeObserver = new ResizeObserver(() => this.resizeCanvas());
+        this.resizeObserver.observe(this.canvas);
         this.startRenderLoop();
       } catch (error) {
         console.error('Failed to initialize WASM module:', error);
@@ -317,61 +333,62 @@ const { assetPath = '/snippets/premature-optimization' } = Astro.props;
     }
 
     private setupEventListeners() {
-      this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
-      document.addEventListener('mousemove', this.onMouseMove.bind(this));
-      document.addEventListener('mouseup', this.onMouseUp.bind(this));
+      // Pointer events on the canvas only: mouse and touch/pen share one path,
+      // and nothing on document means the rest of the page still scrolls.
+      this.canvas.addEventListener('pointerdown', this.onPointerDown.bind(this));
+      this.canvas.addEventListener('pointermove', this.onPointerMove.bind(this));
+      this.canvas.addEventListener('pointerup', this.onPointerUp.bind(this));
+      this.canvas.addEventListener('pointercancel', this.onPointerUp.bind(this));
+    }
 
-      // Touch support
-      this.canvas.addEventListener('touchstart', this.onTouchStart.bind(this), { passive: false });
-      document.addEventListener('touchmove', this.onTouchMove.bind(this), { passive: false });
-      document.addEventListener('touchend', this.onTouchEnd.bind(this));
+    private resizeCanvas() {
+      const rect = this.canvas.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      this.canvas.width = Math.round(rect.width * dpr);
+      this.canvas.height = Math.round(rect.height * dpr);
+
+      // The bitmap now matches the element's display size in device pixels;
+      // scale drawing so all draw() coordinates can stay in the logical
+      // 500x400 space the WASM math already uses.
+      this.ctx.setTransform(this.canvas.width / LOGICAL_WIDTH, 0, 0, this.canvas.height / LOGICAL_HEIGHT, 0, 0);
+      this.draw();
     }
 
     private getCanvasPos(clientX: number, clientY: number) {
       const rect = this.canvas.getBoundingClientRect();
-      // Scale from display coords to canvas coords, then to WASM coords
-      const displayToCanvas = this.canvas.width / rect.width;
+      // Map CSS pixels to the logical 500x400 drawing space, then to WASM coords.
+      const logicalX = (clientX - rect.left) * (LOGICAL_WIDTH / rect.width);
+      const logicalY = (clientY - rect.top) * (LOGICAL_HEIGHT / rect.height);
       return {
-        x: (clientX - rect.left) * displayToCanvas / this.scaleX,
-        y: (clientY - rect.top) * displayToCanvas / this.scaleY,
+        x: logicalX / this.scaleX,
+        y: logicalY / this.scaleY,
       };
     }
 
-    private onMouseDown(e: MouseEvent) {
+    private onPointerDown(e: PointerEvent) {
+      this.canvas.setPointerCapture(e.pointerId);
       const pos = this.getCanvasPos(e.clientX, e.clientY);
-      this.module?.handleMouseDown(pos.x, pos.y);
+      // Grab from anywhere in the canvas, not just the dot or triangle interior.
+      const target = this.triangle ? clampToTriangle(pos, this.triangle) : pos;
+      this.module?.handleMouseDown(target.x, target.y);
       this.updateUI();
     }
 
-    private onMouseMove(e: MouseEvent) {
+    private onPointerMove(e: PointerEvent) {
       const pos = this.getCanvasPos(e.clientX, e.clientY);
       this.module?.handleMouseMove(pos.x, pos.y);
     }
 
-    private onMouseUp() {
+    private onPointerUp(e: PointerEvent) {
+      if (this.canvas.hasPointerCapture(e.pointerId)) {
+        this.canvas.releasePointerCapture(e.pointerId);
+      }
       this.module?.handleMouseUp();
     }
 
-    private onTouchStart(e: TouchEvent) {
-      e.preventDefault();
-      const touch = e.touches[0];
-      const pos = this.getCanvasPos(touch.clientX, touch.clientY);
-      this.module?.handleMouseDown(pos.x, pos.y);
-      this.updateUI();
-    }
-
-    private onTouchMove(e: TouchEvent) {
-      e.preventDefault();
-      const touch = e.touches[0];
-      const pos = this.getCanvasPos(touch.clientX, touch.clientY);
-      this.module?.handleMouseMove(pos.x, pos.y);
-    }
-
-    private onTouchEnd() {
-      this.module?.handleMouseUp();
-    }
-
-    // Scale factor from WASM coords (700x550) to canvas (500x400)
+    // Scale factor from WASM coords (700x550) to the logical canvas space (500x400)
     private scaleX = 500 / 700;
     private scaleY = 400 / 550;
 
@@ -394,7 +411,7 @@ const { assetPath = '/snippets/premature-optimization' } = Astro.props;
       const sy = this.scaleY;
       const colors = this.getColors();
 
-      ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      ctx.clearRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
 
       // Calculate triangle centroid (balance point)
       const centerX = ((tri.topX + tri.leftX + tri.rightX) / 3) * sx;
@@ -478,6 +495,7 @@ const { assetPath = '/snippets/premature-optimization' } = Astro.props;
       if (this.rafId) {
         cancelAnimationFrame(this.rafId);
       }
+      this.resizeObserver?.disconnect();
     }
   }
 

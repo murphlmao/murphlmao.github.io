@@ -68,7 +68,7 @@ tree. Give it an `order` higher than `umich-cs` to sort it below.
 
 | Path | What |
 | --- | --- |
-| `src/content/snippets/` | Snippets. Either a flat `<slug>.md`, or `<slug>/index.md` plus assets for an interactive one (`type: interactive`, `assetPath` pointing into `public/`). |
+| `src/content/snippets/` | Snippets, served at `/resources/<slug>` (folded into the `/resources` page). Either a flat `<slug>.md`, or `<slug>/index.md` plus assets for an interactive one (`type: interactive`, `assetPath` pointing into `public/`). |
 | `src/content/deer/` | The deer/raccoon incident log (`animal`, `car`, `count`, `damage`, `images`). |
 | `src/content/resume.ts` | Resume data — summary, contact, experience, education, certifications, and skill groups with evidence links. `experience` also feeds the home page rail. |
 | `src/content/projects/data.ts` | Projects. `id` becomes the resume anchor `rs-p-<id>`. |

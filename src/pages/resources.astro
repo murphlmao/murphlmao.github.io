@@ -2,23 +2,45 @@
 /* Resources index. Markup ported from docs/redesign-previews/r4/resources.html
    (lines 53-55), CSS from r4/pages.css (.res-list, .res, .res__*) and r4/style.css
    (.sec). Hues come from the hostname hash in r4/spec-v2.md §4, run at build time
-   so its precomputed table (150 / 334 / 101 / 77 / 352 / 350) reproduces exactly. */
+   so its precomputed table (150 / 334 / 101 / 77 / 352 / 350) reproduces exactly.
+   Snippets (formerly /snippets) are folded in as the first section; that row
+   markup/CSS (.post-list, .post-row, ...) is ported from the old snippets index. */
 import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
 import { resources } from '../content/resources/data';
+import { isoDate, parseHumanDate } from '../lib/site';
 
 const hue = (host: string) => {
   let h = 0;
   for (const c of host) h = (h * 31 + c.charCodeAt(0)) >>> 0;
   return h % 360;
 };
+
+/* frontmatter dates are human strings ("December 1, 2025"), so parse them to UTC
+   midnight — otherwise isoDate reads the UTC day off a local-midnight instant and
+   a build host east of UTC renders the previous day. */
+const snippets = (await getCollection('snippets'))
+  .map((entry) => ({ entry, date: parseHumanDate(entry.data.date) }))
+  .sort((a, b) => (b.date?.getTime() ?? 0) - (a.date?.getTime() ?? 0));
 ---
-<Base title="Resources" description="A curated list of developer tools & resources I recommend." scene="resources">
+<Base title="Resources" description="A curated list of developer tools, resources, and code snippets I recommend." scene="resources">
   <header class="page-head">
     <div class="page-head__text">
       <h1>Resources</h1>
     </div>
     <canvas class="pen" data-scene="resources" aria-hidden="true"></canvas>
   </header>
+  <h2 class="sec">snippets</h2>
+  <ol class="post-list">{snippets.map(({ entry, date }) => (
+    <li class="post-row">
+      {date && <time class="post-date" datetime={isoDate(date)}>{isoDate(date)}</time>}
+      <a class="post-title" href={`/resources/${entry.id}`}>{entry.data.title}</a>
+      <p class="post-desc">{entry.data.description}</p>
+      {entry.data.type === 'interactive' && (
+        <span class="post-tags"><span class="tag">interactive</span></span>
+      )}
+    </li>
+  ))}</ol>
   {Object.entries(resources).map(([group, items]) => (
     <>
       <h2 class="sec">{group.toLowerCase()}</h2>
@@ -37,6 +59,17 @@ const hue = (host: string) => {
   /* r4/style.css 179 */
   .page-head + .sec { margin-top: 0; }
 
+  /* r4/style.css 205-218 */
+  .post-row { display: grid; grid-template-columns: 10ch 1fr; gap: 2px 16px; align-items: baseline; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .post-date { font: 12.5px/1.6 var(--mono); color: var(--accent-2); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .post-title { font-weight: 500; color: var(--text); text-decoration: none; }
+  .post-title:hover { color: var(--accent-text); }
+  .post-desc { grid-column: -2 / -1; margin: 0; color: var(--muted); font-size: 14.5px; line-height: 1.5; }
+  .post-tags { grid-column: -2 / -1; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
+  .tag { font: 11.5px var(--mono); color: var(--muted); }
+  .tag::before { content: "["; }
+  .tag::after { content: "]"; }
+
   /* r4/pages.css 103-109, 121-123 */
   .res-list { list-style: none; margin: 0; padding: 0; }
   .res { display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; gap: 2px 14px; align-items: baseline; padding: 12px 0; border-bottom: 1px solid var(--line); }
@@ -47,6 +80,9 @@ const hue = (host: string) => {
   .res__desc { grid-column: 2 / -1; margin: 0; color: var(--muted); font-size: 14.5px; line-height: 1.5; }
 
   @media (max-width: 560px) {
+    .post-row { grid-template-columns: 1fr; gap: 2px; }
+    .post-desc, .post-tags { grid-column: 1; }
+
     .res { grid-template-columns: 36px minmax(0, 1fr); }
     .res__host { grid-column: 2; order: 1; }
     .res__desc { grid-column: 2; }

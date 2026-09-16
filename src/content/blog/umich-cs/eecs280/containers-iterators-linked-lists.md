@@ -54,9 +54,9 @@ The thing to note about these two types of sequential containers is that they st
 in a linear sequence. This means that the order of the objects matters,
 and you can access them based on their position in that sequence. In memory, as you
 might expect, these objects are stored in a contiguous block (contiguous allocation).
-I explained this in detail in my previous post on [Arrays & Pointer Arithmetic](./arrays-pointer-arithmetic)
+I explained this in detail in my previous post on [Arrays & Pointer Arithmetic](/articles/arrays-pointer-arithmetic)
 
-In addition to the aforementioned post & my post on [The Heap / Dynamic Memory](./heap-of-faith#source),
+In addition to the aforementioned post & my post on [The Heap / Dynamic Memory](/articles/heap-of-faith#source),
 I brought up the fact that `std::array` has some niceties around C-style arrays & that `std::vector`s are just
 dynamic wrappers around C arrays (as in they are dynamic, not fixed, in size). Arrays are
 usually allocated on the stack, while vectors are allocated on the heap.

@@ -42,7 +42,7 @@ looking through this post:
 
 
 ## Call Stack
-As I spoke about on my post about [the stack](./what-is-the-stack#stack-frames), each function call creates a new stack frame on the call stack. That's certainly the case with recursion, and it's actually one of the downsides of it: high memory utilization and a high number of function calls. This is a very crude mockup of the call stack during the execution of `factorial(5)`:
+As I spoke about on my post about [the stack](/articles/what-is-the-stack#stack-frames), each function call creates a new stack frame on the call stack. That's certainly the case with recursion, and it's actually one of the downsides of it: high memory utilization and a high number of function calls. This is a very crude mockup of the call stack during the execution of `factorial(5)`:
 
 ```
 | Stack Frame    | n   |

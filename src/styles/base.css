@@ -19,6 +19,11 @@ a { color: inherit; }
 
 ::selection { background: color-mix(in srgb, var(--accent) 35%, transparent); }
 
+/* shared 30px icon-button box: sidebar socials, deer link, settings gear
+   (Sidebar.astro + Settings.astro) — global so both scoped components share it. */
+.side__icon { display: inline-flex; width: 30px; height: 30px; align-items: center; justify-content: center; color: var(--muted); border-radius: var(--radius); text-decoration: none; }
+.side__icon:hover, .side__icon:focus-visible { color: var(--accent-text); background: var(--hover); }
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }

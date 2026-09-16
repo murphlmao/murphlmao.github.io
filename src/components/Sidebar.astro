@@ -6,13 +6,11 @@
 import Orb from './Orb.astro';
 import Settings from './Settings.astro';
 import { site } from '../site.config';
-import { deerCounts } from '../lib/site';
 
 interface Props {
   toc?: { depth: number; slug: string; text: string }[];
 }
 const { toc = [] } = Astro.props;
-const d = await deerCounts();
 
 const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
 const isCurrent = (href: string) => (href === '/' ? path === '/' : path === href || path.startsWith(href + '/'));
@@ -45,11 +43,15 @@ const icons: Record<string, string> = {
       </nav>
     )}
     <div class="side__spacer"></div>
-    <ul class="side__socials">{site.socials.map((s) => (
-      <li><a href={s.href} aria-label={s.name} target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={icons[s.name]}/></svg></a></li>
-    ))}</ul>
-    <Settings />
-    <a class="side__deer" href="/deer" title="Tragedy &amp; Pain.">Tragedy &amp; Pain.<span class="side__deer-count">{d.deer} deer &middot; {d.raccoon} raccoons &middot; {d.cars} cars</span></a>
+    <div class="side__icons">
+      {site.socials.map((s) => (
+        <a class="side__icon" href={s.href} aria-label={s.name} target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={icons[s.name]}/></svg></a>
+      ))}
+      <a class="side__icon side__deer" href="/deer" aria-label="Deer log" title="Deer log">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9.5c-3 0-5.4 2.4-5.4 5.4 0 2.1 1.1 3.6 1.9 4.9.7 1 1.3 1.9 1.3 2.6 0 .7.8 1.1 2.2 1.1s2.2-.4 2.2-1.1c0-.7.6-1.6 1.3-2.6.8-1.3 1.9-2.8 1.9-4.9 0-3-2.4-5.4-5.4-5.4Z M8.6 10.2Q8.1 7.8 5.9 7Q6.6 9.2 8.6 10.2Z M15.4 10.2Q15.9 7.8 18.1 7Q17.4 9.2 15.4 10.2Z M10.6 10.2Q9.2 5 6 1.3Q6.9 6.6 10.6 10.2Z M13.4 10.2Q14.8 5 18 1.3Q17.1 6.6 13.4 10.2Z"/></svg>
+      </a>
+      <Settings />
+    </div>
   </div>
 </aside>
 <style>
@@ -93,16 +95,10 @@ const icons: Record<string, string> = {
 
   .side__spacer { flex: 1; }
 
-  /* socials */
-  .side__socials { display: flex; gap: 2px; margin: 0; padding: 0; list-style: none; }
-  .side__socials a { display: inline-flex; width: 30px; height: 30px; align-items: center; justify-content: center; color: var(--muted); border-radius: var(--radius); }
-  .side__socials a:hover { color: var(--accent-text); background: var(--hover); }
-  .side__socials svg { width: 17px; height: 17px; fill: currentColor; }
-
-  /* deer count line — r4/style.css 153-155 */
-  .side__deer { display: block; font: 12px/1.5 var(--mono); color: var(--muted); text-decoration: none; }
-  .side__deer:hover { color: var(--text); }
-  .side__deer-count { display: block; color: var(--accent-text); }
+  /* bottom icon row: socials, deer log, settings gear — all share .side__icon
+     (base.css) for the 30px box; svg sizing/fill for this file's icons here. */
+  .side__icons { display: flex; gap: 2px; }
+  .side__icon svg { width: 17px; height: 17px; fill: currentColor; }
 
   @media (max-width: 899px) {
     .side { position: sticky; top: 0; height: 56px; align-self: stretch; flex-direction: row; align-items: center; gap: 12px; padding: 0 16px; border-right: 0; border-bottom: 1px solid var(--line); overflow: visible; }

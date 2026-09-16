@@ -114,3 +114,55 @@ export function getPriorityInfo(values: TriangleValues): PriorityInfo {
     description: descriptions[key] || "Finding your balance.",
   };
 }
+
+// --- Triangle clamping (mirrors the C++ clampToTriangle/projectOntoSegment) ---
+// The WASM side only starts a drag when a press lands on the dot or inside
+// the triangle. On mobile the tappable area needs to be the whole canvas, so
+// we clamp an arbitrary point to the triangle here before handing it to
+// handleMouseDown, in the same coordinate space getTriangle() returns.
+
+function signedTriArea(
+  x1: number, y1: number, x2: number, y2: number, x3: number, y3: number
+): number {
+  return (x1 - x3) * (y2 - y3) - (x2 - x3) * (y1 - y3);
+}
+
+function isInsideTriangle(px: number, py: number, tri: TriangleVertices): boolean {
+  const d1 = signedTriArea(px, py, tri.topX, tri.topY, tri.leftX, tri.leftY);
+  const d2 = signedTriArea(px, py, tri.leftX, tri.leftY, tri.rightX, tri.rightY);
+  const d3 = signedTriArea(px, py, tri.rightX, tri.rightY, tri.topX, tri.topY);
+  const hasNeg = d1 < 0 || d2 < 0 || d3 < 0;
+  const hasPos = d1 > 0 || d2 > 0 || d3 > 0;
+  return !(hasNeg && hasPos);
+}
+
+function projectOntoSegment(
+  px: number, py: number, ax: number, ay: number, bx: number, by: number
+): { x: number; y: number } {
+  const dx = bx - ax;
+  const dy = by - ay;
+  const lengthSq = dx * dx + dy * dy;
+  if (lengthSq < 0.001) return { x: ax, y: ay };
+  const t = Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / lengthSq));
+  return { x: ax + t * dx, y: ay + t * dy };
+}
+
+/** Clamps a point to the nearest position inside/on the triangle. */
+export function clampToTriangle(
+  point: { x: number; y: number },
+  tri: TriangleVertices
+): { x: number; y: number } {
+  if (isInsideTriangle(point.x, point.y, tri)) return point;
+
+  const candidates = [
+    projectOntoSegment(point.x, point.y, tri.topX, tri.topY, tri.leftX, tri.leftY),
+    projectOntoSegment(point.x, point.y, tri.leftX, tri.leftY, tri.rightX, tri.rightY),
+    projectOntoSegment(point.x, point.y, tri.rightX, tri.rightY, tri.topX, tri.topY),
+  ];
+
+  return candidates.reduce((closest, c) => {
+    const dClosest = (closest.x - point.x) ** 2 + (closest.y - point.y) ** 2;
+    const dC = (c.x - point.x) ** 2 + (c.y - point.y) ** 2;
+    return dC < dClosest ? c : closest;
+  });
+}

@@ -67,16 +67,19 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   :root {
     --hl: color-mix(in srgb, var(--accent) 55%, transparent);
     --hover: color-mix(in srgb, var(--text) 6%, transparent);
-    --side-w: 272px; --gutter: 48px; --w-index: 1040px; --w-prose: 70ch; --w-rail: 200px; --radius: 4px;
+    --side-w: 272px; --gutter: 48px; --w-index: 1040px; --w-prose: 64ch; --w-rail: 200px; --radius: 4px;
     --bg-opacity: .55; --bg-dim: .5; /* overwritten inline on <html> by the tweaks module */
+    /* article body scale: 17px up to ~1440, ~19px at 1920, 21px at 2560 */
+    --prose-size: clamp(17px, .45vw + 10.5px, 21px);
     color-scheme: dark;
   }
+  @media (min-width: 1600px) { :root { --w-prose: 66ch; } }
   .mich-mark { color: var(--mich); }
 
   img { display: block; max-width: 100%; height: auto; }
   button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
   h1, h2, h3, h4 { margin: 0; line-height: 1.2; font-weight: 600; letter-spacing: -.01em; }
-  h1 { font-size: 30px; }
+  h1 { font-size: 1.765em; }
   p { margin: 0 0 1em; }
   .muted { color: var(--muted); }
   .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
@@ -93,7 +96,10 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   .page, .foot { position: relative; z-index: 1; grid-column: 2; min-width: 0; max-width: calc(var(--w-index) + var(--gutter) * 2); }
   .page { grid-row: 1; padding: 48px var(--gutter) 0; }
   .foot { grid-row: 2; padding-left: var(--gutter); padding-right: var(--gutter); }
-  body.is-article .page, body.is-article .foot { max-width: calc(var(--w-prose) + var(--gutter) * 2); }
+  /* article body: centered in the content column and scaled by viewport, rather
+     than pinned to the left at a fixed 17px next to the sidebar. */
+  body.is-article .page, body.is-article .foot { justify-self: center; width: 100%; max-width: calc(var(--w-prose) + var(--gutter) * 2); }
+  body.is-article .page { font-size: var(--prose-size); }
   @media (min-width: 1280px) {
     body.is-wide .page, body.is-wide .foot { max-width: calc(var(--w-index) + var(--w-rail) + 48px + var(--gutter) * 2); }
   }

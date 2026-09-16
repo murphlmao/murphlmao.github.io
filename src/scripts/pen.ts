@@ -1,14 +1,18 @@
 /* Pen-drawn header scenes. Ported function-for-function from
    docs/redesign-previews/r4/site.js (the pen section, lines 439-690): the CAT/M path
    data, the SCENES table, clampN/easeInOut/glowAt, makePen (readColors, computeBox,
-   render, frame, still, loop, hover re-trace, tweakchange, reduced motion,
-   visibilitychange) and initPen.
+   render, frame, still, loop, tweakchange, reduced motion, visibilitychange) and initPen.
 
    Only deviation from r4: r4 traced the single `canvas.pen` on the page and read the
    scene straight out of `data-scene`. Here every `canvas.pen[data-scene]` is traced and
    `data-scene` carries our page name (home/articles/article/...), which SCENE_KEYS maps
    onto r4's scene keys (home/book/bigo/prompt/catslash/compass). Unknown names and
-   "none" draw nothing. */
+   "none" draw nothing.
+
+   v2 deviation from r4: the scene traces once on load and never re-traces on hover.
+   `tweakchange` for palette/mich/reset just repaints the finished frame with the new
+   colors (`still()`); only `draw` (pen/laser mode) re-traces, since that is the only
+   way to preview the mode. */
 
 const reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
 
@@ -90,7 +94,6 @@ function glowAt(x: number) { /* x = ms past trace end -> 0..1 */
 /* One scene bound to `canvas` (reads data-scene). `manual` skips the auto-trace and
    hover/visibility wiring (debug harness). Returns { renderAt(mode, ms), dur, glow }. */
 export function makePen(canvas: HTMLCanvasElement, manual?: boolean): any {
-  const pageHead = canvas.closest('.page-head');
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
   const key = SCENE_KEYS[canvas.dataset.scene || ''] || 'home';
@@ -241,7 +244,6 @@ export function makePen(canvas: HTMLCanvasElement, manual?: boolean): any {
 
   if (!reduce && !manual) {
     setTimeout(startTrace, 600);
-    if (pageHead) pageHead.addEventListener('mouseenter', function () { if (!tracing) startTrace(); });
     document.addEventListener('visibilitychange', function () {
       if (document.hidden) pauseTrace(); else resumeTrace();
     });
@@ -255,9 +257,13 @@ export function makePen(canvas: HTMLCanvasElement, manual?: boolean): any {
 
   document.addEventListener('tweakchange', function (e: any) {
     const k = e.detail.key;
-    if (k === 'palette' || k === 'mich' || k === 'reset') readColors();
-    if (k === 'draw' || k === 'reset') { pauseTrace(); tracing = false; if (!manual) startTrace(); }
-    else if ((k === 'palette' || k === 'mich') && !tracing) still();
+    /* palette/mich/reset: repaint the finished frame instantly, no re-trace.
+       draw (pen/laser) is the one case that re-traces, to preview the mode. */
+    if (k === 'palette' || k === 'mich' || k === 'reset') {
+      readColors(); pauseTrace(); tracing = false; still();
+    } else if (k === 'draw') {
+      pauseTrace(); tracing = false; if (!manual) startTrace();
+    }
   });
 
   return { canvas: canvas, renderAt: frame, dur: { pen: dur, laser: durLaser }, glow: { flash: FLASH, hold: HOLD, fade: FADE } };

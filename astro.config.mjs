@@ -27,5 +27,7 @@ export default defineConfig({
     '/projects': '/resume',
     '/blog': '/articles',
     '/blog/[slug]': '/articles/[slug]',
+    '/snippets': '/resources',
+    '/snippets/[slug]': '/resources/[slug]',
   },
 });

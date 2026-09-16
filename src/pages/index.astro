@@ -33,7 +33,6 @@ const jobs = [...experience].sort((a, b) => endsAt(b) - endsAt(a)).slice(0, 2);
       <section class="bio">
         <figure class="bio__photo">
           <img src="/profile.jpeg" alt="Murphy asleep with a cat" width="300" height="277" />
-          <figcaption>me, asleep, with a cat.</figcaption>
         </figure>
         <div class="bio__text">
           <p>I'm a software & platform engineer at Prism Controls and a Computer Science student at the University of Michigan, specializing in full-stack development, DevSecOps, and embedded systems. I've a deep passion for all of the above, but also Linux (Arch btw), networking, cybersecurity, and cats!</p>
@@ -68,7 +67,7 @@ const jobs = [...experience].sort((a, b) => endsAt(b) - endsAt(a)).slice(0, 2);
         <h2 class="rail__label">writing</h2>
         <p class="rail__stat"><strong class="rail__num">{stats.total}</strong>articles</p>
         <p class="rail__stat"><strong class="rail__num">{stats.words.toLocaleString('en-US')}</strong>words</p>
-        <p class="rail__stat"><strong class="rail__num">{stats.since}</strong>since</p>
+        <p class="rail__stat">since<strong class="rail__num">{stats.since}</strong></p>
       </section>
     </aside>
   </div>
@@ -93,7 +92,6 @@ const jobs = [...experience].sort((a, b) => endsAt(b) - endsAt(a)).slice(0, 2);
   .bio { display: grid; grid-template-columns: 120px 1fr; gap: 24px; align-items: start; margin: 0 0 8px; }
   .bio__photo { margin: 0; }
   .bio__photo img { width: 120px; border: 1px solid var(--line); border-radius: var(--radius); }
-  .bio__photo figcaption { margin-top: 6px; font: 12px/1.4 var(--mono); color: var(--muted); }
   .bio__text { max-width: 62ch; }
   .bio__text p { margin: 0 0 1.1em; }
   /* r4/style.css 184-185, the .bio share of the shared link rule */
