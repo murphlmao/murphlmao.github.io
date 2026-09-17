@@ -1,7 +1,10 @@
-/* Articles index: "by date" / "by class" switch with a FLIP transition.
+/* Articles index: "by date" / "by class" switch.
    Ported from docs/redesign-previews/r4/pages.js (the whole file is initArticles).
    The rows are rendered once, in #flat; this moves them into the per-course lists in
-   #groups and animates the difference. Two deliberate changes from r4:
+   #groups. Three deliberate changes from r4:
+   - no FLIP: the courses are collapsible now, so most rows have no start rect and the
+     rest slid in from the indented course column, which read as a jump. The incoming
+     view just fades up in place instead;
    - the buttons are role="radio" in a radiogroup, so the state attribute is aria-checked
      (r4 used aria-pressed on a plain group) and arrow keys move between them;
    - the hash jump accepts any id inside #groups instead of r4's /^(umich|off-syllabus|eecs\d{3})$/,
@@ -21,10 +24,7 @@ export function initArticles(): void {
 
   function setView(view: string, animate: boolean): void {
     const rows = Array.from(document.querySelectorAll<HTMLLIElement>('.post-row'));
-    // FIRST: one rect per row, measured before any mutation.
-    const first = animate ? new Map(rows.map((r) => [r, r.getBoundingClientRect()])) : null;
 
-    // MOVE
     if (view === 'class') {
       groups!.querySelectorAll<HTMLOListElement>('ol[data-course]').forEach((ol) => {
         ol.append(...rows.filter((r) => r.dataset.course === ol.dataset.course));
@@ -39,32 +39,13 @@ export function initArticles(): void {
     }
 
     btns.forEach((b) => b.setAttribute('aria-checked', String(b.dataset.view === view)));
+    document.documentElement.dataset.articlesView = view;   // keeps the pre-paint CSS in step
 
-    if (!first || reduce) return;
-
-    // LAST + INVERT + PLAY. Element.animate applies the first keyframe before the next
-    // paint, so no double rAF is needed.
-    for (const row of rows) {
-      const last = row.getBoundingClientRect();
-      const f = first.get(row)!;
-      const dx = f.left - last.left;
-      const dy = f.top - last.top;
-      if (Math.abs(dx) + Math.abs(dy) >= 0.5) {
-        row.animate(
-          [{ transform: `translate(${dx}px,${dy}px)` }, { transform: 'none' }],
-          { duration: 220, easing: 'ease-out' },
-        );
-      }
-    }
-
-    if (view === 'class') {
-      groups!.querySelectorAll('.group-head, .course-head, .empty').forEach((el) => {
-        el.animate(
-          [{ opacity: 0, transform: 'translateY(-6px)' }, { opacity: 1, transform: 'none' }],
-          { duration: 220, easing: 'ease-out' },
-        );
-      });
-    }
+    if (!animate || reduce) return;
+    (view === 'class' ? groups! : flat!).animate(
+      [{ opacity: 0, transform: 'translateY(4px)' }, { opacity: 1, transform: 'none' }],
+      { duration: 180, easing: 'ease-out' },
+    );
   }
 
   let saved: string | null = null;
@@ -83,7 +64,11 @@ export function initArticles(): void {
       : saved === 'class' ? 'class' : 'date';
 
   setView(boot, false);
-  if (jump) target!.scrollIntoView();
+  if (jump) {
+    const course = target!.closest<HTMLDetailsElement>('details.course');
+    if (course) course.open = true;
+    target!.scrollIntoView();
+  }
 
   btns.forEach((btn, i) => {
     btn.addEventListener('click', () => {

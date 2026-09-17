@@ -6,7 +6,7 @@ import { initSidecat } from './sidecat';
 import { initCritters } from './critters';
 import { initWalker } from './walker';
 import { initMenu } from './menu';
-import { initCopy, initToc } from './article';
+import { initCopy, initToc, initHeadingLinks } from './article';
 import { initArticles } from './articles';
 
 initTweaks();
@@ -19,4 +19,5 @@ initCritters();
 initWalker();
 initCopy();
 initToc();
+initHeadingLinks();
 initArticles();

@@ -39,6 +39,12 @@ const counts = await courseCounts();
   .view__btn[aria-checked="true"] { color: var(--text); background: color-mix(in srgb, var(--text) 10%, transparent); }
   .view__hint { font: 12.5px var(--mono); color: var(--muted); }
 
+  /* pre-paint view (html[data-articles-view], set inline in Base.astro): under by-class the
+     flat list stays hidden and the course heads show at once, so the rows moving over in
+     scripts/articles.ts never flash as an expanded by-date list first. */
+  :global(html[data-articles-view="class"]) #flat { display: none; }
+  :global(html[data-articles-view="class"] #groups[hidden]) { display: block; }  /* #groups is CourseGroups-scoped */
+
   @media (max-width: 560px) {
     .view-bar { flex-wrap: wrap; }
   }

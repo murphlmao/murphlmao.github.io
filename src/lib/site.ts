@@ -51,6 +51,10 @@ export async function courseCounts(): Promise<Record<string, number>> {
   return counts;
 }
 
+/** Course lists sort by course number, highest first (EECS 370 above EECS 280). */
+export const courseNumber = (c: { slug: string }) => parseInt(c.slug.replace(/\D/g, ''), 10) || 0;
+export const byCourseNumberDesc = <T extends { slug: string }>(list: T[]): T[] => [...list].sort((a, b) => courseNumber(b) - courseNumber(a));
+
 export const fmtDate = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
 export const isoDate = (d: Date) => d.toISOString().slice(0, 10);
 

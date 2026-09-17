@@ -18,7 +18,7 @@ interface Props {
 }
 const {
   title = site.name,
-  description = 'Software & platform engineer. CS student at the University of Michigan.',
+  description = 'Software, systems & platform engineer. CS student at the University of Michigan.',
   scene = 'none', wide = false, article = false, toc = [],
 } = Astro.props;
 const fullTitle = title === site.name ? title : `${title} · ${site.domain}`;
@@ -45,6 +45,14 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
         document.documentElement.style.setProperty('--bg-opacity', String(s.bgOpacity / 100));
         document.documentElement.style.setProperty('--bg-dim', String(s.bgDim / 100));
       } catch { /* no storage or bad JSON: the CSS defaults stand */ }
+      /* articles index: pick the view before first paint so the by-date list never
+         flashes under a saved by-class view (same rule as scripts/articles.ts boot) */
+      try {
+        const q = new URLSearchParams(location.search).get('view');
+        document.documentElement.dataset.articlesView = location.hash ? 'class'
+          : (q === 'class' || q === 'date') ? q
+          : localStorage.getItem('articlesView') === 'class' ? 'class' : 'date';
+      } catch { /* storage blocked: by date */ }
     </script>
     <slot name="head" />
   </head>

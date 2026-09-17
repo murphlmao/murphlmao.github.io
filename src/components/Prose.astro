@@ -35,13 +35,13 @@
   .table-scroll { margin: 0 0 1.2em; overflow-x: auto; }
   .prose table { width: 100%; margin: 0; border-collapse: collapse; font-size: .88em; }
   .prose th, .prose td { padding: 6px 10px; border: 1px solid var(--line); text-align: left; }
-  .prose th { font: 500 .87em var(--mono); color: var(--accent-2); }
+  .prose th { font: 500 .87em var(--mono); color: var(--muted); }
 
   /* code blocks: r4's .code / .code-head / .code-lang on our wrapper markup.
      <pre> keeps shiki's inline background/color, which resolve to the palette
      through the --astro-code-* variables in styles/tokens.css. */
   .code-block-wrapper { position: relative; margin: 24px 0; border: 1px solid var(--line); border-radius: 3px; background: var(--bg-2); overflow: hidden; }
-  .code-block-lang { display: block; padding: 5px 12px; border-bottom: 1px solid var(--line); font: .7em var(--mono); color: var(--accent-2); }
+  .code-block-lang { display: block; padding: 5px 12px; border-bottom: 1px solid var(--line); font: .7em var(--mono); color: var(--muted); }
   /* astro's shiki `wrap: true` sets white-space: pre-wrap inline; on lines padded
      with long runs of spaces (comment-aligned code), browsers let the trailing
      spaces "hang" past the wrap point, which quietly widens the whole page on
@@ -60,4 +60,14 @@
   .fig-body { padding: 12px; }
   .fig-foot { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; justify-content: space-between; padding: 10px 12px; border-top: 1px solid var(--line); }
   @media (max-width: 899px) { .fig-foot { flex-direction: column; align-items: flex-start; } }
+
+  /* heading copy-link button, injected by scripts/article.ts (initHeadingLinks); hover
+     to reveal on pointer devices, always faintly there on touch */
+  .prose .heading-link { display: inline-flex; align-items: center; height: 22px; min-width: 22px; margin-left: .35em; padding: 0 3px; vertical-align: middle; border: 0; border-radius: var(--radius); background: none; color: var(--muted); opacity: 0; cursor: pointer; transition: opacity .12s ease; }
+  .prose .heading-link svg { width: 14px; height: 14px; }
+  .prose h2:hover .heading-link, .prose h3:hover .heading-link, .prose h4:hover .heading-link,
+  .prose .heading-link:focus-visible, .prose .heading-link.is-copied { opacity: 1; }
+  .prose .heading-link:hover, .prose .heading-link.is-copied { color: var(--accent-text); }
+  .prose .heading-link.is-copied::after { content: "copied"; margin-left: 5px; font: 11px var(--mono); }
+  @media (hover: none) { .prose .heading-link { opacity: .5; } }
 </style>
