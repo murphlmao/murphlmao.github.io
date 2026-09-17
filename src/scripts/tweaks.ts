@@ -53,6 +53,7 @@ function sync(): void {
     const k = el.name as keyof Tweaks;
     if (!(k in state)) return;
     if (el instanceof HTMLInputElement && el.type === 'checkbox') el.checked = !!state[k];
+    else if (el instanceof HTMLInputElement && el.type === 'radio') el.checked = state[k] === el.value;
     else el.value = String(state[k]);
     if (el instanceof HTMLInputElement && el.type === 'range') {
       const out = el.parentNode?.querySelector('output');
@@ -77,7 +78,10 @@ export function initTweaks(): void {
     const k = el.name as keyof Tweaks;
     if (!(k in state)) return;
     const v = el instanceof HTMLInputElement && el.type === 'checkbox' ? (el.checked ? 1 : 0)
-      : el instanceof HTMLInputElement && el.type === 'range' ? Number(el.value) : el.value;
+      : el instanceof HTMLInputElement && el.type === 'range' ? Number(el.value)
+      : el instanceof HTMLInputElement && el.type === 'radio' ? (el.checked ? el.value : null)
+      : el.value;
+    if (v === null) return; // radio's un-checked sibling firing input (defensive; browsers don't normally do this)
     if (el instanceof HTMLInputElement && el.type === 'range') {
       const out = el.parentNode?.querySelector('output');
       if (out) out.textContent = String(v);

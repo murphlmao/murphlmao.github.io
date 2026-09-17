@@ -1,8 +1,10 @@
 ---
 /* Fixed sidebar. Ported from the <aside class="side"> block of
    docs/redesign-previews/r4/index.html (+ the TOC block of r4/article.html).
-   Below 900px it collapses to a 56px bar with the .side__menu sheet toggle
-   handled by src/scripts/menu.ts. */
+   Below 900px it collapses to a 56px bar; `.side__actions` (gear + menu
+   button) lives outside `.side__panel` so both stay reachable while the
+   sheet is closed. `.side__panel`'s sheet toggle is handled by
+   src/scripts/menu.ts, and its backdrop is `.side__backdrop` below it. */
 import Orb from './Orb.astro';
 import Settings from './Settings.astro';
 import { site } from '../site.config';
@@ -26,7 +28,12 @@ const icons: Record<string, string> = {
 <aside class="side">
   <a class="side__brand" href="/"><Orb /><span class="side__domain">{site.domain}</span></a>
   <div class="side__rule"><div class="side-cat" id="sideCat" aria-hidden="true"></div></div>
-  <button class="side__menu" type="button" aria-expanded="false" aria-controls="sidepanel">Menu <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 4h12M2 8h12M2 12h12"/></svg></button>
+  <div class="side__actions">
+    <Settings />
+    <button class="side__menuBtn side__icon" type="button" aria-expanded="false" aria-controls="sidepanel" aria-label="Menu">
+      <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+    </button>
+  </div>
   <div class="side__panel" id="sidepanel">
     <p class="side__intro"><span class="side__name">{site.name}</span><span class="side__line">{site.intro}</span></p>
     <nav class="side__nav" aria-label="Site">
@@ -50,9 +57,9 @@ const icons: Record<string, string> = {
       <a class="side__icon side__deer" href="/deer" aria-label="Deer log" title="Deer log">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9.5c-3 0-5.4 2.4-5.4 5.4 0 2.1 1.1 3.6 1.9 4.9.7 1 1.3 1.9 1.3 2.6 0 .7.8 1.1 2.2 1.1s2.2-.4 2.2-1.1c0-.7.6-1.6 1.3-2.6.8-1.3 1.9-2.8 1.9-4.9 0-3-2.4-5.4-5.4-5.4Z M8.6 10.2Q8.1 7.8 5.9 7Q6.6 9.2 8.6 10.2Z M15.4 10.2Q15.9 7.8 18.1 7Q17.4 9.2 15.4 10.2Z M10.6 10.2Q9.2 5 6 1.3Q6.9 6.6 10.6 10.2Z M13.4 10.2Q14.8 5 18 1.3Q17.1 6.6 13.4 10.2Z"/></svg>
       </a>
-      <Settings />
     </div>
   </div>
+  <div class="side__backdrop"></div>
 </aside>
 <style>
   /* .side* ported from docs/redesign-previews/r4/style.css (section 5). */
@@ -63,7 +70,13 @@ const icons: Record<string, string> = {
     overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--line) transparent;
   }
   .side__panel { display: contents; }
-  .side__menu { display: none; }
+
+  /* gear + menu button: a sibling of .side__panel (not inside it) so both stay
+     reachable on mobile while the sheet is closed. order:5 keeps the gear at
+     the bottom of the desktop column, after the unrolled panel content. */
+  .side__actions { display: flex; align-items: center; gap: 2px; order: 5; }
+  .side__menuBtn { display: none; }
+  .side__backdrop { display: none; }
 
   /* brand: orb or mark + wordmark */
   .side__brand { display: flex; align-items: center; gap: 12px; width: fit-content; color: var(--text); text-decoration: none; }
@@ -95,8 +108,8 @@ const icons: Record<string, string> = {
 
   .side__spacer { flex: 1; }
 
-  /* bottom icon row: socials, deer log, settings gear — all share .side__icon
-     (base.css) for the 30px box; svg sizing/fill for this file's icons here. */
+  /* bottom icon row: socials + deer log share .side__icon (base.css) for the
+     30px box; svg sizing/fill for this file's icons here. */
   .side__icons { display: flex; gap: 2px; }
   .side__icon svg { width: 17px; height: 17px; fill: currentColor; }
 
@@ -105,15 +118,46 @@ const icons: Record<string, string> = {
     .side__brand { flex: 1; min-width: 0; gap: 10px; }
     .side__domain { font-size: 17px; }
     .side__rule { order: 1; position: static; height: auto; margin: 0; background: none; }
-    .side__menu { order: 2; display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 6px 10px; border: 1px solid var(--line); border-radius: var(--radius); font: 500 13px var(--mono); color: var(--text); }
-    .side__menu svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
-    .side__menu[aria-expanded="true"] { border-color: var(--accent); color: var(--accent-text); }
-    .side__panel { display: none; position: fixed; left: 0; right: 0; top: 56px; bottom: 0; z-index: 3; flex-direction: column; gap: 20px; padding: 20px 16px 40px; background: var(--bg-2); overflow-y: auto; }
-    .side.is-open .side__panel { display: flex; }
+    .side__actions { order: 2; gap: 4px; }
+
+    /* icon-only hamburger that morphs to an × via transform/opacity only */
+    .side__menuBtn { display: inline-flex; flex-direction: column; justify-content: center; align-items: center; gap: 5px; }
+    .side__menuBtn .bar { display: block; width: 18px; height: 2px; border-radius: 1px; background: currentColor; transition: transform 180ms ease-out, opacity 180ms ease-out; }
+    .side__menuBtn[aria-expanded="true"] { color: var(--accent-text); }
+    .side__menuBtn[aria-expanded="true"] .bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .side__menuBtn[aria-expanded="true"] .bar:nth-child(2) { opacity: 0; }
+    .side__menuBtn[aria-expanded="true"] .bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* sheet: drops from under the 56px bar, not full-screen. Kept in the
+       render tree (not display:none) at rest so opacity/transform can
+       transition it in; visibility+pointer-events do the actual hiding. */
+    .side__panel {
+      display: flex; position: fixed; left: 0; right: 0; top: 56px; z-index: 3;
+      flex-direction: column; gap: 16px; padding: 8px 16px 20px;
+      max-height: calc(100vh - 56px); overflow-y: auto;
+      background: var(--bg-2); border-bottom: 1px solid var(--line); border-radius: 0 0 16px 16px;
+      visibility: hidden; opacity: 0; pointer-events: none; transform: translateY(-8px);
+      transition: opacity 180ms ease-out, transform 180ms ease-out;
+    }
+    .side.is-open .side__panel { visibility: visible; opacity: 1; pointer-events: auto; transform: translateY(0); }
+    .side__intro { display: none; }
     .side__spacer { display: none; }
-    /* tap target: the sheet's nav rows need to clear 40px tall (the icon row's
-       shared .side__icon box gets the same treatment in styles/base.css, since
-       Settings.astro's gear button shares that class from outside this scope) */
-    .side__nav a { padding-top: 9px; padding-bottom: 9px; }
+
+    /* nav rows: 48px, 17px/500 */
+    .side__nav a { min-height: 48px; display: flex; align-items: center; font-size: 17px; }
+
+    /* TOC rows: 40px */
+    .toc__link { min-height: 40px; display: flex; align-items: center; }
+
+    /* icon row: hairline above it (nav/TOC already carry their own separators) */
+    .side__icons { border-top: 1px solid var(--line); padding-top: 14px; margin-top: 2px; }
+
+    /* backdrop below the sheet, click closes (menu.ts) */
+    .side__backdrop {
+      display: block; position: fixed; inset: 56px 0 0 0; z-index: 2;
+      background: rgba(0,0,0,.5); opacity: 0; pointer-events: none;
+      transition: opacity 150ms ease-out;
+    }
+    .side.is-open .side__backdrop { opacity: 1; pointer-events: auto; }
   }
 </style>
