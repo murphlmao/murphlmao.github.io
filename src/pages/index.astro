@@ -6,14 +6,14 @@
    src/content/resume.ts, courses from the blog structure, writing from getStats(). */
 import Base from '../layouts/Base.astro';
 import PostRow from '../components/PostRow.astro';
-import { getPosts, getStats, courseCounts } from '../lib/site';
+import { getPosts, getStats, courseCounts, byCourseNumberDesc } from '../lib/site';
 import { getBlogStructure } from '../lib/content';
 import { experience, type Entry } from '../content/resume';
 
 const posts = (await getPosts()).slice(0, 5);
 const stats = await getStats();
 const counts = await courseCounts();
-const categories = getBlogStructure().flatMap((h) => h.categories);
+const categories = byCourseNumberDesc(getBlogStructure().flatMap((h) => h.categories));
 
 /* rail work: the two jobs held most recently — "Current" sorts first. Same pair r4
    shows at index.html:70-71 (Prism Controls, the consulting entry). */
@@ -23,7 +23,7 @@ const jobs = [...experience].sort((a, b) => endsAt(b) - endsAt(a)).slice(0, 2);
 <Base scene="home" wide>
   <header class="page-head">
     <div class="page-head__text">
-      <p class="kicker">Prism Controls &middot; University of Michigan &middot; Arch btw</p>
+      <p class="kicker">Prism Controls &middot; University of Michigan</p>
       <h1 class="hero-title">Murphy <span class="hl">Malcolm</span></h1>
     </div>
     <canvas class="pen" data-scene="home" aria-hidden="true"></canvas>
@@ -31,11 +31,14 @@ const jobs = [...experience].sort((a, b) => endsAt(b) - endsAt(a)).slice(0, 2);
   <div class="home">
     <div class="home__main">
       <section class="bio">
+        {/* photo parked for now; restore this and the 120px column in .bio to bring it back
         <figure class="bio__photo">
           <img src="/profile.jpeg" alt="Murphy asleep with a cat" width="300" height="277" />
         </figure>
+        */}
         <div class="bio__text">
-          <p>I'm a software & platform engineer at Prism Controls and a Computer Science student at the University of Michigan, specializing in full-stack development, DevSecOps, and embedded systems. I've a deep passion for all of the above, but also Linux (Arch btw), networking, cybersecurity, and cats!</p>
+          <p>I'm a software, systems, & platform engineer at Prism Controls. I'm also currently studying Computer Science & Sociology at the University of Michigan.</p>
+          <p>I specialize in full-stack development, DevSecOps, and embedded systems. I've a deep passion for all of the above, but also Linux (Arch btw), networking, cybersecurity, and cats!</p>
           <p>I'm opinionated about technology&mdash;but those opinions come from a genuine love of the game and a drive to continuously learn and improve. Always happy to connect and talk.</p>
         </div>
       </section>
@@ -89,7 +92,8 @@ const jobs = [...experience].sort((a, b) => endsAt(b) - endsAt(a)).slice(0, 2);
   .more a:hover { color: var(--accent-text); }
 
   /* r4/style.css 187-192 */
-  .bio { display: grid; grid-template-columns: 120px 1fr; gap: 24px; align-items: start; margin: 0 0 8px; }
+  /* photo column parked with the figure above: was `120px 1fr` */
+  .bio { display: grid; grid-template-columns: 1fr; gap: 24px; align-items: start; margin: 0 0 8px; }
   .bio__photo { margin: 0; }
   .bio__photo img { width: 120px; border: 1px solid var(--line); border-radius: var(--radius); }
   .bio__text { max-width: 62ch; }
@@ -114,7 +118,7 @@ const jobs = [...experience].sort((a, b) => endsAt(b) - endsAt(a)).slice(0, 2);
   .rail__job { margin: 0 0 12px; }
   .rail__co { display: block; font-size: 14.5px; font-weight: 500; line-height: 1.4; color: var(--text); }
   .rail__role { display: block; font-size: 13px; line-height: 1.4; color: var(--muted); }
-  .rail__dates { display: block; margin-top: 1px; font: 12px/1.5 var(--mono); color: var(--accent-2); white-space: nowrap; }
+  .rail__dates { display: block; margin-top: 1px; font: 12px/1.5 var(--mono); color: var(--muted); white-space: nowrap; }
   .rail .more { margin-top: 4px; }
 
   /* courses block: code left, count right */
@@ -143,7 +147,7 @@ const jobs = [...experience].sort((a, b) => endsAt(b) - endsAt(a)).slice(0, 2);
   }
   @media (max-width: 560px) {
     /* r4/style.css 364-365, r4/pages.css */
-    .bio { grid-template-columns: 96px 1fr; gap: 14px; }
+    .bio { gap: 14px; }  /* was `96px 1fr` with the photo */
     .bio__photo img { width: 96px; }
     .rail { grid-template-columns: 1fr; gap: 20px; }
     .home__main .post-list :global(.post-row) { grid-template-columns: 1fr; }

@@ -6,12 +6,12 @@ import { projects } from './projects/data';
 
 export interface Entry { id: string; org: string; place: string; title: string; start: string; end: string; gpa?: string; bullets: string[]; note?: string }
 
-export const summary = 'Software Engineer with expertise in full-stack development, DevSecOps, and embedded development. Skilled in Python, Rust, C, and CI/CD automation. Strong systems thinker who excels at architectural planning, identifying integration points across complex projects, and driving solutions from concept to deployment.';
+export const summary = 'Software & Systems Engineer with expertise in full-stack development, DevSecOps, and embedded development. Skilled in Python, Rust, C, and CI/CD automation. Strong systems thinker who excels at architectural planning, identifying integration points across complex projects, and driving solutions from concept to deployment.';
 
 export const contact = { email: 'murphyjmalcolm@gmail.com', place: 'Ann Arbor, MI', site: 'murph.rip' };
 
 export const experience: Entry[] = [
-  { id: 'rs-prism', org: 'Prism Controls', place: 'Lowell, MI', title: 'Software & Platform Engineer', start: 'June 2022', end: 'Current', bullets: [
+  { id: 'rs-prism', org: 'Prism Controls', place: 'Lowell, MI', title: 'Software, Systems, & Platform Engineer', start: 'June 2022', end: 'Current', bullets: [
     'Led a team of 2 junior developers in rewriting the front-end & back-end of our Responsive Egg Flow product.',
     'Delivered product demonstrations to customers, translating technical capabilities into business value and gathering feedback for feature development.',
     'Standardized Git workflows, coding standards, and CI/CD architecture across the engineering team.',

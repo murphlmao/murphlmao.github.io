@@ -4,16 +4,13 @@ export interface Project { id: string; title: string; description: string; link:
 
 export const projects: Project[] = [
   {
-    id: "vs-file-split",
-    title: "VS File Split",
+    id: "sid",
+    title: "sid",
     description:
-      "Visual Studio [Code] File Split is a file system monitor & file splitter for creating multiple files at once in VSCode.",
-    link: "https://github.com/murphlmao/vs-file-split",
-    tech: [
-      "Go",
-      "GitHub Actions",
-    ],
-    status: "Live",
+      "A fast, focused desktop cockpit for developer workflow: SSH/SFTP, databases, ports & processes, and system tweaks in one native Rust app, scoped per git workspace.",
+    link: "https://github.com/murphlmao/sid",
+    tech: ["Rust", "GPUI"],
+    status: "Building",
   },
   {
     id: "wrike",
@@ -24,68 +21,28 @@ export const projects: Project[] = [
     status: "Live",
   },
   {
+    id: "quora-prompt-remover",
+    title: "Quora Prompt Remover",
+    description: "Chrome extension that stripped Quora's forced login prompt. Quora has since patched it.",
+    link: "https://github.com/murphlmao/Quora-Prompt-Remover",
+    tech: ["JavaScript", "Chrome Extension"],
+    status: "Archived",
+  },
+  {
+    id: "vs-file-split",
+    title: "VS File Split",
+    description:
+      "Visual Studio [Code] File Split is a file system monitor & file splitter for creating multiple files at once in VSCode.",
+    link: "https://github.com/murphlmao/vs-file-split",
+    tech: ["Go", "GitHub Actions"],
+    status: "Archived",
+  },
+  {
     id: "create-py-app",
     title: "Create-Py-App",
-    description:
-      "CLI Tool to create a standard Python repository structure",
+    description: "CLI Tool to create a standard Python repository structure",
     link: "https://github.com/murphlmao/create-py-app",
-    tech: ["Rust", "Askama", "Python", "GitHub Actions"],
-    status: "Live",
+    tech: ["Rust"],
+    status: "Archived",
   },
 ];
-
-export const techStack: Record<string, string[]> = {
-  Languages: [
-    "Python",
-    "Rust",
-    "Go",
-    "TypeScript",
-    "C",
-    "C#",
-    "C++",
-    "SQL",
-    "Bash"
-  ],
-  "Frameworks / Libraries": [
-    "FastAPI",
-    "React",
-    "Next.js",
-    "Remix",
-    "Hugo",
-    "HTMX",
-    "Electron",
-    "Node.js",
-    "Deno",
-    "Tailwind CSS",
-  ],
-
-  "DevOps & Infrastructure": [
-    "Azure",
-    "GCP",
-    "Git",
-    "Ansible",
-    "Docker",
-    "Kubernetes",
-    "Terraform",
-    "Nginx",
-    "CI/CD",
-  ],
-  "IT & Systems Administration": [
-    "Linux",
-    "Windows Server",
-    "AD/DS",
-    "Networking",
-    "Cybersecurity",
-    "Virtualization",
-  ],
-  "Databases": [
-    "PostgreSQL",
-    "SQLite",
-    "Redis"
-  ],
-  "Misc. Skills": [
-    "Videography",
-    "Color Grading",
-    "Professional Communication",
-  ],
-};

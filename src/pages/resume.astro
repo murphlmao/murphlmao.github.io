@@ -111,7 +111,7 @@ const hasExpandableSkills = skillGroups.some((g) => g.skills.some((sk) => sk.evi
         {hasExpandableSkills && <p class="rs-rail__note">Open source. Click a skill above to see where it was used.</p>}
         <div class="rs-projects">
           {projects.map((p) => (
-            <article class="rs-proj" id={`rs-p-${p.id}`}>
+            <article class="rs-proj" id={`rs-p-${p.id}`} data-status={p.status.toLowerCase()}>
               <div class="rs-proj__top">
                 <h3 class="rs-proj__name"><a href={p.link} target="_blank" rel="noopener">{p.title}</a></h3>
                 <span class="rs-proj__status"><span class="rs-proj__dot" aria-hidden="true" />{p.status.toLowerCase()}</span>
@@ -158,7 +158,7 @@ const hasExpandableSkills = skillGroups.some((g) => g.skills.some((sk) => sk.evi
   .rs-entry + .rs-entry { margin-top: 26px; }
   .rs-entry { scroll-margin-top: 24px; }
   .rs-entry__meta { display: flex; flex-direction: column; gap: 1px; padding-top: 3px; font: 12.5px/1.6 var(--mono); color: var(--muted); }
-  .rs-entry__dates { color: var(--accent-2); }
+  .rs-entry__dates { color: var(--muted); }
   .rs-entry__body { min-width: 0; max-width: var(--rs-body-w); }
   .rs-entry__org { margin: 0; font-size: 17px; font-weight: 600; line-height: 1.35; }
   .rs-entry__role { margin: 1px 0 0; font-size: 15px; line-height: 1.5; }
@@ -178,14 +178,14 @@ const hasExpandableSkills = skillGroups.some((g) => g.skills.some((sk) => sk.evi
 
   /* certifications: one line after education, same two columns */
   .rs-certs { margin: 26px 0 0; }
-  .rs-certs__label { padding-top: 3px; font: 12.5px/1.6 var(--mono); color: var(--accent-2); }
+  .rs-certs__label { padding-top: 3px; font: 12.5px/1.6 var(--mono); color: var(--muted); }
   .rs-certs__list { font-size: 15px; line-height: 1.6; }
 
   /* ---------- 2. skills: group name left; rows "name | work school projects | count | chevron" right ---------- */
   .rs-skills__head, .rs-skill__row { display: grid; grid-template-columns: minmax(0, 1fr) repeat(3, var(--rs-cell)) 3ch 14px; gap: 0 6px; align-items: center; max-width: var(--rs-row-w); }
   .rs-skills__head { grid-column: 2; padding-bottom: 6px; border-bottom: 1px solid var(--line); font: 500 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); text-align: center; }
   .rs-skills__head::before { content: ""; }               /* empty name cell keeps the labels over the dots */
-  .rs-group__name { margin: 0; padding-top: 24px; font: 13px/1.6 var(--mono); font-weight: 400; color: var(--accent-2); }
+  .rs-group__name { margin: 0; padding-top: 24px; font: 13px/1.6 var(--mono); font-weight: 400; color: var(--muted); }
   .rs-group__rows { min-width: 0; padding-top: 18px; }
   .rs-skill { max-width: var(--rs-row-w); border-bottom: 1px solid var(--line); }
   .rs-skill__row { padding: 6px 0; }
@@ -205,17 +205,20 @@ const hasExpandableSkills = skillGroups.some((g) => g.skills.some((sk) => sk.evi
   .rs-ev { list-style: none; margin: 2px 0 10px; padding: 0 0 0 12px; border-left: 1px solid var(--line); }
   .rs-ev li { display: grid; grid-template-columns: 7ch minmax(0, 1fr); gap: 0 10px; align-items: baseline; padding: 4px 0; font-size: 14px; line-height: 1.5; }
   .rs-ev__where { font: 11px/1.5 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
-  .rs-ev__src { margin-left: 6px; font: 12.5px var(--mono); color: var(--accent-2); text-decoration: none; white-space: nowrap; }
+  .rs-ev__src { margin-left: 6px; font: 12.5px var(--mono); color: var(--muted); text-decoration: none; white-space: nowrap; }
   .rs-ev__src::before { content: "\2192 "; }
   .rs-ev__src:hover { color: var(--accent-text); }
 
   /* ---------- 3. projects: card tiles in the rail (or folded into a grid below skills) ---------- */
   .rs-projects { display: grid; grid-template-columns: 1fr; gap: 16px; }
   .rs-proj {
-    min-width: 0; padding: 14px 16px; border: 1px solid var(--line); border-radius: var(--radius);
+    position: relative; min-width: 0; padding: 14px 16px; border: 1px solid var(--line); border-radius: var(--radius);
     background: var(--bg-2); scroll-margin-top: 24px;
   }
   .rs-proj:hover { border-color: var(--accent-text); }
+  /* stretched link: the title anchor covers the whole card, so anywhere on it opens the project */
+  .rs-proj__name a::after { content: ""; position: absolute; inset: 0; }
+  .rs-proj:hover .rs-proj__name a, .rs-proj:hover .rs-proj__host { color: var(--accent-text); }
   .rs-proj:target { border-color: var(--accent-text); }
   .rs-proj:target .rs-proj__name a { color: var(--accent-text); }
   .rs-proj__top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
@@ -224,6 +227,10 @@ const hasExpandableSkills = skillGroups.some((g) => g.skills.some((sk) => sk.evi
   .rs-proj__name a:hover { color: var(--accent-text); }
   .rs-proj__status { display: inline-flex; flex-shrink: 0; align-items: center; gap: 5px; padding: 2px 7px; border: 1px solid var(--line); border-radius: 999px; font: 11px var(--mono); color: var(--muted); }
   .rs-proj__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  /* archived: grey dot, chip and card sit back a little */
+  .rs-proj[data-status="archived"] .rs-proj__dot { background: var(--muted); }
+  .rs-proj[data-status="archived"] .rs-proj__status { border-style: dashed; }
+  .rs-proj[data-status="archived"] .rs-proj__name a { color: var(--muted); }
   .rs-proj__desc { margin: 8px 0 0; font-size: 13.5px; line-height: 1.5; color: var(--muted); }
   .rs-proj__stack { display: flex; flex-wrap: wrap; gap: 5px; list-style: none; margin: 10px 0 0; padding: 0; }
   .rs-proj__chip { font: 11.5px var(--mono); color: var(--muted); border: 1px solid var(--line); border-radius: 3px; padding: 2px 7px; }

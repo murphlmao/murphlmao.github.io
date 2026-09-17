@@ -74,11 +74,8 @@ const gearPath = 'M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.
         {site.socials.map((s) => (
           <a class="side__icon" href={s.href} aria-label={s.name} target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={icons[s.name]}/></svg></a>
         ))}
-      </div>
-      <div class="side__pills">
-        <a class="side__pill side__deer" href="/deer" aria-label="Deer log" title="Deer log">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d={deerPath}/></svg><span>Deer log</span>
-        </a>
+        <span class="side__sep" aria-hidden="true"></span>
+        <a class="side__icon side__deer" href="/deer" aria-label="Deer log" title="Deer log"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={deerPath}/></svg></a>
         <Settings />
       </div>
     </div>
@@ -98,7 +95,7 @@ const gearPath = 'M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.
   /* menu button: a sibling of .side__panel (not inside it) so it stays
      reachable on mobile while the sheet is closed. order:5 keeps it at
      the bottom of the desktop column, after the unrolled panel content
-     (the gear lives in the bottom-cluster pill instead, see .side__pills). */
+     (the gear lives in the bottom icon row instead, see .side__icons). */
   .side__actions { display: flex; align-items: center; gap: 2px; order: 5; }
   .side__menuBtn { display: none; }
   .side__backdrop { display: none; }
@@ -141,20 +138,12 @@ const gearPath = 'M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.
 
   .side__spacer { flex: 1; }
 
-  /* bottom cluster: socials row, then a distinct row of two labeled pills
-     (deer log, settings) -- 10px between the rows, own the gap so it holds
-     regardless of the panel's own flex gap (20px desktop / 16px mobile). */
-  .side__bottom { display: flex; flex-direction: column; gap: 10px; }
-
-  /* socials row: share .side__icon (base.css) for the 30px box; svg sizing/fill here */
-  .side__icons { display: flex; gap: 2px; }
+  /* bottom cluster: one icon row -- the socials, a hairline, then the deer log
+     and the settings gear (Settings.astro, same .side__icon box). Same baseline,
+     two groups. */
+  .side__icons { display: flex; align-items: center; gap: 2px; }
   .side__icon svg { width: 17px; height: 17px; fill: currentColor; }
-
-  /* pill row: deer log + settings, both `.side__pill` (base.css handles the
-     chrome + icon sizing); the deer glyph is filled, the gear (Settings.astro)
-     is stroked and sets its own fill:none, so only the deer icon needs fill here. */
-  .side__pills { display: flex; gap: 8px; }
-  .side__deer svg { fill: currentColor; }
+  .side__sep { width: 1px; height: 16px; margin: 0 8px; background: var(--line); }
 
   @media (max-width: 899px) {
     /* three-column bar: brand left, cat centered in the middle column, menu
@@ -200,10 +189,9 @@ const gearPath = 'M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.
     .side__settingsRow:hover, .side__settingsRow:focus-visible { color: var(--accent-text); }
     .side__deerRow { text-decoration: none; border-top: 1px solid var(--line); margin-top: 6px; padding-top: 6px; }
     .side__deerRow svg { fill: currentColor; stroke: none; }
-    /* the Customize popover lives inside .side__pills; display:none on that ancestor would
-       keep it out of the top layer, so unwrap the row and hide only the pill buttons */
-    .side__pills { display: contents; }
-    .side__pills .side__pill { display: none; }
+    /* the menu has its own Deer log / Customize rows; hide only the icons (the gear's
+       .settings wrapper stays in the tree so the #tweaks popover can reach the top layer) */
+    .side__sep, .side__deer, .side__icons :global(.settings__gear) { display: none; }
 
     /* TOC rows: 40px */
     /* long headings wrap in the sheet instead of clipping; block keeps the row a full-width tap target */
