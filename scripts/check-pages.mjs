@@ -4,8 +4,8 @@ import { readFileSync, existsSync } from 'node:fs';
 
 /** [dist path, [substrings that must appear]] — tasks append rows. */
 const checks = [
-  ['dist/index.html', ['Murphy Malcolm', 'class="side', 'id="tweaks"', 'id="orb"', 'id="critters"', 'id="footWalk"', 'id="sideCat"', 'data-palette="ember"', 'class="hl"', 'data-scene="home"', 'class="rail', 'all 14 articles']],
-  ['dist/articles/complexity_analysis_big_Oshit/index.html', ['Complexity Analysis', 'code-block-wrapper', 'class="toc', 'about 8 min read', 'class="prose"']],
+  ['dist/index.html', ['Murphy Malcolm', 'class="side', 'id="tweaks"', 'id="orb"', 'id="critters"', 'id="footWalk"', 'id="sideCat"', 'data-palette="ember"', 'class="hl"', 'data-scene="home"', 'class="rail', 'all 13 articles']],
+  ['dist/articles/binary-search-trees/index.html', ['Binary Search Trees', 'code-block-wrapper', 'class="toc', 'class="prose"']],
   ['dist/articles/what-is-the-stack/index.html', ['What is the Stack?', 'code-block-wrapper']],
   ['dist/articles/index.html', ['id="flat"', 'data-view="class"', 'mich-mark', 'data-course="eecs280"']],
   ['dist/articles/eecs280/index.html', ['EECS 280', 'What is the Stack?', 'oldest first']],
@@ -19,6 +19,9 @@ const checks = [
   ['dist/snippets/divisible_cat/index.html', ['/resources/divisible_cat']],
   ['dist/deer/index.html', ['2008 Jeep Liberty']],
   ['dist/404.html', ['404']],
+  ['dist/statue/index.html', ['coming soon', 'main_cloud_1400_7.gif', 'href="/statue/1"']],
+  ['dist/statue/12/index.html', ['main_cloud_1400_1.gif', 'manheadwhat2.gif', 'href="/statue/1"']],
+  ['dist/statue/9/index.html', ['pine_01.gif', 'href="/statue/10"']],
 ];
 
 /** dist paths that must NOT exist — content blacklisted in src/content/publish.ts. */

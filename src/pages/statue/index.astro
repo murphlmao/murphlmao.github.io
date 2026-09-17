@@ -1,0 +1,60 @@
+---
+/* /statue: a coming-soon door for a page that does not exist yet. Standalone: no
+   sidebar, no footer, statue12's clouds turning behind the head, one line of text.
+   The head is the way through to the rooms (/statue/1). */
+import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/500.css';
+import StatueClouds from '../../components/StatueClouds.astro';
+import { site } from '../../site.config';
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>soon · {site.domain}</title>
+    <meta name="description" content="Not yet." />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/statue/favicon2.gif" />
+  </head>
+  <body>
+    <StatueClouds />
+    <div class="veil" aria-hidden="true"></div>
+    <a class="head" href="/statue/1" aria-label="Enter"><img src="/statue/manheadwhat2.gif" alt="" width="424" height="584" decoding="async" /></a>
+    <main class="text">
+      <h1 class="soon">coming soon</h1>
+      <p class="line">something is being carved.<br />it is not done. neither am i.</p>
+      <a class="back" href="/">&larr; {site.domain}</a>
+    </main>
+  </body>
+</html>
+<style>
+  html, body { margin: 0; height: 100%; background: #000; color: #ede7df; overflow: hidden; }
+  body { font: 400 14px/1.6 "IBM Plex Mono", ui-monospace, Menlo, monospace; -webkit-font-smoothing: antialiased; }
+  ::selection { background: rgba(215, 38, 61, .4); }
+
+  /* the clouds are near-white; a veil pulls them down so the head and the text carry */
+  .veil { position: fixed; inset: 0; z-index: 7; background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,.25), rgba(0,0,0,.7) 70%); }
+  .head { position: fixed; left: 50%; top: 50%; z-index: 8; width: 424px; height: 584px; margin: -270px 0 0 -212px; }
+  .head img { display: block; width: 100%; height: 100%; }
+
+  /* text sits low, over everything; the title stutters like a bad tube */
+  .text { position: fixed; left: 0; right: 0; bottom: 6vh; z-index: 9; text-align: center; text-shadow: 0 0 10px #000, 0 0 28px #000, 0 0 60px #000; }
+  .soon { margin: 0; font-size: clamp(28px, 6vw, 56px); font-weight: 500; letter-spacing: .18em; text-transform: uppercase; animation: stutter 6s steps(1, end) infinite; }
+  .line { margin: 10px 0 22px; color: #9b939e; letter-spacing: .04em; }
+  .back { color: #9b939e; text-decoration: none; letter-spacing: .08em; }
+  .back:hover, .back:focus-visible { color: #e8546a; }
+  :focus-visible { outline: 2px solid #d7263d; outline-offset: 2px; }
+
+  @keyframes stutter {
+    0%, 100% { opacity: 1; }
+    41% { opacity: 1; } 42% { opacity: .35; } 43% { opacity: 1; }
+    47% { opacity: 1; } 48% { opacity: .2; } 48.6% { opacity: 1; }
+    83% { opacity: 1; } 83.4% { opacity: .5; } 84% { opacity: 1; }
+  }
+
+  @media (max-width: 560px) {
+    .head { width: 240px; height: 331px; margin: -190px 0 0 -120px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .soon { animation: none; } }
+</style>

@@ -78,6 +78,11 @@ const gearPath = 'M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.
         <a class="side__icon side__deer" href="/deer" aria-label="Deer log" title="Deer log"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={deerPath}/></svg></a>
         <Settings />
       </div>
+      <div class="side__break" aria-hidden="true"></div>
+      <a class="side__statue" href="/statue" aria-label="Coming soon" title="soon">
+        <img class="side__statue-cloud" src="/statue/main_cloud_1400_3.gif" alt="" width="2048" height="2048" decoding="async" />
+        <img class="side__statue-cloud side__statue-cloud--2" src="/statue/main_cloud_1400_2.gif" alt="" width="2048" height="2048" decoding="async" />
+      </a>
     </div>
   </div>
   <div class="side__backdrop"></div>
@@ -144,6 +149,16 @@ const gearPath = 'M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.
   .side__icons { display: flex; align-items: center; gap: 2px; }
   .side__icon svg { width: 17px; height: 17px; fill: currentColor; }
   .side__sep { width: 1px; height: 16px; margin: 0 8px; background: var(--line); }
+
+  /* statue: a hairline, then a low black slab with two of statue12's cloud layers turning
+     inside it (public/statue, the mirrored fauux pages). Links to the coming-soon page. */
+  .side__break { height: 1px; margin: 12px 0; background: var(--line); }
+  .side__statue { position: relative; display: block; height: 44px; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius); background: #000; }
+  .side__statue:hover, .side__statue:focus-visible { border-color: var(--accent); }
+  .side__statue-cloud { position: absolute; left: 50%; top: 50%; width: 280px; height: 280px; margin: -140px 0 0 -140px; animation: statue-spin 20s linear infinite reverse; }
+  .side__statue-cloud--2 { animation-duration: 30s; }
+  @keyframes statue-spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .side__statue-cloud { animation: none; } }
 
   @media (max-width: 899px) {
     /* three-column bar: brand left, cat centered in the middle column, menu

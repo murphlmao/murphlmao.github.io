@@ -1,0 +1,59 @@
+---
+/* /statue/<n>: one room. Black page, the room's gif placed exactly where the original
+   put it, linking to the next room; a 0x0 looping YouTube iframe underneath, as the
+   originals did (browsers only let it sound once you have clicked through). Data
+   and credits in src/content/statue.ts. */
+import { statues, pines, nextOf, type StatuePage } from '../../content/statue';
+import StatueClouds from '../../components/StatueClouds.astro';
+
+export function getStaticPaths() {
+  return statues.map((page) => ({ params: { n: String(page.n) }, props: { page } }));
+}
+const { page } = Astro.props as { page: StatuePage };
+const next = `/statue/${nextOf(page.n)}`;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>statue {page.n}</title>
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/statue/favicon2.gif" />
+  </head>
+  <body class:list={[{ 'is-rgb': page.backdrop === 'rgb' }]}>
+    {page.backdrop === 'clouds' && <StatueClouds />}
+    <a class="figure" href={next} style={page.css + `;width:${page.w}px;height:${page.h}px` + (page.behind ? ';z-index:-1' : '')}>
+      <img src={`/statue/${page.gif}`} alt="" width={page.w} height={page.h} decoding="async" />
+    </a>
+    {page.marquee && (
+      <a class="scroll" href={next}>
+        <marquee behavior="scroll" direction="up">{page.marquee.map((line) => <>{line}<br /></>)}</marquee>
+      </a>
+    )}
+    {page.backdrop === 'pines' && pines.map((p) => (
+      <div class="pine" style={`--t:${p.seconds}s;background-image:url(${p.src})`} aria-hidden="true"></div>
+    ))}
+    <iframe class="music" width="0" height="0" src={`https://www.youtube.com/embed/${page.music}?autoplay=1&loop=1&playlist=${page.music}`} frameborder="0" allow="autoplay" title="music"></iframe>
+  </body>
+</html>
+<style>
+  html, body { margin: 0; padding: 0; min-height: 100%; background: #000; overflow: hidden; }
+  body { cursor: url('/statue/cursor.gif'), auto; }
+  a { cursor: url('/statue/cursor2.gif'), pointer; }
+  body.is-rgb { background: #000 url('/statue/rgb_bg11.gif'); }
+
+  .figure { display: block; }
+  .figure img { display: block; width: 100%; height: 100%; }
+
+  /* 10: the lines scroll up the right side, in the same link as the figure */
+  .scroll { position: fixed; top: 0; right: 12%; bottom: 0; width: 40%; color: #2a4a81; text-decoration: none; font: 16px/3 serif; letter-spacing: 3px; text-align: right; }
+  .scroll marquee { height: 100%; }
+
+  /* 9: four pine bands along the bottom, each sliding at its own speed */
+  .pine { position: absolute; bottom: 0; left: 0; width: 100%; height: 275px; background-repeat: repeat-x; animation: slide var(--t) linear infinite; }
+  @keyframes slide { from { background-position: -1598px 0; } to { background-position: 1598px 0; } }
+
+  .music { position: absolute; width: 0; height: 0; border: 0; }
+  @media (prefers-reduced-motion: reduce) { .pine { animation: none; } }
+</style>

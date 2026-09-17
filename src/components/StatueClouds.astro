@@ -1,0 +1,17 @@
+---
+/* statue12's backdrop: seven 2048px cloud layers pinned to the viewport center, each
+   turning backwards at its own pace (20s .. 80s), deeper layers slower and further
+   back. Used by /statue (the door) and /statue/12. */
+import { clouds } from '../content/statue';
+---
+<div class="clouds" aria-hidden="true">
+  {clouds.map((c) => (
+    <img class="cloud" style={`--t:${c.seconds}s;--z:${1 - c.n}`} src={c.src} alt="" width="2048" height="2048" decoding="async" />
+  ))}
+</div>
+<style>
+  .clouds { position: fixed; inset: 0; }
+  .cloud { position: absolute; left: 50%; top: 50%; width: 2048px; height: 2048px; margin: -1024px 0 0 -1024px; z-index: var(--z); animation: spin var(--t) linear infinite reverse; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .cloud { animation: none; } }
+</style>
