@@ -147,7 +147,8 @@ const icons: Record<string, string> = {
     .side__nav a { min-height: 48px; display: flex; align-items: center; font-size: 17px; }
 
     /* TOC rows: 40px */
-    .toc__link { min-height: 40px; display: flex; align-items: center; }
+    /* long headings wrap in the sheet instead of clipping; block keeps the row a full-width tap target */
+    .toc__link { display: block; min-height: 40px; padding-top: 10px; padding-bottom: 10px; white-space: normal; line-height: 1.4; }
 
     /* icon row: hairline above it (nav/TOC already carry their own separators) */
     .side__icons { border-top: 1px solid var(--line); padding-top: 14px; margin-top: 2px; }
