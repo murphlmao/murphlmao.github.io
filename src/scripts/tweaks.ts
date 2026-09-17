@@ -29,6 +29,9 @@ export function writeAttrs(): void {
   }
   h.style.setProperty('--bg-opacity', String(state.bgOpacity / 100));
   h.style.setProperty('--bg-dim', String(state.bgDim / 100));
+  h.style.setProperty('--draw-speed', String(state.drawSpeed / 100));
+  h.style.setProperty('--glow-strength', String(state.glowStrength / 100));
+  d.glowBreathe = state.glowBreathe ? 'on' : 'off';
   /* the favicon follows the logo + palette; orb.ts owns it (setFavicon) */
 }
 
@@ -46,6 +49,11 @@ export function reset(): void {
   document.dispatchEvent(new CustomEvent('tweakchange', { detail: { key: 'reset', value: null, state } }));
 }
 
+/** Range readouts: drawSpeed shows a multiplier, everything else the raw number. */
+function fmtRange(k: keyof Tweaks, v: number): string {
+  return k === 'drawSpeed' ? `${(v / 100).toFixed(2).replace(/\.?0+$/, '')}x` : String(v);
+}
+
 function sync(): void {
   const form = document.getElementById('tweaks');
   if (!form) return;
@@ -57,7 +65,7 @@ function sync(): void {
     else el.value = String(state[k]);
     if (el instanceof HTMLInputElement && el.type === 'range') {
       const out = el.parentNode?.querySelector('output');
-      if (out) out.textContent = String(state[k]);
+      if (out) out.textContent = fmtRange(k, state[k] as number);
     }
   });
 }
@@ -84,7 +92,7 @@ export function initTweaks(): void {
     if (v === null) return; // radio's un-checked sibling firing input (defensive; browsers don't normally do this)
     if (el instanceof HTMLInputElement && el.type === 'range') {
       const out = el.parentNode?.querySelector('output');
-      if (out) out.textContent = String(v);
+      if (out) out.textContent = fmtRange(k, v as number);
     }
     set(k, v as Tweaks[typeof k]);
   });

@@ -12,7 +12,15 @@
    v2 deviation from r4: the scene traces once on load and never re-traces on hover.
    `tweakchange` for palette/mich/reset just repaints the finished frame with the new
    colors (`still()`); only `draw` (pen/laser mode) re-traces, since that is the only
-   way to preview the mode. */
+   way to preview the mode.
+
+   v2.1: drawSpeed/glowStrength/glowBreathe (site.config Tweaks, mirrored onto <html> as
+   --draw-speed/--glow-strength/data-glow-breathe by tweaks.ts). Speed and strength are
+   read fresh at the start of each trace (and cached for the settle/breathing that
+   follows it); changing them mid-trace never re-traces, only the *next* trace picks up
+   the new value. Laser mode breathes once the settle finishes: a slow, randomly-timed
+   glow pulse over the finished ink, run on a cheap setTimeout between pulses and a
+   capped rAF loop only while a pulse is actually animating. */
 
 import { capDPR, prefersReducedMotion } from './util';
 
@@ -78,23 +86,57 @@ const SCENE_KEYS: Record<string, string> = {
 
 function clampN(v: number, a: number, b: number) { return Math.min(b, Math.max(a, v)); }
 
-/* Pen scene timing. Trace: ~40% of the old clamp(total/220, 1.2, 3) s.
-   Laser mode: constant speed per unit length, PAUSE ms head-lift between paths,
-   then a completion glow: FLASH in, HOLD, FADE back to plain ink. */
-const PAUSE = 40, FLASH = 120, HOLD = 300, FADE = 500, GLOW = FLASH + HOLD + FADE;
+/* Pen scene timing. Trace: ~40% of the old clamp(total/220, 1.2, 3) s; unaffected by
+   drawSpeed's base (pen keeps its current feel, just scaled by speed at runtime).
+
+   Laser mode: constant speed per unit length, head-lift pause between paths, then a
+   completion glow (FLASH in, HOLD, FADE back to plain ink) once the trace finishes.
+   Laser's *base* trace (and its pause) run BASE_SLOW times the pen base, so the M takes
+   roughly 3-4s at speed 1x instead of ~1s; the whole thing (trace, pause, glow) is then
+   divided by --draw-speed at the start of each trace. Glow amplitude multiplies by
+   --glow-strength. */
+const PAUSE = 40, FLASH = 400, HOLD = 600, FADE = 2400;
+const BASE_SLOW = 3.2;                 /* laser base trace/pause vs. pen's base */
 const TAU = Math.PI * 2, EMPTY: number[] = [];
 
+/* Laser breathing (mode==='laser', data-glow-breathe=on, not reduced-motion): once the
+   settle finishes, every BREATH_MIN..BREATH_MAX ms (re-rolled each cycle) the glow rises
+   to 0.55 * glowStrength and falls back, occasionally as a double pulse. */
+const BREATH_MIN = 7000, BREATH_MAX = 14000, BREATH_PEAK = .55;
+
 function easeInOut(t: number) { return t < .5 ? 2 * t * t : 1 - (2 - 2 * t) * (2 - 2 * t) / 2; }
-function glowAt(x: number) { /* x = ms past trace end -> 0..1 */
+function glowAt(x: number, flash: number, hold: number, fade: number) { /* x = ms past trace end -> 0..1 */
   if (x <= 0) return 0;
-  if (x < FLASH) { const u = x / FLASH; return 1 - (1 - u) * (1 - u); }
-  if (x < FLASH + HOLD) return 1;
-  if (x < GLOW) { const v = (x - FLASH - HOLD) / FADE; return 1 - v * v * (3 - 2 * v); }
+  if (x < flash) { const u = x / flash; return 1 - (1 - u) * (1 - u); }
+  if (x < flash + hold) return 1;
+  const g = flash + hold + fade;
+  if (x < g) { const v = (x - flash - hold) / fade; return 1 - v * v * (3 - 2 * v); }
+  return 0;
+}
+
+/* Single vs. double breath, as fractions of BREATH_PEAK (0..1); double pulse 1 in 4. */
+function breathShape(): { from: number; to: number; dur: number }[] {
+  if (Math.random() < .25) {
+    return [
+      { from: 0, to: 1, dur: 1600 }, { from: 1, to: .5, dur: 1000 },
+      { from: .5, to: 1, dur: 1000 }, { from: 1, to: 0, dur: 2600 },
+    ];
+  }
+  return [{ from: 0, to: 1, dur: 1600 }, { from: 1, to: 1, dur: 300 }, { from: 1, to: 0, dur: 2600 }];
+}
+function shapeDur(shape: { dur: number }[]) { return shape.reduce(function (a, s) { return a + s.dur; }, 0); }
+function shapeAt(shape: { from: number; to: number; dur: number }[], ms: number) {
+  let t = ms;
+  for (let i = 0; i < shape.length; i++) {
+    const s = shape[i];
+    if (t <= s.dur) { const u = easeInOut(clampN(t / s.dur, 0, 1)); return s.from + (s.to - s.from) * u; }
+    t -= s.dur;
+  }
   return 0;
 }
 
 /* One scene bound to `canvas` (reads data-scene). `manual` skips the auto-trace and
-   hover/visibility wiring (debug harness). Returns { renderAt(mode, ms), dur, glow }. */
+   hover/visibility wiring (debug harness). Returns { renderAt(mode, ms), dur, glow, pulse }. */
 export function makePen(canvas: HTMLCanvasElement, manual?: boolean): any {
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
@@ -117,16 +159,13 @@ export function makePen(canvas: HTMLCanvasElement, manual?: boolean): any {
     st.len = p.getTotalLength() || 0.001;
     st.path2d = new Path2D(st.d);
     st.start = cum; cum += st.len;
-    st.lift = i * PAUSE;                 /* laser: head-lift pauses before this path */
+    st.i = i;
     st.dash = [st.len, st.len];          /* partial-trace dash, reused every frame */
     st.seg = [0, st.len];                /* laser trail segment, [0] set per frame */
   });
   const total = cum;
-  const dur = clampN(total / 550, 0.5, 1.2) * 1000;
-  const rate = dur / total;              /* ms per path unit, both modes */
-  const durLaser = dur + PAUSE * (strokes.length - 1);
+  const baseDur = clampN(total / 550, 0.5, 1.2) * 1000; /* pen's base trace, unaffected by BASE_SLOW */
   const trail = total * 0.14;
-  strokes.forEach(function (st) { st.t0 = st.start * rate; });
 
   const colors = { ink: '', accent: '', mich: '' };
   function readColors() {
@@ -135,6 +174,44 @@ export function makePen(canvas: HTMLCanvasElement, manual?: boolean): any {
     colors.accent = cs.getPropertyValue('--accent').trim();
     colors.mich = cs.getPropertyValue('--mich').trim();
   }
+
+  /* --draw-speed (0.25..3, default 1), --glow-strength (0..1, default .6) and
+     data-glow-breathe, read fresh at the start of each trace/reset. */
+  function readSpeed() {
+    const v = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--draw-speed'));
+    return clampN(v || 1, 0.25, 3);
+  }
+  function readStrength() {
+    const v = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--glow-strength'));
+    return clampN(isNaN(v) ? 0.6 : v, 0, 1);
+  }
+  function readBreathe() { return document.documentElement.dataset.glowBreathe !== 'off'; }
+
+  let speed = readSpeed(), strength = readStrength(), breathe = readBreathe();
+  let ratePen = 0, rateLaser = 0, pauseEff = 0, flashEff = FLASH, holdEff = HOLD, fadeEff = FADE, glowEff = FLASH + HOLD + FADE;
+  let durLaserEff = 0;
+  const durObj = { pen: 0, laser: 0 };
+
+  /* Recompute effective (speed-scaled) durations and each stroke's start offset for
+     both modes. Called once at setup and again at the start of every trace, so a speed
+     change never re-traces, it only changes the NEXT trace. */
+  function recompute() {
+    const penDurEff = baseDur / speed;
+    const laserTraceEff = (baseDur * BASE_SLOW) / speed;
+    pauseEff = (PAUSE * BASE_SLOW) / speed;
+    flashEff = FLASH / speed; holdEff = HOLD / speed; fadeEff = FADE / speed;
+    glowEff = flashEff + holdEff + fadeEff;
+    ratePen = penDurEff / total;
+    rateLaser = laserTraceEff / total;
+    strokes.forEach(function (st) {
+      st.t0Pen = st.start * ratePen;
+      st.t0Laser = st.start * rateLaser;
+      st.lift = st.i * pauseEff;
+    });
+    durLaserEff = laserTraceEff + pauseEff * (strokes.length - 1);
+    durObj.pen = penDurEff; durObj.laser = durLaserEff;
+  }
+  recompute();
 
   let box = { bx: 0, by: 0, k: 0 };
   function computeBox() {
@@ -148,7 +225,8 @@ export function makePen(canvas: HTMLCanvasElement, manual?: boolean): any {
 
   function dot(x: number, y: number, r: number, a: number) { ctx.globalAlpha = a; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill(); }
 
-  /* e: trace-time ms (pen: eased, laser: linear). g: laser completion glow 0..1. */
+  /* e: trace-time ms (pen: eased, laser: linear). g: laser completion/breath glow, 0..1
+     and already strength-scaled by the caller. */
   function render(laser: boolean, e: number, g: number) {
     const dpr = capDPR();
     ctx.save();
@@ -157,7 +235,7 @@ export function makePen(canvas: HTMLCanvasElement, manual?: boolean): any {
     let tipSt: any = null, tipLocal = 0, i: number, st: any, local: number, a: number;
     for (i = 0; i < strokes.length; i++) {
       st = strokes[i];
-      local = (e - st.t0 - (laser ? st.lift : 0)) / rate;
+      local = (e - (laser ? st.t0Laser : st.t0Pen) - (laser ? st.lift : 0)) / (laser ? rateLaser : ratePen);
       if (local <= 0) continue;
       if (local > st.len) local = st.len;
       ctx.save();
@@ -185,7 +263,7 @@ export function makePen(canvas: HTMLCanvasElement, manual?: boolean): any {
           ctx.lineDashOffset = -a;
           ctx.lineWidth = 10 / st.s; ctx.globalAlpha = .3; ctx.stroke(st.path2d);
           ctx.lineWidth = 1.5 / st.s; ctx.globalAlpha = 1; ctx.stroke(st.path2d);
-        } else {                           /* completion glow: wide soft + thin hot */
+        } else {                           /* completion/breath glow: wide soft + thin hot */
           ctx.lineWidth = 9 / st.s; ctx.globalAlpha = .35 * g; ctx.stroke(st.path2d);
           ctx.lineWidth = 1.5 / st.s; ctx.globalAlpha = g; ctx.stroke(st.path2d);
         }
@@ -213,23 +291,62 @@ export function makePen(canvas: HTMLCanvasElement, manual?: boolean): any {
   /* Deterministic frame at `ms` since trace start. Returns true once nothing is left to animate. */
   function frame(mode: string, ms: number) {
     const laser = mode === 'laser';
-    if (laser) render(true, ms, ms > durLaser ? glowAt(ms - durLaser) : 0);
-    else render(false, easeInOut(clampN(ms / dur, 0, 1)) * dur, 0);
-    return ms >= (laser ? durLaser + GLOW : dur);
+    if (laser) render(true, ms, ms > durLaserEff ? glowAt(ms - durLaserEff, flashEff, holdEff, fadeEff) * strength : 0);
+    else render(false, easeInOut(clampN(ms / durObj.pen, 0, 1)) * durObj.pen, 0);
+    return ms >= (laser ? durLaserEff + glowEff : durObj.pen);
   }
   function still() { render(false, 1e9, 0); }
 
-  let mode = 'pen', tracing = false, rafId: number | null = null, startTs = 0, elapsed = 0, lastFrameTs = 0;
+  let mode = 'pen', tracing = false, settled = false, rafId: number | null = null, startTs = 0, elapsed = 0, lastFrameTs = 0;
+  /* Breathing: a setTimeout schedules the next pulse; the rAF loop only runs while a
+     pulse is actually animating (30fps cap, same as the trace loop). */
+  let pulseTimer: ReturnType<typeof setTimeout> | null = null, pulseRafId: number | null = null;
+
+  function clearBreath() {
+    if (pulseTimer) { clearTimeout(pulseTimer); pulseTimer = null; }
+    if (pulseRafId) { cancelAnimationFrame(pulseRafId); pulseRafId = null; }
+  }
+  function scheduleBreath() {
+    clearBreath();
+    if (reduce || mode !== 'laser' || !breathe || document.hidden) return;
+    pulseTimer = setTimeout(runPulse, BREATH_MIN + Math.random() * (BREATH_MAX - BREATH_MIN));
+  }
+  function runPulse() {
+    if (reduce || mode !== 'laser') return;
+    clearBreath();
+    const shape = breathShape(), dur = shapeDur(shape);
+    let pStart = 0, pLast = 0;
+    pulseRafId = requestAnimationFrame(function tick(ts) {
+      if (!pStart) pStart = ts;
+      if (ts - pLast < 33) { pulseRafId = requestAnimationFrame(tick); return; }
+      pLast = ts;
+      const e = ts - pStart;
+      if (e >= dur) { render(true, durLaserEff, 0); pulseRafId = null; scheduleBreath(); return; }
+      render(true, durLaserEff, shapeAt(shape, e) * BREATH_PEAK * strength);
+      pulseRafId = requestAnimationFrame(tick);
+    });
+  }
+  /** Trigger a breath immediately (debug harness / manual testing). */
+  function pulse() { if (!reduce && mode === 'laser') runPulse(); }
+
   function loop(ts: number) {
     if (ts - lastFrameTs < 33) { rafId = requestAnimationFrame(loop); return; }
     lastFrameTs = ts;
     elapsed = ts - startTs;
-    if (frame(mode, elapsed)) { tracing = false; rafId = null; return; }
+    if (frame(mode, elapsed)) {
+      tracing = false; rafId = null; settled = true;
+      if (mode === 'laser') scheduleBreath();
+      return;
+    }
     rafId = requestAnimationFrame(loop);
   }
   function startTrace() {
+    clearBreath();
     mode = document.documentElement.dataset.draw === 'laser' ? 'laser' : 'pen';
-    if (reduce) { still(); return; }
+    speed = readSpeed(); strength = readStrength(); breathe = readBreathe();
+    recompute();
+    settled = false;
+    if (reduce) { still(); settled = true; return; }
     if (rafId) cancelAnimationFrame(rafId);
     tracing = true; elapsed = 0; lastFrameTs = 0;
     rafId = requestAnimationFrame(function (ts) { startTs = ts; loop(ts); });
@@ -247,7 +364,11 @@ export function makePen(canvas: HTMLCanvasElement, manual?: boolean): any {
   if (!reduce && !manual) {
     setTimeout(startTrace, 600);
     document.addEventListener('visibilitychange', function () {
-      if (document.hidden) pauseTrace(); else resumeTrace();
+      if (document.hidden) { pauseTrace(); clearBreath(); }
+      else {
+        resumeTrace();
+        if (!tracing) { still(); if (settled) scheduleBreath(); }
+      }
     });
   }
 
@@ -263,17 +384,33 @@ export function makePen(canvas: HTMLCanvasElement, manual?: boolean): any {
        draw (pen/laser) is the one case that re-traces, to preview the mode. */
     if (k === 'palette' || k === 'mich' || k === 'reset') {
       readColors(); pauseTrace(); tracing = false; still();
+      if (k === 'reset') {
+        speed = readSpeed(); strength = readStrength(); breathe = readBreathe();
+        clearBreath();
+        if (settled && mode === 'laser') scheduleBreath();
+      }
     } else if (k === 'draw') {
-      pauseTrace(); tracing = false; if (!manual) startTrace();
+      pauseTrace(); tracing = false; clearBreath(); if (!manual) startTrace();
+    } else if (k === 'glowStrength') {
+      strength = readStrength();
+      if (!tracing && !pulseRafId) still();
+    } else if (k === 'glowBreathe') {
+      breathe = readBreathe();
+      if (breathe) { if (settled && mode === 'laser') scheduleBreath(); }
+      else { clearBreath(); still(); }
     }
+    /* drawSpeed: nothing to do here, --draw-speed is already live on <html> and
+       startTrace() reads it fresh at the start of the next trace. */
   });
 
-  return { canvas: canvas, renderAt: frame, dur: { pen: dur, laser: durLaser }, glow: { flash: FLASH, hold: HOLD, fade: FADE } };
+  return { canvas: canvas, renderAt: frame, dur: durObj, glow: { flash: FLASH, hold: HOLD, fade: FADE }, pulse: pulse };
 }
 
 export function initPen(): void {
+  const debug = new URLSearchParams(location.search).get('debug') === '1';
   document.querySelectorAll<HTMLCanvasElement>('canvas.pen[data-scene]').forEach(function (canvas) {
     if (!SCENE_KEYS[canvas.dataset.scene || '']) return;   /* "none" / unknown: no scene */
-    makePen(canvas);
+    const pen = makePen(canvas);
+    if (debug && !(window as any).__pen) (window as any).__pen = pen;
   });
 }

@@ -9,8 +9,9 @@ import { palettes, showTweaks } from '../site.config';
 ---
 {showTweaks && (
 <div class="settings">
-  <button class="settings__gear side__icon" type="button" popovertarget="tweaks" aria-label="Site settings">
+  <button class="settings__gear side__pill" type="button" popovertarget="tweaks" aria-label="Site settings">
     <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+    <span>Customize</span>
   </button>
   <form id="tweaks" class="tweak" popover>
     <div class="tweak__hd">
@@ -80,6 +81,12 @@ import { palettes, showTweaks } from '../site.config';
         </div>
       </div>
 
+      <div class="tweak__sub">
+        <label class="tweak__row tweak__rangerow"><span class="tweak__rowlabel">Drawing speed</span><span class="tweak__ctl"><input type="range" name="drawSpeed" min="25" max="300" step="5" /><output></output></span></label>
+        <label class="tweak__row tweak__switchrow"><span class="tweak__rowlabel">Glow breathes</span><input type="checkbox" class="switch" name="glowBreathe" /></label>
+        <label class="tweak__row tweak__rangerow"><span class="tweak__rowlabel">Glow strength</span><span class="tweak__ctl"><input type="range" name="glowStrength" min="0" max="100" step="5" /><output></output></span></label>
+      </div>
+
       <label class="tweak__row tweak__switchrow"><span class="tweak__rowlabel">Orb spin</span><input type="checkbox" class="switch" name="orb" /></label>
       <label class="tweak__row tweak__switchrow"><span class="tweak__rowlabel">Background</span><input type="checkbox" class="switch" name="bg" /></label>
 
@@ -104,7 +111,15 @@ import { palettes, showTweaks } from '../site.config';
 )}
 <style>
   .settings { position: relative; }
-  .settings__gear svg { width: 17px; height: 17px; }
+
+  /* the trigger + form now live inside .side__panel's bottom cluster, which on
+     mobile gets `visibility: hidden` while the menu sheet is closed. `visibility`
+     is inherited, so the popover -- promoted to the top layer when open, but not
+     exempt from an inherited `visibility` -- would inherit that hidden value from
+     a closed ancestor sheet. Reassert visible on the popover itself so it still
+     shows once menu.ts closes the sheet to open it; harmless while closed, since
+     `[popover]` is `display: none` at rest regardless of visibility. */
+  #tweaks { visibility: visible; }
 
   /* ---------------- panel chrome (shared by both presentations) ---------------- */
   .tweak { font: 400 13.5px/1.5 var(--sans); color: var(--text); margin: 0; }
@@ -136,6 +151,8 @@ import { palettes, showTweaks } from '../site.config';
      dimmed to inert when Background is off. CSS-only, no JS wiring needed. */
   .tweak__sub { display: flex; flex-direction: column; padding-left: 12px; border-left: 1px solid var(--line); }
   .tweak:has(input[name="bg"]:not(:checked)) .tweak__sub { opacity: .45; pointer-events: none; }
+  .tweak:has(input[name="draw"][value="pen"]:checked) .tweak__rangerow:has([name="glowStrength"]),
+  .tweak:has(input[name="draw"][value="pen"]:checked) .tweak__switchrow:has([name="glowBreathe"]) { opacity: .45; pointer-events: none; }
 
   /* ---------------- controls ---------------- */
   .chips { display: flex; flex-wrap: wrap; gap: 8px; }

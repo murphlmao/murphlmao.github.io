@@ -30,6 +30,8 @@ export function initSidecat(): void {
     '.side-cat svg.sc{position:absolute;right:0;bottom:0;width:48px;height:24px}' +
     'svg.sc{color:var(--cat,var(--muted));overflow:visible;cursor:pointer;transition:color .2s}' +
     'svg.sc:hover,svg.sc:focus-visible{color:color-mix(in srgb,var(--cat,var(--muted)) 60%,var(--muted))}' +
+    'svg.sc:focus{outline:none}' +
+    'svg.sc:focus-visible{outline:2px solid var(--accent);outline-offset:3px}' +
     'svg.sc .sc__ink{fill:currentColor}' +
     'svg.sc .sc__tail{fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round}' +
     '@media (max-width:899px){.side-cat{position:static;width:auto;height:auto;line-height:0}' +
@@ -274,11 +276,20 @@ export function initSidecat(): void {
     return c;
   });
 
-  /* click / keyboard easter egg — opt-in, never autoplay */
+  /* click / keyboard easter egg — opt-in, never autoplay. A single click (or
+     Enter/Space) only perks the ears; the audio itself only toggles on five
+     clicks within 3s of each other (a rolling window — filtering out clicks
+     older than 3s each time is the reset, no separate timer needed). */
   var audio = document.getElementById('chill');
+  var clickTimes = [];
   function toggle() {
     cats.forEach(function (c) { c.perkAt = clock(); });
     if (!audio) return;
+    var now = clock();
+    clickTimes = clickTimes.filter(function (t) { return now - t < 3; });
+    clickTimes.push(now);
+    if (clickTimes.length < 5) return;
+    clickTimes.length = 0;
     if (audio.paused) audio.play().catch(function () {}); else audio.pause();
   }
   cats.forEach(function (c) {

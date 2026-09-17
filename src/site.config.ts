@@ -8,6 +8,9 @@ export interface Tweaks {
   logo: Logo;
   mich: Mich;
   draw: Draw;
+  drawSpeed: number; // 25..300, percent of the base trace speed
+  glowBreathe: 0 | 1; // laser: the finished drawing pulses now and then
+  glowStrength: number; // 0..100, laser glow intensity
   orb: 0 | 1;
   bg: 0 | 1;
   bgOpacity: number; // 0..100
@@ -22,6 +25,7 @@ export interface Tweaks {
 
 export const tweakDefaults: Tweaks = {
   palette: 'ember', logo: 'orb', mich: 'maize', draw: 'pen',
+  drawSpeed: 100, glowBreathe: 1, glowStrength: 60,
   orb: 1, bg: 1, bgOpacity: 25, strands: 1, motes: 1, bgDim: 50,
   paws: 0, walker: 1, deer: 1, raccoon: 1,
 };
@@ -36,7 +40,11 @@ export const site = {
   name: 'Murphy Malcolm',
   domain: 'murph.rip',
   url: 'https://murph.rip',
-  intro: 'Software & platform engineer. CS student at the University of Michigan.',
+  /** Sidebar lines under the name: what he does, then what he studies. */
+  roles: [
+    { title: 'Software, Systems, & Platform Engineer', at: 'Prism Controls' },
+    { title: 'CS & SOC Student', at: 'the University of Michigan, Ann Arbor' },
+  ],
   socials: [
     { name: 'GitHub', href: 'https://github.com/murphlmao' },
     { name: 'Spotify', href: 'https://open.spotify.com/user/bigseeexyman' },
