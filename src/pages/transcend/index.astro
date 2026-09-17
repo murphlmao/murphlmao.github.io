@@ -1,0 +1,119 @@
+---
+/* /transcend: a coming-soon page for something personal that does not exist yet.
+   Standalone, no site chrome. Its backdrop is every room's backdrop at once: the
+   rgb floor tile from 11 under everything, five of 12's cloud rings oversized and
+   off-centre turning through each other, 9's pine bands sliding along the bottom,
+   a heavy veil and a grain that never sits still. The title stutters in greys.
+   The whole page is the way into the rooms; only the back link is not. */
+import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/500.css';
+import { pines } from '../../content/statue';
+import { site } from '../../site.config';
+
+/* size in px, centre as % of the viewport, seconds per turn */
+const clouds = [
+  { src: '/statue/12-cloud-1.gif', size: 2600, x: 72, y: 28, t: 110, dir: 'normal' },
+  { src: '/statue/12-cloud-2.gif', size: 2100, x: 18, y: 78, t: 80, dir: 'reverse' },
+  { src: '/statue/12-cloud-3.gif', size: 1700, x: 56, y: 58, t: 55, dir: 'normal' },
+  { src: '/statue/12-cloud-4.gif', size: 3000, x: 40, y: 110, t: 140, dir: 'reverse' },
+  { src: '/statue/12-cloud-5.gif', size: 1400, x: 88, y: 70, t: 42, dir: 'normal' },
+];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>are you awake?</title>
+    <meta name="description" content="Not yet." />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/statue/favicon.gif" />
+  </head>
+  <body>
+    <div class="floor" aria-hidden="true"></div>
+    <div class="sky" aria-hidden="true">
+      {clouds.map((c) => (
+        <img class="cloud" style={`--s:${c.size}px;--x:${c.x}%;--y:${c.y}%;--t:${c.t}s;--dir:${c.dir}`} src={c.src} alt="" width="2048" height="2048" decoding="async" />
+      ))}
+    </div>
+    <div class="veil" aria-hidden="true"></div>
+    {pines.map((p) => (
+      <div class="pine" style={`--t:${p.seconds}s;background-image:url(${p.src})`} aria-hidden="true"></div>
+    ))}
+    <div class="grain" aria-hidden="true"></div>
+
+    <p class="crumb">{site.domain} / transcend</p>
+    <main class="text">
+      <p class="tag">coming soon</p>
+      <h1 class="title" data-text="not yet.">not yet.</h1>
+      <p class="line">something is being carved out of the noise.<br />it has no shape. come back when it does.</p>
+    </main>
+    <a class="enter" href="/transcend/statue" aria-label="Enter the statues"></a>
+    <a class="back" href="/">&larr; {site.domain}</a>
+  </body>
+</html>
+<style>
+  html, body { margin: 0; height: 100%; background: #000; color: #ede7df; overflow: hidden; }
+  body { font: 400 14px/1.6 "IBM Plex Mono", ui-monospace, Menlo, monospace; -webkit-font-smoothing: antialiased; cursor: url('/statue/cursor.gif'), auto; }
+  a { cursor: url('/statue/cursor-link.gif'), pointer; }
+  ::selection { background: rgba(215, 38, 61, .4); }
+
+  /* 11's floor, tiled and nearly gone */
+  .floor { position: fixed; inset: 0; background: url('/statue/11-rgb-floor.gif'); opacity: .12; }
+
+  /* 12's rings, each far bigger than the viewport and centred somewhere off it, so
+     only bands of cloud cross the screen; each gif is clipped to its ring (the grey
+     frame around it never shows) and screen-blended so the rings pile up */
+  .sky { position: fixed; inset: 0; overflow: hidden; filter: contrast(1.25) brightness(.7); }
+  .cloud { position: absolute; left: var(--x); top: var(--y); width: var(--s); height: var(--s); margin: calc(var(--s) / -2) 0 0 calc(var(--s) / -2); clip-path: circle(26%); mix-blend-mode: screen; animation: turn var(--t) linear infinite var(--dir); }
+  @keyframes turn { to { transform: rotate(360deg); } }
+  /* dark from the left, where the words are; the chaos stays brighter to the right */
+  .veil { position: fixed; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,.9) 0, rgba(0,0,0,.7) 34%, rgba(0,0,0,.25) 62%, rgba(0,0,0,.7) 100%), linear-gradient(0deg, rgba(0,0,0,.6), transparent 40%); }
+
+  /* 9's pines along the bottom, each band sliding at its own speed */
+  .pine { position: fixed; bottom: 0; left: 0; width: 100%; height: 200px; background-repeat: repeat-x; background-position-y: bottom; opacity: .6; animation: slide var(--t) linear infinite; }
+  @keyframes slide { from { background-position: -1598px bottom; } to { background-position: 1598px bottom; } }
+
+  .grain { position: fixed; inset: -50%; width: 200%; height: 200%; opacity: .16; mix-blend-mode: overlay; pointer-events: none; animation: grain 1.1s steps(6) infinite;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  @keyframes grain {
+    0% { transform: translate(0, 0); } 20% { transform: translate(-5%, -8%); } 40% { transform: translate(4%, 6%); }
+    60% { transform: translate(-7%, 3%); } 80% { transform: translate(6%, -5%); } 100% { transform: translate(0, 0); }
+  }
+
+  .crumb { position: fixed; top: 24px; left: 6vw; margin: 0; color: #9b939e; letter-spacing: .1em; font-size: 12px; text-shadow: 0 0 10px #000; }
+  .text { position: fixed; left: 6vw; bottom: 30vh; max-width: 44ch; }
+  .tag { display: inline-block; margin: 0 0 18px; padding: 4px 10px; border: 1px solid rgba(155,147,158,.4); border-radius: 999px; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #9b939e; }
+  .title { position: relative; margin: 0 0 18px; font-size: clamp(56px, 11vw, 150px); line-height: .95; font-weight: 500; letter-spacing: -.02em; color: #a39ba1; text-shadow: 0 0 24px #000; animation: stutter 7s steps(1, end) infinite; }
+  /* the tear: two dark copies of the title, sliced top and bottom, twitching sideways */
+  .title::before, .title::after { content: attr(data-text); position: absolute; left: 0; top: 0; width: 100%; pointer-events: none; text-shadow: none; }
+  .title::before { color: #3a3344; clip-path: inset(0 0 55% 0); animation: shear 3.4s steps(1, end) infinite; }
+  .title::after { color: #221e27; clip-path: inset(60% 0 0 0); animation: shear 2.7s steps(1, end) infinite reverse; }
+  .line { margin: 0; color: #d3ccc4; font-size: 15px; letter-spacing: .03em; text-shadow: 0 0 10px #000, 0 0 24px #000; }
+
+  /* the whole page is the door; the back link floats above it */
+  .enter { position: fixed; inset: 0; z-index: 9; }
+  .back { position: fixed; left: 6vw; bottom: 24px; z-index: 10; color: #9b939e; text-decoration: none; font-size: 12px; letter-spacing: .1em; text-shadow: 0 0 10px #000; }
+  .back:hover, .back:focus-visible { color: #e8546a; }
+  :focus-visible { outline: 2px solid #d7263d; outline-offset: 2px; }
+
+  @keyframes stutter {
+    0%, 100% { opacity: 1; }
+    37% { opacity: 1; } 38% { opacity: .3; } 38.7% { opacity: 1; }
+    61% { opacity: 1; } 61.5% { opacity: .55; } 62.3% { opacity: 1; }
+    89% { opacity: 1; } 89.3% { opacity: .2; } 89.9% { opacity: 1; }
+  }
+  @keyframes shear {
+    0%, 100% { transform: none; }
+    31% { transform: none; } 32% { transform: translate(-6px, 0); } 34% { transform: none; }
+    57% { transform: none; } 58% { transform: translate(5px, -1px); } 59.5% { transform: none; }
+    83% { transform: none; } 84% { transform: translate(-3px, 1px); } 85% { transform: none; }
+  }
+  @media (max-width: 560px) {
+    .text { bottom: 24vh; }
+    .pine { height: 140px; background-size: auto 140px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cloud, .pine, .grain, .title, .title::before, .title::after { animation: none; }
+  }
+</style>

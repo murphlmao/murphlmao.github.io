@@ -1,0 +1,80 @@
+---
+/* /transcend/statue: the twelve rooms on one page. Each room ships as a <template>
+   (so its gifs and track only load when shown); the script drops the current room
+   into #stage. Clicking a figure swaps to the next room in place and leaves the URL
+   alone; /transcend/statue#7 (or #room-7) opens room 7. Data and credits in
+   src/content/statue.ts. */
+import { statues, pines, nextOf } from '../../content/statue';
+import StatueClouds from '../../components/StatueClouds.astro';
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>are you awake?</title>
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/statue/favicon.gif" />
+  </head>
+  <body>
+    <div id="stage"></div>
+    {statues.map((page) => (
+      <template id={`room-${page.n}`} data-rgb={page.backdrop === 'rgb' ? '' : undefined}>
+        {page.backdrop === 'clouds' && <StatueClouds />}
+        <a class="figure" href={`#room-${nextOf(page.n)}`} style={page.css + `;width:${page.w}px;height:${page.h}px` + (page.behind ? ';z-index:-1' : '')}>
+          <img src={`/statue/${page.gif}`} alt="" width={page.w} height={page.h} decoding="async" />
+        </a>
+        {page.marquee && (
+          <a class="scroll" href={`#room-${nextOf(page.n)}`}>
+            <marquee behavior="scroll" direction="up">{page.marquee.map((line) => <>{line}<br /></>)}</marquee>
+          </a>
+        )}
+        {page.backdrop === 'pines' && pines.map((p) => (
+          <div class="pine" style={`--t:${p.seconds}s;background-image:url(${p.src})`} aria-hidden="true"></div>
+        ))}
+        <iframe class="music" width="0" height="0" src={`https://www.youtube.com/embed/${page.music}?autoplay=1&loop=1&playlist=${page.music}`} frameborder="0" allow="autoplay" title="music"></iframe>
+      </template>
+    ))}
+    <script>
+      const stage = document.getElementById('stage')!;
+      const count = document.querySelectorAll('template[id^="room-"]').length;
+      function show(n: number): void {
+        const t = document.getElementById(`room-${n}`) as HTMLTemplateElement | null;
+        if (!t) return;
+        stage.replaceChildren(t.content.cloneNode(true));
+        document.body.classList.toggle('is-rgb', t.hasAttribute('data-rgb'));
+      }
+      const roomOf = (hash: string): number => { const n = parseInt(hash.replace(/^#(room-)?/, ''), 10); return n >= 1 && n <= count ? n : 1; };
+      const fromHash = (): number => roomOf(location.hash);
+      // room links swap in place; the URL stays put
+      stage.addEventListener('click', (e) => {
+        const a = (e.target as Element).closest('a[href^="#"]');
+        if (!a) return;
+        e.preventDefault();
+        show(roomOf(a.getAttribute('href')!));
+      });
+      addEventListener('hashchange', () => show(fromHash()));
+      show(fromHash());
+    </script>
+  </body>
+</html>
+<style>
+  html, body { margin: 0; padding: 0; min-height: 100%; background: #000; overflow: hidden; }
+  body { cursor: url('/statue/cursor.gif'), auto; }
+  a { cursor: url('/statue/cursor-link.gif'), pointer; }
+  body.is-rgb { background: #000 url('/statue/11-rgb-floor.gif'); }
+
+  .figure { display: block; }
+  .figure img { display: block; width: 100%; height: 100%; }
+
+  /* 10: the lines scroll up the right side, in the same link as the figure */
+  .scroll { position: fixed; top: 0; right: 12%; bottom: 0; width: 40%; color: #2a4a81; text-decoration: none; font: 16px/3 serif; letter-spacing: 3px; text-align: right; }
+  .scroll marquee { height: 100%; }
+
+  /* 9: four pine bands along the bottom, each sliding at its own speed */
+  .pine { position: absolute; bottom: 0; left: 0; width: 100%; height: 275px; background-repeat: repeat-x; animation: slide var(--t) linear infinite; }
+  @keyframes slide { from { background-position: -1598px 0; } to { background-position: 1598px 0; } }
+
+  .music { position: absolute; width: 0; height: 0; border: 0; }
+  @media (prefers-reduced-motion: reduce) { .pine { animation: none; } }
+</style>

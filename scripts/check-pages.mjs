@@ -19,9 +19,8 @@ const checks = [
   ['dist/snippets/divisible_cat/index.html', ['/resources/divisible_cat']],
   ['dist/deer/index.html', ['2008 Jeep Liberty']],
   ['dist/404.html', ['404']],
-  ['dist/statue/index.html', ['coming soon', 'main_cloud_1400_7.gif', 'href="/statue/1"']],
-  ['dist/statue/12/index.html', ['main_cloud_1400_1.gif', 'manheadwhat2.gif', 'href="/statue/1"']],
-  ['dist/statue/9/index.html', ['pine_01.gif', 'href="/statue/10"']],
+  ['dist/transcend/index.html', ['coming soon', 'not yet.', 'class="enter" href="/transcend/statue"', '09-pines-1.gif', '12-cloud-5.gif']],
+  ['dist/transcend/statue/index.html', ['id="room-1"', 'id="room-12"', '12-cloud-7.gif', '09-pines-1.gif', '12-head.gif']],
 ];
 
 /** dist paths that must NOT exist — content blacklisted in src/content/publish.ts. */

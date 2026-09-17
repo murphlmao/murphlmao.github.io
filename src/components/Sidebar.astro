@@ -79,9 +79,12 @@ const gearPath = 'M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.
         <Settings />
       </div>
       <div class="side__break" aria-hidden="true"></div>
-      <a class="side__statue" href="/statue" aria-label="Coming soon" title="soon">
-        <img class="side__statue-cloud" src="/statue/main_cloud_1400_3.gif" alt="" width="2048" height="2048" decoding="async" />
-        <img class="side__statue-cloud side__statue-cloud--2" src="/statue/main_cloud_1400_2.gif" alt="" width="2048" height="2048" decoding="async" />
+      <a class="side__statue" href="/transcend" aria-label="Coming soon" title="soon">
+        <img class="side__statue-cloud" style="--s:2048px;--dx:0px;--dy:458px;--t:90s;--dir:normal" src="/statue/12-cloud-3.gif" alt="" width="2048" height="2048" decoding="async" />
+        <img class="side__statue-cloud" style="--s:2048px;--dx:0px;--dy:-458px;--t:120s;--dir:reverse" src="/statue/12-cloud-2.gif" alt="" width="2048" height="2048" decoding="async" />
+        <img class="side__statue-cloud" style="--s:1800px;--dx:-400px;--dy:0px;--t:70s;--dir:normal" src="/statue/12-cloud-1.gif" alt="" width="2048" height="2048" decoding="async" />
+        <img class="side__statue-cloud" style="--s:1800px;--dx:400px;--dy:0px;--t:80s;--dir:reverse" src="/statue/12-cloud-4.gif" alt="" width="2048" height="2048" decoding="async" />
+        <span class="side__statue-veil" aria-hidden="true"></span>
       </a>
     </div>
   </div>
@@ -150,14 +153,19 @@ const gearPath = 'M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.
   .side__icon svg { width: 17px; height: 17px; fill: currentColor; }
   .side__sep { width: 1px; height: 16px; margin: 0 8px; background: var(--line); }
 
-  /* statue: a hairline, then a low black slab with two of statue12's cloud layers turning
-     inside it (public/statue, the mirrored fauux pages). Links to the coming-soon page. */
+  /* transcend: a hairline, then a low black slab. Three of the statue cloud rings
+     (public/statue) sit with their centres outside the slab, at near native size so
+     the ring's thin cloud band (radius 20.5-24% of its size) crosses the slab as a
+     near-straight strip: two run along it, two across it, each turning at its own
+     speed. clip-path trims each gif to its ring so the grey frame never shows;
+     screen-blended so the rings add up. max-width: none beats base.css's img clamp.
+     --dx/--dy are the ring's centre offset from the slab's centre. */
   .side__break { height: 1px; margin: 12px 0; background: var(--line); }
   .side__statue { position: relative; display: block; height: 44px; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius); background: #000; }
   .side__statue:hover, .side__statue:focus-visible { border-color: var(--accent); }
-  .side__statue-cloud { position: absolute; left: 50%; top: 50%; width: 280px; height: 280px; margin: -140px 0 0 -140px; animation: statue-spin 20s linear infinite reverse; }
-  .side__statue-cloud--2 { animation-duration: 30s; }
-  @keyframes statue-spin { to { transform: rotate(360deg); } }
+  .side__statue-cloud { position: absolute; left: calc(50% + var(--dx)); top: calc(50% + var(--dy)); width: var(--s); max-width: none; height: var(--s); margin: calc(var(--s) / -2) 0 0 calc(var(--s) / -2); clip-path: circle(26%); mix-blend-mode: screen; filter: contrast(1.2) brightness(.85); animation: statue-turn var(--t) linear infinite var(--dir); }
+  .side__statue-veil { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,.55), transparent 30%, transparent 70%, rgba(0,0,0,.55)); }
+  @keyframes statue-turn { to { transform: rotate(360deg); } }
   @media (prefers-reduced-motion: reduce) { .side__statue-cloud { animation: none; } }
 
   @media (max-width: 899px) {
