@@ -33,9 +33,8 @@ export function initMenu(): void {
     if (e.key === 'Escape' && side.classList.contains('is-open')) closeMenu(true);
   });
 
-  /* Settings.astro's gear pill and Sidebar.astro's mobile "Customize" row both
-     popovertarget="tweaks"; either one opening it should close this sheet
-     first so the two don't stack. */
+  /* Settings.astro's gear sits inside this sheet on phones; opening its #tweaks
+     popover closes the sheet first so the two don't stack. */
   const tweaks = document.getElementById('tweaks');
   tweaks?.addEventListener('beforetoggle', (e) => {
     if (e.newState === 'open' && side.classList.contains('is-open')) closeMenu(false);
