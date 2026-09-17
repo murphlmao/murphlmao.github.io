@@ -8,7 +8,8 @@ export interface Tweaks {
   logo: Logo;
   mich: Mich;
   draw: Draw;
-  drawSpeed: number; // 25..300, percent of the base trace speed
+  penSpeed: number; // 25..300, percent of the base trace speed, pen mode
+  laserSpeed: number; // 25..300, same for laser (its trace, pause and finish all scale)
   glowBreathe: 0 | 1; // laser: the finished drawing pulses now and then
   glowStrength: number; // 0..100, laser glow intensity
   orb: 0 | 1;
@@ -24,10 +25,10 @@ export interface Tweaks {
 }
 
 export const tweakDefaults: Tweaks = {
-  palette: 'ember', logo: 'orb', mich: 'maize', draw: 'pen',
-  drawSpeed: 100, glowBreathe: 1, glowStrength: 60,
-  orb: 1, bg: 1, bgOpacity: 25, strands: 1, motes: 1, bgDim: 50,
-  paws: 0, walker: 1, deer: 1, raccoon: 1,
+  palette: 'ember', logo: 'orb', mich: 'maize', draw: 'laser',
+  penSpeed: 85, laserSpeed: 135, glowBreathe: 1, glowStrength: 30,
+  orb: 1, bg: 1, bgOpacity: 56, strands: 1, motes: 1, bgDim: 50,
+  paws: 0, walker: 0, deer: 0, raccoon: 0,
 };
 
 export const palettes: Palette[] = ['ember', 'alley', 'space'];
