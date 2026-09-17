@@ -127,7 +127,8 @@ const gearPath = 'M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.
   /* Customize row: mobile-only nested settings trigger (menu.ts closes the
      sheet when the #tweaks popover it opens toggles open). Hidden on desktop,
      where the bottom-cluster gear pill (Settings.astro) is the only trigger. */
-  .side__settingsRow { display: none; }
+  /* mobile-only rows; the anchor form needs the extra specificity to beat .side__nav a */
+  .side__settingsRow, .side__nav a.side__deerRow { display: none; }
 
   /* TOC (article pages only, under the nav) */
   .toc { border-top: 1px solid var(--line); padding-top: 14px; }
@@ -199,7 +200,10 @@ const gearPath = 'M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.
     .side__settingsRow:hover, .side__settingsRow:focus-visible { color: var(--accent-text); }
     .side__deerRow { text-decoration: none; border-top: 1px solid var(--line); margin-top: 6px; padding-top: 6px; }
     .side__deerRow svg { fill: currentColor; stroke: none; }
-    .side__pills { display: none; }
+    /* the Customize popover lives inside .side__pills; display:none on that ancestor would
+       keep it out of the top layer, so unwrap the row and hide only the pill buttons */
+    .side__pills { display: contents; }
+    .side__pills .side__pill { display: none; }
 
     /* TOC rows: 40px */
     /* long headings wrap in the sheet instead of clipping; block keeps the row a full-width tap target */
