@@ -606,7 +606,9 @@ const gearPath =
         .side__settingsRow:focus-visible {
             color: var(--accent-text);
         }
-        .side__deerRow {
+        /* the desktop hide rule is `.side__nav a.side__deerRow`; match its specificity */
+        .side__nav a.side__deerRow {
+            display: flex;
             text-decoration: none;
             border-top: 1px solid var(--line);
             margin-top: 6px;

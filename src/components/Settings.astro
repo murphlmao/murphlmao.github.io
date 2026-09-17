@@ -120,8 +120,10 @@ import { palettes, showTweaks } from '../site.config';
      exempt from an inherited `visibility` -- would inherit that hidden value from
      a closed ancestor sheet. Reassert visible on the popover itself so it still
      shows once menu.ts closes the sheet to open it; harmless while closed, since
-     `[popover]` is `display: none` at rest regardless of visibility. */
-  #tweaks { visibility: visible; }
+     `[popover]` is `display: none` at rest regardless of visibility. Same story for
+     `pointer-events`: the closed sheet sets it to none and it inherits, which made the
+     open sheet-popover let every tap fall through to the page. */
+  #tweaks { visibility: visible; pointer-events: auto; }
 
   /* ---------------- panel chrome (shared by both presentations) ---------------- */
   .tweak { font: 400 13.5px/1.5 var(--sans); color: var(--text); margin: 0; }
