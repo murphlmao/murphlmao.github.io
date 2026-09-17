@@ -13,9 +13,10 @@
    turn and breathing are transforms. rAF, time-based, eased, 60fps cap,
    paused when the tab is hidden, static under prefers-reduced-motion.
 
-   Contract: click (or Enter/Space) toggles the #chill audio — opt-in, never
-   autoplay; the cat acknowledges with an ear perk and a faint accent glow
-   while playing. Hovering `.side__deer` makes him listen that way. */
+   Contract: click (or Enter/Space) perks the ears. If a #chill audio element
+   exists, five clicks within 3s toggle it (opt-in, never autoplay) and the cat
+   glows while it plays; without one the clicks are just clicks. Hovering
+   `.side__deer` makes him listen that way. */
 import { prefersReducedMotion } from './util';
 
 export function initSidecat(): void {
@@ -90,7 +91,7 @@ export function initSidecat(): void {
               'L1.1 -2.3 2.1 -1.7C2.4 -.8 2.6 .3 2.7 1.4Z';
 
   var SVG = '<svg class="sc" viewBox="0 0 48 24" role="button" tabindex="0" aria-pressed="false"' +
-    ' aria-label="Cat. Click for a chill guy."><g class="sc__all"><path class="sc__tail"/>' +
+    ' aria-label="Cat."><g class="sc__all"><path class="sc__tail"/>' +
     '<g class="sc__ink"><path class="sc__body"/><g class="sc__head"><circle cx="38" cy="11" r="6"/>' +
     '<path class="sc__earL" d="' + EAR_L + '"/><path class="sc__earR" d="' + EAR_R + '"/></g></g></g></svg>';
 
