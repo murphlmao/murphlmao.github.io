@@ -90,6 +90,23 @@ export function initOrb(): void {
     return d.orb === 'on' && !document.hidden && !reduce;
   }
 
+  /* Favicon: a 32px canvas of its own, so painting it never touches the visible orb.
+     While the main orb spins, frame() repaints it every FAV_MS at the orb's own t, so
+     the tab icon turns in step; otherwise it holds the t=0 still. Chrome and Firefox
+     repaint the tab on every href change; Safari keeps the first icon it fetched. */
+  const FAV_MS = 100;
+  const favLink = document.getElementById('favicon') as HTMLLinkElement | null;
+  const fav = document.createElement('canvas');
+  fav.width = 32; fav.height = 32;
+  const favCtx = fav.getContext('2d');
+  let favLast = 0;
+  function paintFavicon(t: number): void {
+    if (!favLink || !favCtx) return;
+    draw(favCtx, 32, t);
+    if (favLink.type !== 'image/png') favLink.type = 'image/png';
+    favLink.href = fav.toDataURL('image/png');
+  }
+
   let raf: number | null = null, last = 0;
   function frame(t: number): void {
     raf = requestAnimationFrame(frame);
@@ -97,6 +114,7 @@ export function initOrb(): void {
     last = t;
     const tt = t / 1000;
     for (const e of entries) if (shouldRun(e.kind)) draw(e.ctx, e.size, tt);
+    if (t - favLast >= FAV_MS && shouldRun('main')) { favLast = t; paintFavicon(tt); }
   }
   function evaluate(): void {
     const active = entries.some((e) => shouldRun(e.kind));
@@ -110,45 +128,32 @@ export function initOrb(): void {
   evaluate();
   document.addEventListener('visibilitychange', evaluate);
 
-  let faviconCache: Record<string, string> = {};
-  function orbDataURL(): string {
-    if (!main) return '';
-    const pal = document.documentElement.dataset.palette || '';
-    if (faviconCache[pal]) return faviconCache[pal];
-    draw(main.getContext('2d') as CanvasRenderingContext2D, 40, 0);
-    const off = document.createElement('canvas');
-    off.width = 32; off.height = 32;
-    off.getContext('2d')?.drawImage(main, 0, 0, 32, 32);
-    const url = off.toDataURL('image/png');
-    faviconCache[pal] = url;
-    return url;
-  }
-
+  /* The resting favicon: the orb's t=0 still, or the active static mark in the palette's
+     accent. A spinning orb paints over it from frame() within FAV_MS. */
   function setFavicon(): void {
-    const link = document.getElementById('favicon') as HTMLLinkElement | null;
-    if (!link) return;
+    if (!favLink) return;
     const logo = document.documentElement.dataset.logo;
     if (logo === 'orb') {
-      link.type = 'image/png';
-      link.href = orbDataURL();
+      paintFavicon(0);
     } else {
       const markSvg = document.querySelector('.side__mark .' + logo);
       if (!markSvg) return;
       const cs = getComputedStyle(document.documentElement);
       const accentText = cs.getPropertyValue('--accent-text').trim();
       const svgStr = markSvg.outerHTML.replace(/currentColor/g, accentText).replace(/ class="[^"]*"/, '');
-      link.type = 'image/svg+xml';
-      link.href = 'data:image/svg+xml,' + encodeURIComponent(svgStr);
+      favLink.type = 'image/svg+xml';
+      favLink.href = 'data:image/svg+xml,' + encodeURIComponent(svgStr);
     }
   }
 
   document.addEventListener('tweakchange', (e) => {
     const k = (e as CustomEvent).detail.key;
-    if (k === 'palette' || k === 'reset') { readColors(); faviconCache = {}; }
+    if (k === 'palette' || k === 'reset') readColors();
     /* r4 omits 'logo' here, which leaves the orb frozen after switching back
        to it from a static mark; one extra key, same behaviour otherwise. */
     if (k === 'orb' || k === 'palette' || k === 'logo' || k === 'reset') evaluate();
-    if (k === 'palette' || k === 'logo' || k === 'reset') setFavicon();
+    /* 'orb': spin switched off, so drop back from the last animated frame to the still */
+    if (k === 'orb' || k === 'palette' || k === 'logo' || k === 'reset') setFavicon();
   });
 
   setFavicon();

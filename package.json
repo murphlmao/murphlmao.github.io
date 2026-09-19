@@ -10,6 +10,7 @@
     "bs": "astro build && astro preview",
     "lint": "eslint .",
     "typecheck": "astro check",
+    "test": "playwright test",
     "check": "astro check && astro build && node scripts/check-pages.mjs && node scripts/check-links.mjs"
   },
   "dependencies": {
@@ -28,6 +29,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.63.0",
     "@types/hast": "^3.0.5",
     "@types/node": "^22.20.2",
     "@types/react": "^19.3.0",

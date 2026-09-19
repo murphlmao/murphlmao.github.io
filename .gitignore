@@ -14,6 +14,8 @@
 # testing
 /coverage
 temp
+/test-results/
+/playwright-report/
 
 # next.js
 /.next/

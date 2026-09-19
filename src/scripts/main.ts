@@ -8,15 +8,19 @@ import { initWalker } from './walker';
 import { initMenu } from './menu';
 import { initCopy, initToc, initHeadingLinks } from './article';
 import { initArticles } from './articles';
+import { whenStylesReady } from './util';
 
 initTweaks();
 initMenu();
-initOrb();
-initScene();
-initPen();
-initSidecat();
-initCritters();
-initWalker();
+/* the canvas modules read palette tokens and measure their canvases at startup */
+whenStylesReady(() => {
+  initOrb();
+  initScene();
+  initPen();
+  initSidecat();
+  initCritters();
+  initWalker();
+});
 initCopy();
 initToc();
 initHeadingLinks();
