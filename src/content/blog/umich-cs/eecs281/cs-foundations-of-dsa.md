@@ -148,7 +148,7 @@ So which one wins? Neither. This scenario isn't actually trying to make the case
 
 
 ## What's an Abstract Data Type (ADT)?
-An abstract data type is just a description of what a data structure does. For example, the List ADT looks like: 
+An abstract data type, colloquially called an interface, is just a description of what a data structure does. For example, the List ADT looks like: 
 
 | Operation | Promise |
 |---|---|
