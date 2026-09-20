@@ -4,8 +4,11 @@ import { glob } from 'astro/loaders';
 // Keep ids equal to the file path without extension, original casing, so URLs do not change.
 const keepId = ({ entry }: { entry: string }) => entry.replace(/\.(md|mdx)$/, '');
 
+// "Not an underscore" is [^_], never [!_]: the loader's startup scan (tinyglobby) reads
+// [!_] as a negation, but its dev watcher (picomatch.isMatch) reads it as the literal
+// class "! or _", so every edit was dropped and `pnpm dev` served stale markdown.
 const blog = defineCollection({
-  loader: glob({ pattern: '**/[!_]*.{md,mdx}', base: './src/content/blog', generateId: keepId }),
+  loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/blog', generateId: keepId }),
   schema: z.object({
     title: z.string(),
     date: z.coerce.date(),
@@ -18,7 +21,7 @@ const blog = defineCollection({
 });
 
 const snippets = defineCollection({
-  loader: glob({ pattern: '**/[!_]*.md', base: './src/content/snippets', generateId: ({ entry }) => entry.replace(/\/index\.md$|\.md$/, '') }),
+  loader: glob({ pattern: '**/[^_]*.md', base: './src/content/snippets', generateId: ({ entry }) => entry.replace(/\/index\.md$|\.md$/, '') }),
   schema: z.object({
     title: z.string(),
     description: z.string(),
