@@ -1,0 +1,12 @@
+{
+  "languages": {
+    "Markdown": {
+      "soft_wrap": "bounded",
+      "preferred_line_length": 85
+    },
+    "MDX": {
+      "soft_wrap": "bounded",
+      "preferred_line_length": 85
+    }
+  }
+}

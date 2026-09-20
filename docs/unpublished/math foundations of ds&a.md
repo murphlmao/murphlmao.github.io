@@ -1,0 +1,4 @@
+- Precalc, linear functions, exponential functions, etc
+- Discrete math
+- Summation
+- Recurrence Relations
