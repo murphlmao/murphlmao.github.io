@@ -4,8 +4,10 @@ import { readFileSync, existsSync } from 'node:fs';
 
 /** [dist path, [substrings that must appear]] — tasks append rows. */
 const checks = [
-  ['dist/index.html', ['Murphy Malcolm', 'class="side', 'id="tweaks"', 'id="orb"', 'id="critters"', 'id="footWalk"', 'id="sideCat"', 'data-palette="ember"', 'class="hl"', 'data-scene="home"', 'class="rail', 'all 13 articles']],
+  ['dist/index.html', ['Murphy Malcolm', 'class="side', 'id="tweaks"', 'id="orb"', 'id="critters"', 'id="footWalk"', 'id="sideCat"', 'data-palette="ember"', 'class="hl"', 'data-scene="home"', 'class="rail', 'all 15 articles']],
   ['dist/articles/binary-search-trees/index.html', ['Binary Search Trees', 'code-block-wrapper', 'class="toc', 'class="prose"']],
+  // an .mdx article: the React figure is server-rendered into the page, then hydrated as an island
+  ['dist/articles/stacks-queues-deques/index.html', ['Stacks, Queues, and Deques', 'data-adt="stack"', 'isEmpty()', '<astro-island']],
   ['dist/articles/what-is-the-stack/index.html', ['What is the Stack?', 'code-block-wrapper']],
   ['dist/articles/index.html', ['id="flat"', 'data-view="class"', 'mich-mark', 'data-course="eecs280"']],
   ['dist/articles/eecs280/index.html', ['EECS 280', 'What is the Stack?', 'oldest first']],
@@ -19,7 +21,7 @@ const checks = [
   ['dist/snippets/divisible_cat/index.html', ['/resources/divisible_cat']],
   ['dist/deer/index.html', ['2008 Jeep Liberty']],
   ['dist/404.html', ['404']],
-  ['dist/transcend/index.html', ['coming soon', 'not yet.', 'class="enter" href="/transcend/statue"', '09-pines-1.gif', '12-cloud-5.gif']],
+  ['dist/transcend/index.html', ['coming soon', 'not yet.', 'class="enter" href="/transcend/statue"', '09-pines-1.gif', '12-cloud-5-core.gif']],
   ['dist/transcend/statue/index.html', ['id="room-1"', 'id="room-12"', '12-cloud-7.gif', '09-pines-1.gif', '12-head.gif']],
 ];
 

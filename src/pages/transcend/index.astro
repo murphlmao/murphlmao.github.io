@@ -1,7 +1,7 @@
 ---
 /* /transcend: a coming-soon page for something personal that does not exist yet.
    Standalone, no site chrome. Its backdrop is every room's backdrop at once: the
-   rgb floor tile from 11 under everything, five of 12's cloud rings oversized and
+   rgb floor tile from 11 under everything, four of 12's cloud rings oversized and
    off-centre turning through each other, 9's pine bands sliding along the bottom,
    a heavy veil and a grain that never sits still. The title stutters in greys.
    The whole page is the way into the rooms; only the back link is not. */
@@ -10,14 +10,20 @@ import '@fontsource/ibm-plex-mono/500.css';
 import { pines } from '../../content/statue';
 import { site } from '../../site.config';
 
-/* size in px, centre as % of the viewport, seconds per turn */
-const clouds = [
-  { src: '/statue/12-cloud-1.gif', size: 2600, x: 72, y: 28, t: 110, dir: 'normal' },
-  { src: '/statue/12-cloud-2.gif', size: 2100, x: 18, y: 78, t: 80, dir: 'reverse' },
-  { src: '/statue/12-cloud-3.gif', size: 1700, x: 56, y: 58, t: 55, dir: 'normal' },
-  { src: '/statue/12-cloud-4.gif', size: 3000, x: 40, y: 110, t: 140, dir: 'reverse' },
-  { src: '/statue/12-cloud-5.gif', size: 1400, x: 88, y: 70, t: 42, dir: 'normal' },
-];
+/* Each ring shows only its core: the circle of radius 26% around the gif's centre. The
+   -core gifs are the full 2048px rings cropped, pixel for pixel, to the CORE px square
+   that holds that circle (scripts/crop-transcend-rings.py), so a quarter of the pixels
+   are decoded, rastered and turned. Ring 1 is not here: it is hollow, fully transparent
+   inside that circle, and never drew a pixel.
+   size: what the full ring would measure on screen, in px. centre as % of the viewport,
+   seconds per turn. */
+const FULL = 2048, CORE = 1068;
+const rings = [
+  { n: 2, size: 2100, x: 18, y: 78, t: 80, dir: 'reverse' },
+  { n: 3, size: 1700, x: 56, y: 58, t: 55, dir: 'normal' },
+  { n: 4, size: 3000, x: 40, y: 110, t: 140, dir: 'reverse' },
+  { n: 5, size: 1400, x: 88, y: 70, t: 42, dir: 'normal' },
+].map((r) => ({ ...r, src: `/statue/12-cloud-${r.n}-core.gif`, side: (r.size * CORE) / FULL, radius: r.size * 0.26 }));
 ---
 <!doctype html>
 <html lang="en">
@@ -32,8 +38,8 @@ const clouds = [
   <body>
     <div class="floor" aria-hidden="true"></div>
     <div class="sky" aria-hidden="true">
-      {clouds.map((c) => (
-        <img class="cloud" style={`--s:${c.size}px;--x:${c.x}%;--y:${c.y}%;--t:${c.t}s;--dir:${c.dir}`} src={c.src} alt="" width="2048" height="2048" decoding="async" />
+      {rings.map((r) => (
+        <img class="cloud" style={`--d:${r.side}px;--r:${r.radius}px;--x:${r.x}%;--y:${r.y}%;--t:${r.t}s;--dir:${r.dir}`} src={r.src} alt="" width={CORE} height={CORE} decoding="async" />
       ))}
     </div>
     <div class="veil" aria-hidden="true"></div>
@@ -63,14 +69,24 @@ const clouds = [
 
   /* 12's rings, each far bigger than the viewport and centred somewhere off it, so
      only bands of cloud cross the screen; each gif is clipped to its ring (the grey
-     frame around it never shows) and screen-blended so the rings pile up */
+     frame around it never shows) and screen-blended so the rings pile up.
+     --d is the core gif's side on screen, --r the ring's radius (26% of the full gif).
+     The clip and the blend stay on the element that turns, on purpose. Moving them to a
+     still wrapper around it is ~10% faster, but was measured to change the picture: an
+     effect on the turning element is drawn through a surface in its own turned space, so
+     the gif is resampled twice, and that second pass is the softness these clouds have.
+     On a still wrapper it is resampled once and comes out ~13% crisper, dither and all. */
   .sky { position: fixed; inset: 0; overflow: hidden; filter: contrast(1.25) brightness(.7); }
-  .cloud { position: absolute; left: var(--x); top: var(--y); width: var(--s); height: var(--s); margin: calc(var(--s) / -2) 0 0 calc(var(--s) / -2); clip-path: circle(26%); mix-blend-mode: screen; animation: turn var(--t) linear infinite var(--dir); }
+  .cloud { position: absolute; left: var(--x); top: var(--y); width: var(--d); height: var(--d); margin: calc(var(--d) / -2) 0 0 calc(var(--d) / -2); clip-path: circle(var(--r)); mix-blend-mode: screen; animation: turn var(--t) linear infinite var(--dir); }
   @keyframes turn { to { transform: rotate(360deg); } }
   /* dark from the left, where the words are; the chaos stays brighter to the right */
   .veil { position: fixed; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,.9) 0, rgba(0,0,0,.7) 34%, rgba(0,0,0,.25) 62%, rgba(0,0,0,.7) 100%), linear-gradient(0deg, rgba(0,0,0,.6), transparent 40%); }
 
-  /* 9's pines along the bottom, each band sliding at its own speed */
+  /* 9's pines along the bottom, each band sliding at its own speed. This animates
+     background-position on purpose, although it repaints the four bands every frame:
+     sliding them by transform instead was measured, and the compositor's filtering of a
+     layer at fractional pixel offsets cost the 1px line art 6-10% of its contrast (up to
+     25% on a phone), where a repaint draws it crisp each time. */
   .pine { position: fixed; bottom: 0; left: 0; width: 100%; height: 200px; background-repeat: repeat-x; background-position-y: bottom; opacity: .6; animation: slide var(--t) linear infinite; }
   @keyframes slide { from { background-position: -1598px bottom; } to { background-position: 1598px bottom; } }
 

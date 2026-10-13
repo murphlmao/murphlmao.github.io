@@ -1,0 +1,112 @@
+/* Inside of the AdtPlayground figure. The frame is the global .fig / .fig-head / .fig-body
+   from Prose.astro. Every rule hangs off .root so it outranks the .prose element rules
+   (.prose ol would otherwise indent the cells). Colors are palette tokens only. */
+
+.root { --cell: clamp(30px, 10cqw, 40px); --plate-w: clamp(76px, 24cqw, 112px); --plate-h: 28px; --gap: 5px; --pad: 7px; --wall: 2px; --lines: 5; font-family: var(--mono); }
+
+.root .head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.root .reset { color: var(--muted); }
+
+/* .frame is the query container, .body the grid that answers to it: a container cannot
+   restyle itself from its own @container rule. */
+.root .frame { container-type: inline-size; }
+.root .body { display: grid; gap: 10px 14px; grid-template-areas: "stage" "ops" "log"; }
+.root .stage { grid-area: stage; }
+.root .ops { grid-area: ops; }
+.root .log { grid-area: log; }
+/* A stack is tall and narrow, so the log stands beside it at every width and nothing is
+   left empty next to it. The buttons join the log's column once they fit on one line. */
+.root[data-adt="stack"] .body { grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "stage log" "ops ops"; }
+@container (min-width: 460px) {
+  .root[data-adt="stack"] .body { grid-template-rows: auto minmax(0, 1fr); grid-template-areas: "stage ops" "stage log"; }
+}
+
+/* overflow: hidden clips a removed item as it flies out, so the page never scrolls sideways.
+   The stack's height is fixed at --max plates so the figure does not jump on push and pop;
+   its left padding is where the "top" label lives. */
+.root .stage { display: flex; justify-content: center; overflow: hidden; }
+.root[data-adt="stack"] .stage { align-items: flex-end; height: calc(var(--max) * (var(--plate-h) + var(--gap)) + 2 * var(--pad) + 22px); padding: 0 6px 0 52px; }
+.root:not([data-adt="stack"]) .stage { align-items: center; padding: 12px 0 30px; }
+
+/* The walls are the point of the picture: a stack is open at the top only, a queue and a
+   deque at both ends, and nobody reaches through a wall into the middle. */
+.root .cells { position: relative; display: flex; gap: var(--gap); margin: 0; padding: var(--pad); list-style: none; border: 0 solid color-mix(in srgb, var(--muted) 55%, transparent); transition: border-color .15s; }
+.root[data-adt="stack"] .cells { flex-direction: column-reverse; border-width: 0 var(--wall) var(--wall); border-radius: 0 0 4px 4px; }
+/* A queue and a deque flow left to right, the way a line moves: an item joins at the back on
+   the left and leaves from the front on the right. items[0] is still the front, so the DOM
+   (and a screen reader) reads front to back; only the drawing is mirrored. */
+.root:not([data-adt="stack"]) .cells { flex-direction: row-reverse; justify-content: center; min-width: calc(3 * var(--cell)); border-width: var(--wall) 0; }
+.root .cells[data-failed] { border-color: var(--accent); }
+
+.root .cell { position: relative; display: grid; place-items: center; flex: none; width: var(--cell); height: var(--cell); border: 1px solid color-mix(in srgb, var(--text) 14%, transparent); border-radius: 3px; background: color-mix(in srgb, var(--text) 6%, transparent); color: var(--text); font-size: 13px; transition: border-color .15s, color .15s; }
+.root[data-adt="stack"] .cell, .root[data-adt="stack"] .empty { width: var(--plate-w); height: var(--plate-h); }
+.root .cell[data-hit] { border-color: var(--accent); color: var(--accent-text); }
+.root .empty { display: grid; place-items: center; width: 100%; height: var(--cell); font-size: 12px; color: var(--muted); }
+
+/* top / front / back: a label on the cell itself, so it follows the item that holds the role */
+.root .tag { position: absolute; font-size: 11px; color: var(--muted); white-space: nowrap; pointer-events: none; }
+.root[data-adt="stack"] .tag { top: 50%; right: calc(100% + var(--pad) + var(--wall) + 7px); translate: 0 -50%; }
+.root[data-adt="stack"] .tag::after { content: " →"; }
+.root:not([data-adt="stack"]) .tag { top: calc(100% + var(--pad) + var(--wall) + 5px); left: 50%; translate: -50% 0; }
+
+/* an inserted item arrives through the end it was pushed at (the front is on the right) */
+.root .cell[data-from="front"] { animation: from-right .22s ease-out; }
+.root .cell[data-from="back"] { animation: from-left .22s ease-out; }
+.root[data-adt="stack"] .cell[data-from] { animation: from-top .22s ease-out; }
+@keyframes from-top { from { opacity: 0; translate: 0 -16px; } }
+@keyframes from-left { from { opacity: 0; translate: -16px 0; } }
+@keyframes from-right { from { opacity: 0; translate: 16px 0; } }
+
+/* A removed item leaves through the end it was popped from. It rests at opacity 0 and is
+   only ever visible mid-animation, so under prefers-reduced-motion (base.css turns every
+   animation off) it never shows at all. */
+.root .ghost { position: absolute; opacity: 0; pointer-events: none; }
+.root[data-adt="stack"] .ghost { bottom: 100%; left: var(--pad); animation: to-top .3s ease-in; }
+.root:not([data-adt="stack"]) .ghost { top: var(--pad); }
+.root:not([data-adt="stack"]) .ghost[data-end="front"] { left: 100%; animation: to-right .3s ease-in; }
+.root:not([data-adt="stack"]) .ghost[data-end="back"] { right: 100%; animation: to-left .3s ease-in; }
+@keyframes to-top { from { opacity: 1; } to { opacity: 0; translate: 0 -22px; } }
+@keyframes to-left { from { opacity: 1; } to { opacity: 0; translate: -22px 0; } }
+@keyframes to-right { from { opacity: 1; } to { opacity: 0; translate: 22px 0; } }
+
+/* the one inset box: newest call at the bottom, older ones pushed out of the top. The box
+   is as tall as its grid row, which is not a whole number of lines, so ::before fades the
+   top and a half-clipped line reads as history scrolling away. (A mask on .log itself
+   would fade its border too.) */
+.root .log::before { content: ""; position: absolute; inset: 0 0 auto; height: 30px; background: linear-gradient(to bottom, var(--bg) 4px, transparent); pointer-events: none; }
+.root .log { position: relative; display: flex; flex-direction: column; justify-content: flex-end; min-height: calc(var(--lines) * 1.7em + 16px); padding: 8px 12px; overflow: hidden; border: 1px solid var(--line); border-radius: 3px; background: var(--bg); font-size: 12px; line-height: 1.7; color: var(--muted); }
+/* The log never sets the figure's height, or the page would move as calls pile up. Beside
+   a stack it has no size of its own (contain: size) and stretches to the stage's height;
+   under a queue or deque it is a fixed number of lines. */
+.root[data-adt="stack"] .log { contain: size; }
+.root:not([data-adt="stack"]) .log { height: calc(var(--lines) * 1.7em + 16px); }
+.root .line { overflow-wrap: anywhere; }
+.root .line:last-child { color: var(--text); }
+.root .ret { color: var(--accent-2); }
+.root .err { color: var(--accent-text); }
+
+.root .ops { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.root .btn, .root .call { height: 28px; border: 1px solid var(--line); border-radius: 3px; }
+.root .btn, .root .call button { padding: 0 9px; font: 12px var(--mono); color: var(--text); }
+.root .btn:active, .root .call button:active { background: var(--hover); }
+/* push( 4 ): both halves of the call are the button, the box between them is the value.
+   The halves grow to fill the pill, so a stretched pill is still clickable edge to edge. */
+.root .call { display: inline-flex; align-items: center; }
+.root .call button { flex: 1; height: 100%; }
+.root .call button:first-child { padding-right: 0; text-align: right; }
+.root .call button:last-child { padding-left: 0; text-align: left; }
+/* too narrow for one line of buttons: three to a row, stretched, so no button wraps alone */
+@container (max-width: 459px) { .root .ops > * { flex: 1 1 30%; } }
+.root .call input { width: 4.5ch; height: 20px; margin: 0 3px; padding: 0; border: 0; border-radius: 2px; background: var(--bg); font: 12px var(--mono); color: var(--accent-2); text-align: center; }
+/* hover-capable pointers only: on touch, :hover sticks to the last button tapped */
+@media (hover: hover) {
+  .root .btn:hover, .root .call:hover { border-color: var(--accent); }
+  .root .reset:hover { color: var(--text); }
+}
+
+/* touch: 40px tap targets, and a 16px input so iOS Safari does not zoom the page on focus */
+@media (max-width: 899px) {
+  .root .btn, .root .call { height: 40px; }
+  .root .call input { height: 30px; font-size: 16px; }
+  .root .reset { margin: -10px -6px; padding: 10px 6px; }
+}

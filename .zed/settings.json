@@ -2,11 +2,11 @@
   "languages": {
     "Markdown": {
       "soft_wrap": "bounded",
-      "preferred_line_length": 85
+      "preferred_line_length": 90
     },
     "MDX": {
       "soft_wrap": "bounded",
-      "preferred_line_length": 85
+      "preferred_line_length": 90
     }
   }
 }
