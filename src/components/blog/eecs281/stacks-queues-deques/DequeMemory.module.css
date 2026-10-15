@@ -1,0 +1,89 @@
+/* Inside of the DequeMemory figure. The frame is the global .fig / .fig-head / .fig-body
+   from Prose.astro; every rule hangs off .root so it outranks the .prose element
+   rules. The cells, pills and log are the vocabulary of AdtPlayground.module.css, copied so
+   the two figures read as one. Colours are palette tokens only. */
+
+/* --rows is the gap between map rows: room for a start / finish mark above a cell and a
+   front / back tag below the cell of the row above, without the two meeting */
+.root { --cell: 32px; --gap: 4px; --rows: 28px; --ptr: 26px; --lines: 6; font-family: var(--mono); }
+
+.root .head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.root .reset { color: var(--muted); }
+
+/* .frame is the query container, .body the grid that answers to it. The map is tall and
+   narrow, so once there is room the buttons and the log stand beside it, as for a stack. */
+.root .frame { container-type: inline-size; }
+.root .body { display: grid; gap: 10px 14px; grid-template-areas: "stage" "ops" "log" "readout"; }
+.root .stage { grid-area: stage; }
+.root .ops { grid-area: ops; }
+.root .log { grid-area: log; }
+.root .readout { grid-area: readout; }
+@container (min-width: 480px) {
+  .root .body { grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; grid-template-areas: "stage ops" "stage log" "stage readout"; }
+}
+
+/* One row per map slot. Row heights are fixed, so nothing moves when a block comes or goes;
+   the gap over each row is where start / finish sit, the gap under it where front / back do. */
+.root .stage { display: flex; justify-content: center; }
+.root .map { display: grid; gap: var(--rows); margin: 0; padding: 14px 0 14px; list-style: none; }
+.root .row { display: flex; align-items: center; gap: 6px; height: var(--cell); }
+
+/* a map slot: a pointer, dashed while null */
+.root .ptr { display: grid; place-items: center; width: var(--ptr); height: var(--cell); border: 1px solid color-mix(in srgb, var(--text) 14%, transparent); border-radius: 3px; font-size: 11px; color: var(--text); transition: border-color .15s, color .15s; }
+.root .row:not([data-block]) .ptr { border-style: dashed; color: var(--muted); }
+.root .row[data-hit] .ptr { border-color: var(--accent); color: var(--accent-text); }
+.root .map[data-failed] .ptr { border-color: var(--accent); }
+.root .arrow { width: 14px; text-align: center; font-size: 12px; color: var(--muted); }
+
+/* a block: fixed-size cells, dashed while empty; its name is a stand-in for its address */
+.root .cells { display: flex; gap: var(--gap); margin: 0; padding: 0; list-style: none; }
+.root .cell { position: relative; display: grid; place-items: center; flex: none; width: var(--cell); height: var(--cell); border: 1px solid color-mix(in srgb, var(--text) 14%, transparent); border-radius: 3px; background: color-mix(in srgb, var(--text) 6%, transparent); color: var(--text); font-size: 13px; transition: border-color .15s, color .15s; }
+.root .cell[data-empty] { border-style: dashed; background: none; }
+.root .cell[data-hit] { border-color: var(--accent); color: var(--accent-text); }
+.root .name { font-size: 11px; color: var(--muted); }
+/* a freshly allocated block arrives from the right, where the heap is */
+.root .row[data-fresh] .cells, .root .row[data-fresh] .name, .root .row[data-fresh] .arrow { animation: appear .25s ease-out; }
+@keyframes appear { from { opacity: 0; translate: 10px 0; } }
+
+/* front / back: a label on the cell that holds the role, in the gap under its row */
+.root .tag { position: absolute; top: calc(100% + 2px); left: 50%; translate: -50% 0; font-size: 10px; line-height: 1; color: var(--muted); white-space: nowrap; pointer-events: none; }
+/* start / finish: the two positions the deque keeps, over the cell each one points at.
+   Generated content, so the cell's text stays its value (and the tests read it that way). */
+.root .cell[data-mark]::before { content: attr(data-mark); position: absolute; bottom: calc(100% + 2px); left: 50%; translate: -50% 0; font-size: 10px; line-height: 1; color: var(--accent-2); white-space: nowrap; pointer-events: none; }
+/* the same two, as the numbers they really are, under the log */
+.root .readout { margin-top: -2px; padding: 0 2px; font-size: 12px; line-height: 1.7; color: var(--muted); }
+.root .mark { color: var(--accent-2); }
+
+/* the log, as in AdtPlayground: newest call at the bottom, older ones fading out of the top */
+.root .log::before { content: ""; position: absolute; inset: 0 0 auto; height: 30px; background: linear-gradient(to bottom, var(--bg) 4px, transparent); pointer-events: none; }
+.root .log { position: relative; display: flex; flex-direction: column; justify-content: flex-end; min-height: calc(var(--lines) * 1.7em + 16px); padding: 8px 12px; overflow: hidden; border: 1px solid var(--line); border-radius: 3px; background: var(--bg); font-size: 12px; line-height: 1.7; color: var(--muted); }
+/* The log never sets the figure's height. Under the map it is a fixed number of lines; beside
+   the map it has no height of its own (contain: size) and stretches to the map's. These sit
+   after the base rule on purpose: same specificity, so the later one wins. */
+@container (max-width: 479px) { .root .log { height: calc(var(--lines) * 1.7em + 16px); } }
+@container (min-width: 480px) { .root .log { contain: size; } }
+.root .line { overflow-wrap: anywhere; }
+.root .line:last-child { color: var(--text); }
+.root .ret { color: var(--accent-2); }
+.root .err { color: var(--accent-text); }
+
+/* the pills, as in AdtPlayground */
+.root .ops { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; align-content: start; }
+.root .btn, .root .call { height: 28px; border: 1px solid var(--line); border-radius: 3px; }
+.root .btn, .root .call button { padding: 0 9px; font: 12px var(--mono); color: var(--text); }
+.root .btn:active, .root .call button:active { background: var(--hover); }
+.root .call { display: inline-flex; align-items: center; }
+.root .call button { flex: 1; height: 100%; }
+.root .call button:first-child { padding-right: 0; text-align: right; }
+.root .call button:last-child { padding-left: 0; text-align: left; }
+.root .call input { width: 4.5ch; height: 20px; margin: 0 3px; padding: 0; border: 0; border-radius: 2px; background: var(--bg); font: 12px var(--mono); color: var(--accent-2); text-align: center; }
+@container (max-width: 479px) { .root .ops > * { flex: 1 1 30%; } }
+@media (hover: hover) {
+  .root .btn:hover, .root .call:hover { border-color: var(--accent); }
+  .root .reset:hover { color: var(--text); }
+}
+@media (max-width: 899px) {
+  .root .btn, .root .call { height: 40px; }
+  .root .call input { height: 30px; font-size: 16px; }
+  .root .reset { margin: -10px -6px; padding: 10px 6px; }
+}

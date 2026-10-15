@@ -41,7 +41,8 @@
      <pre> keeps shiki's inline background/color, which resolve to the palette
      through the --astro-code-* variables in styles/tokens.css. */
   .code-block-wrapper { position: relative; margin: 24px 0; border: 1px solid var(--line); border-radius: 3px; background: var(--bg-2); overflow: hidden; }
-  .code-block-lang { display: block; padding: 5px 12px; border-bottom: 1px solid var(--line); font: .7em var(--mono); color: var(--muted); }
+  .code-block-lang { display: block; padding: 5px 64px 5px 12px; border-bottom: 1px solid var(--line); font: .7em var(--mono); color: var(--muted); } /* right padding clears .code-copy */
+  .code-block-sep { color: var(--accent-text); } /* the | between language and note, in the heading-marker colour */
   /* astro's shiki `wrap: true` sets white-space: pre-wrap inline; on lines padded
      with long runs of spaces (comment-aligned code), browsers let the trailing
      spaces "hang" past the wrap point, which quietly widens the whole page on

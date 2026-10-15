@@ -13,8 +13,8 @@
 /* the statement is prose, so it is read in the body face; everything around it is chrome */
 .root .question { margin: 0; font: 400 16px/1.5 var(--sans); color: var(--text); }
 
-.root .choices { display: flex; gap: 6px; }
-.root .choice { height: 28px; padding: 0 16px; border: 1px solid var(--line); border-radius: 3px; font: 12px var(--mono); color: var(--text); transition: border-color .15s, color .15s; }
+.root .choices { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
+.root .choice { height: 28px; min-width: 5.5em; padding: 0 16px; border: 1px solid var(--line); border-radius: 3px; font: 12px var(--mono); color: var(--text); transition: border-color .15s, color .15s; }
 .root .choice:active { background: var(--hover); }
 .root .choice:disabled { color: var(--muted); }
 .root .choice[data-verdict="right"] { border-color: var(--accent-2); color: var(--accent-2); }
@@ -25,19 +25,20 @@
   .root .again:hover { color: var(--text); }
 }
 
-/* The verdict: one mono word, then the why in the body face. The line is reserved while
-   empty so a pick does not move the buttons. Under prefers-reduced-motion base.css turns
-   the animations off and the word simply appears. */
-.root .verdict { min-height: 1.5em; font: 400 15px/1.5 var(--sans); color: var(--text); }
-.root .yep, .root .nope { display: block; width: max-content; font: 500 13px var(--mono); }
-.root .verdict :where(p) { margin: 0; } /* MDX wraps the why in a paragraph; .prose would space it */
+/* The verdict: one mono word beside the buttons, so nothing is reserved while it is empty.
+   The why, in the body face, appears under them once the reader has it. Under
+   prefers-reduced-motion base.css turns the animations off and the word simply appears. */
+.root .verdict { margin-left: 4px; font: 500 13px var(--mono); }
+.root .yep, .root .nope { display: inline-block; }
+.root .why { font: 400 15px/1.5 var(--sans); color: var(--text); }
+.root .why :where(p) { margin: 0; } /* MDX wraps the why in a paragraph; .prose would space it */
 .root .yep { color: var(--accent-2); animation: pop .25s ease-out; }
 .root .nope { color: var(--accent-text); animation: shake .3s ease-in-out; }
 @keyframes pop { from { scale: .5; opacity: 0; } 70% { scale: 1.15; } to { scale: 1; opacity: 1; } }
 @keyframes shake { 0%, 100% { translate: 0; } 25% { translate: -3px; } 75% { translate: 3px; } }
 
-/* touch: 40px tap targets, and the pair fills the row */
+/* touch: 40px tap targets */
 @media (max-width: 899px) {
-  .root .choice { flex: 1; height: 40px; }
+  .root .choice { height: 40px; }
   .root .again { margin: -10px -6px; padding: 10px 6px; }
 }

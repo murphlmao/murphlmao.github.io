@@ -1,19 +1,21 @@
 ---
 title: "Complexity Analysis & Big(O)"
-date: '2026-01-10'
-order: 1
-description: "That's a very Big O-oooooooh shit what the FUCK is this???? The worst part of computer science?? YESSSIRRRR."
+date: '2026-10-15'
+order: 3
+description: "Ermm actually we're not hiring you for a web dev position because you couldn't give us the amortized complexity of expanding an array"
 tags: ['C++', 'cpp', 'C-lang', 'C', 'programming', 'stacks', 'big O', 'time complexity', 'data structures', 'algorithms']
 ---
 
 import BigOGraph from '../../../../components/blog/eecs281/complexity_analysis/BigOGraph.tsx';
 
 
-## Why Should We Give A Shit?
+## Why do I need to know this?
 
-This is a question I've wanted to avoid for as long as humanly possible. Why? Because its math. Math, notoriously, blows. Why should you care? Will I use this in my day to day? Honestly, probably not. But the reality of the situation is that you need some way to represent these abstract ideas, even if you recognize, mentally, that some ways of writing code are just better (and more clever) than others.
+This was a question I grappled with for a while. Eventually, I came to realize that the reality of the situation is that, even though you will almost certainly NOT be using complexity analysis in your day to day, you need some way to represent these abstract ideas, even if you recognize, mentally, that some ways of writing code are just better (and more clever) than others.
 
-For example, let's take a really simple problem: "How can I find a duplicate number in my array?" As simple as this question is, the consequences for how you solve this problem can be vast. I'll get into the nitty gritty of Big O later, so just bear with me through this example: To some people, this is how they would genuinely think to solve the issue:
+
+## Complexity analysis in action
+For example, let's take a really simple problem: "Is there a duplicate number in my array?" As simple as this question is, the consequences for how you solve this problem can be vast. I'll get into the nitty gritty of Big O later, so just bear with me through this example:
 
 ```
 Vector: [1, 2, 3, 4, 5]
@@ -60,11 +62,13 @@ bool duplicate_simple(std::vector<int> vec) {
 }
 ```
 
-#### How does an unordered_set work tho?
+#### #whatdatmean
 
-Hash Sets (unordered_set) uses a hash table. When you insert a number, it runs it through a hash function that converts it to an index (like `hash(42) = 7`). It stores the number at that index in an internal array. When you check `if (seen.count(num))`, it hashes num again, jumps directly to that index, and checks if it's there.
+When you insert a number, it runs it through a hash function that converts it to an index (like `hash(42) = 7`). It stores the number at that index in an internal array. We'll come back to hashing way later, but all you need to know for now is that when you check `if (seen.count(num))`, it hashes num again, jumps directly to that index, and checks if it's there.
 
-Because of allllllat, this works out to about O(n) time complexity, because for each of the n items in the array, you're doing a constant time operation (hashing and checking/inserting into the set). If you want to be a fucking chad, you can set a vector to a set & compare the sizes:
+Because of allllllat, this works out to about O(n) time complexity, because for each of the n items in the array, you're doing a constant time operation (hashing and checking/inserting into the set). 
+
+If you want to be a fucking chad, you could also just set a vector to a set & compare the sizes:
 
 ```cpp
 bool duplicate_cast(vector<int>& nums) {
@@ -75,11 +79,8 @@ bool duplicate_cast(vector<int>& nums) {
 
 This method also runs in O(n) time, but is just cleaner code. It's not necessarily better for space, since you're still using extra space for the set, but it's a nice one-liner.
 
-## What Is An Algorithm?
 
-An algorithm is a set of instructions. That's it. There is literally nothing else to it.
-
-## What. The Fuck. Is. Complexity Analysis?
+## So.. complexity analysis details
 
 If you've ever been in a college level computer science classroom before, or just tried to Google "What does `O(log(n(myparentsneverlovedme)^2*sqrt(15))` mean," one of the first pains you'll suffer will be some dumbass graph like this:
 

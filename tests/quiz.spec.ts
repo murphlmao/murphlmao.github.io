@@ -25,10 +25,11 @@ test('quiz: a wrong pick says nope and keeps the why to itself', async ({ page }
 test('quiz: the right pick says yep, shows the why, and again starts over', async ({ page }) => {
   const { quiz, pick, verdict } = await openQuiz(page);
   await pick('false');
-  await expect(verdict).toContainText('yep.');
-  await expect(verdict).toContainText('container adapters');
+  await expect(verdict).toHaveText('yep.');
+  await expect(quiz).toContainText('container adapters'); /* the why, shown under the buttons */
   await expect(quiz.getByRole('button', { name: 'true', exact: true })).toBeDisabled(); /* solved: only again is live */
   await pick('again');
   await expect(verdict).toBeEmpty();
+  await expect(quiz).not.toContainText('container adapters');
   await expect(quiz.getByRole('button', { name: 'true', exact: true })).toBeEnabled();
 });

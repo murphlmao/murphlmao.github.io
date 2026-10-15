@@ -55,19 +55,14 @@ export default function Quiz({ question, answer, children }: Props) {
               {String(choice)}
             </button>
           ))}
+          {/* the verdict word sits beside the buttons. Its live region stays mounted (a screen
+              reader only announces changes inside an existing one); the word is remounted per
+              try so its animation replays. */}
+          <span className={css.verdict} role="status">
+            {picked !== null && (solved ? <span key={tries} className={css.yep}>yep.</span> : <span key={tries} className={css.nope}>nope.</span>)}
+          </span>
         </div>
-        {/* the live region stays mounted (a screen reader only announces changes inside an
-            existing one); the word inside is remounted per try so its animation replays */}
-        <div className={css.verdict} role="status">
-          {picked !== null &&
-            (solved ? (
-              <>
-                <span key={tries} className={css.yep}>yep.</span> {children}
-              </>
-            ) : (
-              <span key={tries} className={css.nope}>nope.</span>
-            ))}
-        </div>
+        {solved && <div className={css.why}>{children}</div>}
       </div>
     </figure>
   );
