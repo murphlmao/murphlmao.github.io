@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 /* Every page with a pen scene: loads without script errors, and the scene ends up inked. */
-const PAGES = ['/', '/articles', '/articles/binary-search-trees', '/resume', '/resources', '/deer'];
+const PAGES = ['/', '/articles', '/articles/binary-search-trees', '/articles/complexity-analysis', '/articles/containers-stacks-queues-deques', '/resume', '/resources', '/deer'];
 
 for (const path of PAGES) {
   test(`${path} loads clean and its pen scene draws`, async ({ page }) => {

@@ -1,0 +1,34 @@
+/* Inside of the BigOGraph figure. The frame is the global .fig / .fig-head / .fig-body from
+   Prose.astro, the same one the stacks & queues figures sit in. Every rule hangs off .root so
+   it outranks the .prose element rules. The chart's ink is palette tokens; only the nine line
+   colours are fixed, since each one is an order's identity. */
+
+.root { font-family: var(--mono); }
+.root .head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.root .scale { color: var(--muted); }
+.root .scale[aria-pressed="true"] { color: var(--accent-text); }
+
+.root .body { display: grid; gap: 10px; }
+
+/* Recharts draws plain SVG; its axes and grid take the palette here rather than as
+   attributes, which cannot hold var(). */
+.root :global(.recharts-cartesian-grid line) { stroke: var(--line); }
+.root :global(.recharts-cartesian-axis-line) { stroke: var(--line); }
+.root :global(.recharts-cartesian-axis-tick-value),
+.root :global(.recharts-label) { fill: var(--muted); font-family: var(--mono); }
+.root :global(.recharts-tooltip-item) { padding: 1px 0 !important; }
+
+/* the legend: one pill per order, in table order; pressed = drawn */
+.root .legend { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.root .key { display: inline-flex; align-items: center; gap: 7px; height: 26px; padding: 0 9px; border: 1px solid var(--line); border-radius: 3px; font: 12px var(--mono); color: var(--text); transition: border-color .15s, color .15s; }
+.root .key[aria-pressed="false"] { color: var(--muted); text-decoration: line-through; }
+.root .key[aria-pressed="false"] .swatch { opacity: .35; }
+.root .swatch { width: 12px; height: 2px; border-radius: 1px; }
+@media (hover: hover) {
+  .root .key:hover { border-color: var(--accent); }
+  .root .scale:hover { color: var(--text); }
+}
+@media (max-width: 899px) {
+  .root .key { height: 36px; }
+  .root .scale { margin: -10px -6px; padding: 10px 6px; }
+}

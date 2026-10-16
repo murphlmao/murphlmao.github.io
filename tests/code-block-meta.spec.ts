@@ -5,7 +5,7 @@ import { test, expect } from '@playwright/test';
    a note, so the note itself can change. */
 
 test('a code fence with words after its language shows them in the header', async ({ page }) => {
-  await page.goto('/articles/stacks-queues-deques');
+  await page.goto('/articles/containers-stacks-queues-deques');
   const header = page.locator('.code-block-lang:has(.code-block-meta)').first();
   await expect(header).toBeVisible();
   const note = (await header.locator('.code-block-meta').textContent())!.trim();

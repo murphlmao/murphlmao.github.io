@@ -1,12 +1,12 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
 
-/* The three figures in /articles/stacks-queues-deques (AdtPlayground.tsx). Their buttons
+/* The three figures in /articles/containers-stacks-queues-deques (AdtPlayground.tsx). Their buttons
    are the rows of the article's ADT tables, so these tests read the way the tables do. */
 
 type Kind = 'stack' | 'queue' | 'deque';
 
 async function openFigure(page: Page, kind: Kind) {
-  await page.goto('/articles/stacks-queues-deques');
+  await page.goto('/articles/containers-stacks-queues-deques');
   const fig = page.locator(`[data-adt="${kind}"]`);
   await fig.scrollIntoViewIfNeeded();
   // client:visible hydrates on scroll; an astro-island drops its `ssr` attribute once it

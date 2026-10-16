@@ -1,10 +1,10 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
 
-/* The "inside a deque" figure (DequeMemory.tsx) in /articles/stacks-queues-deques: a map
+/* The "inside a deque" figure (DequeMemory.tsx) in /articles/containers-stacks-queues-deques: a map
    of 8 pointers down the left, blocks of 4 cells to the right. Rows are map slots. */
 
 async function openFigure(page: Page) {
-  await page.goto('/articles/stacks-queues-deques');
+  await page.goto('/articles/containers-stacks-queues-deques');
   const fig = page.locator('[data-fig="deque-memory"]');
   await fig.scrollIntoViewIfNeeded();
   await expect(page.locator('astro-island[ssr]', { has: fig })).toHaveCount(0);

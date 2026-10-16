@@ -4,6 +4,8 @@
    The styles are global on purpose: <Content /> output is rendered markdown,
    so Astro cannot scope it. The code-block classes are the ones emitted by
    src/lib/rehype-code-wrapper.ts, styled to match r4's .code / .code-head. */
+// KaTeX's fonts & layout for the $...$ math rendered by rehype-katex (astro.config.mjs)
+import 'katex/dist/katex.min.css';
 ---
 <div class="prose"><slot /></div>
 <style is:global>

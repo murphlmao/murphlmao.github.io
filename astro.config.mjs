@@ -2,6 +2,8 @@ import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 import { rehypeCodeWrapper, shikiMeta } from './src/lib/rehype-code-wrapper';
 
 export default defineConfig({
@@ -11,9 +13,7 @@ export default defineConfig({
   integrations: [
     react(),
     sitemap(),
-    mdx({
-      rehypePlugins: [rehypeCodeWrapper],
-    }),
+    mdx(),
   ],
   markdown: {
     shikiConfig: {
@@ -22,7 +22,10 @@ export default defineConfig({
       wrap: true,
       transformers: [shikiMeta],
     },
-    rehypePlugins: [rehypeCodeWrapper],
+    // $...$ inline and $$...$$ display math, typeset by KaTeX at build time (no client JS).
+    // .md and .mdx both get these: mdx() inherits this block.
+    remarkPlugins: [remarkMath],
+    rehypePlugins: [rehypeKatex, rehypeCodeWrapper],
   },
   redirects: {
     '/projects': '/resume',

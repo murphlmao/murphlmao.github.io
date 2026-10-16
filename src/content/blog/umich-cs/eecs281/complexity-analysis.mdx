@@ -14,6 +14,56 @@ import BigOGraph from '../../../../components/blog/eecs281/complexity_analysis/B
 This was a question I grappled with for a while. Eventually, I came to realize that the reality of the situation is that, even though you will almost certainly NOT be using complexity analysis in your day to day, you need some way to represent these abstract ideas, even if you recognize, mentally, that some ways of writing code are just better (and more clever) than others.
 
 
+## What counts as a step?
+
+{/* TODO: Lecture 3 slides 14-17. Primitive ops; a for loop is 2n + 2 steps; func1 = 3n + 4, func2 = 3n² + 7n + 6. */}
+
+
+## The deets
+
+First, common orders of functions (top down, from best-worst)
+
+| Notation | Name | Definition |
+|:---:|:---|:---|
+| $O(1)$ | Constant | The cost doesn't change with the input. 10 elements or 10 million, same amount of work. |
+| $O(\log n)$ | Logarithmic | Each step cuts what's left by a fraction (usually half), so doubling the input only adds one more step. |
+| $O(n)$ | Linear | The cost scales directly with the number of elements. Twice the input, twice the work. |
+| $O(n \log n)$ | Loglinear, Linearithmic, *n* log *n* | A $\log n$ amount of work for each of the $n$ elements. This is what a good comparison sort costs. |
+| $O(n^2)$ | Quadratic | For every element, you go through every element again (a loop inside a loop). Twice the input, four times the work. |
+| $O(n^3), O(n^4), \ldots$ | Polynomial | Same idea with more nested loops: $n^k$ for some fixed $k$. Every extra loop multiplies the work by another $n$. |
+| $O(c^n)$ | Exponential | Every extra element multiplies the work by a constant $c$, like trying every subset of the input ($2^n$ of them). One more element doubles the work. |
+| $O(n!)$ | Factorial | Trying every possible ordering of the elements. $n = 10$ is already about 3.6 million orderings. |
+| $O(2^{2^n})$ | Doubly Exponential | The exponent itself grows exponentially. $n = 5$ is already over 4 billion, and you'll rarely see it outside of theory. |
+
+<BigOGraph client:load />
+
+{/* You can customize which functions to show: */}
+{/* <BigOGraph client:load functions={['O(1)', 'O(n)', 'O(n²)']} maxN={15} /> */}
+
+
+The relationship that complexity analysis is trying to create is that which tells you how an algorithm's time/space scales as input grows. In other words, when looking at an algorithm, you're measuring two main things: the time it takes for the algorithm to complete, and how much space the algorithm needs.
+
+
+## Dropping constants
+
+{/* TODO: Lecture 3 slides 25-27. 3n² + 7n + 42 down to O(n²), rules of thumb, log & power identities. */}
+
+
+## Big-O, Big-Θ, and Big-Ω
+
+{/* TODO: Lecture 3 slides 23 & 31. Formal definition with c & n0; O = upper, Θ = tight, Ω = lower bound on a function. */}
+
+
+## Best, worst, and average case
+
+{/* TODO: Which input you get, not which bound. Linear search: found first / last / halfway. Slide 35: average case is not amortized. */}
+
+
+## Amortized complexity
+
+{/* TODO: Lecture 3 slides 34-40. Spiky costs, cell phone bill, container growth options. The description promises this one. */}
+
+
 ## Complexity analysis in action
 For example, let's take a really simple problem: "Is there a duplicate number in my array?" As simple as this question is, the consequences for how you solve this problem can be vast. I'll get into the nitty gritty of Big O later, so just bear with me through this example:
 
@@ -80,18 +130,6 @@ bool duplicate_cast(vector<int>& nums) {
 This method also runs in O(n) time, but is just cleaner code. It's not necessarily better for space, since you're still using extra space for the set, but it's a nice one-liner.
 
 
-## So.. complexity analysis details
+## Measuring it for real
 
-If you've ever been in a college level computer science classroom before, or just tried to Google "What does `O(log(n(myparentsneverlovedme)^2*sqrt(15))` mean," one of the first pains you'll suffer will be some dumbass graph like this:
-
-<BigOGraph client:load />
-
-{/* You can customize which functions to show: */}
-{/* <BigOGraph client:load functions={['O(1)', 'O(n)', 'O(n²)']} maxN={15} /> */}
-
-If you also suck at math, this means very little to you. When I first saw this graph, this is the relationship I was able to identify: Based on the number of items going into something (indicated by the variable `n`), the number of operations will increase based on that amount.
-
-
-### But *what does this mean*? How does this correlate to code?
-
-The relationship that complexity analysis is trying to create is that which tells you how an algorithm's time/space usage scales as input grows. In other words, you're measuring two main things: time (operations) and space (memory).
+{/* TODO: Lecture 4 slides 2-18. std::chrono timing, prediction vs experiment, perf & valgrind. */}

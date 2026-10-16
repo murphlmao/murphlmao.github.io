@@ -1,10 +1,10 @@
 import { test, expect, type Page } from '@playwright/test';
 
 /* The true-or-false quiz (Quiz.tsx), as placed under the deque figure in
-   /articles/stacks-queues-deques. Any article can carry one. */
+   /articles/containers-stacks-queues-deques. Any article can carry one. */
 
 async function openQuiz(page: Page) {
-  await page.goto('/articles/stacks-queues-deques');
+  await page.goto('/articles/containers-stacks-queues-deques');
   const quiz = page.locator('[data-quiz]').first();
   await quiz.scrollIntoViewIfNeeded();
   await expect(page.locator('astro-island[ssr]', { has: quiz })).toHaveCount(0); /* client:visible has hydrated */
