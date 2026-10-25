@@ -1,0 +1,35 @@
+/* Inside of the ConstantsCrossover figure. Same frame and conventions as BigOGraph.module.css:
+   the global .fig / .fig-head / .fig-body from Prose.astro, every rule hung off .root so it
+   outranks the .prose element rules, chart ink from palette tokens. */
+
+.root { font-family: var(--mono); }
+.root .head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+
+/* table | graph switch; pressed = the view on screen */
+.root .tabs { display: inline-flex; gap: 4px; }
+.root .tab { color: var(--muted); }
+.root .tab[aria-pressed="true"] { color: var(--accent-text); }
+
+.root .body { display: grid; gap: 10px; }
+
+/* the row where the two are equal */
+.root .tie td { color: var(--accent-text); }
+
+.root :global(.recharts-cartesian-grid line) { stroke: var(--line); }
+.root :global(.recharts-cartesian-axis-line) { stroke: var(--line); }
+.root :global(.recharts-cartesian-axis-tick-value),
+.root :global(.recharts-label) { fill: var(--muted); font-family: var(--mono); }
+.root :global(.tie-label) { fill: var(--accent-text); }
+.root :global(.recharts-tooltip-item) { padding: 1px 0 !important; }
+
+.root .legend { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+.root .key { display: inline-flex; align-items: center; gap: 7px; font: 12px var(--mono); color: var(--text); }
+.root .swatch { width: 12px; height: 2px; border-radius: 1px; }
+.root .note { margin: 0; font-size: .8em; color: var(--muted); text-align: center; }
+
+@media (hover: hover) {
+  .root .tab:hover { color: var(--text); }
+}
+@media (max-width: 899px) {
+  .root .tab { margin: -10px -2px; padding: 10px 6px; }
+}

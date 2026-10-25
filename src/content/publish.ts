@@ -13,7 +13,7 @@
 export const blacklist = {
   headers: [] as string[],
   categories: ['eecs298', 'eecs370'],
-  articles: ['quicksort', 'mergesort', 'complexity-analysis'] as string[],
+  articles: ['quicksort', 'mergesort'] as string[],
 };
 
 /** True when PUBLISH_ALL=1 is set in the environment; the blacklist is then ignored. */

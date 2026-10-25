@@ -7,6 +7,8 @@ tags: ['C++', 'cpp', 'C-lang', 'C', 'programming', 'stacks', 'big O', 'time comp
 ---
 
 import BigOGraph from '../../../../components/blog/eecs281/complexity_analysis/BigOGraph.tsx';
+import ConstantsCrossover from '../../../../components/blog/eecs281/complexity_analysis/ConstantsCrossover.tsx';
+import Quiz from '../../../../components/blog/quiz/Quiz.tsx';
 
 
 ## Why do I need to know this?
@@ -16,7 +18,37 @@ This was a question I grappled with for a while. Eventually, I came to realize t
 
 ## What counts as a step?
 
-{/* TODO: Lecture 3 slides 14-17. Primitive ops; a for loop is 2n + 2 steps; func1 = 3n + 4, func2 = 3n² + 7n + 6. */}
+A step is one primitive operation, something the computer does in a fixed amount of time no matter how big the input is. Assigning a variable, doing arithmetic, comparing two values, indexing into an array, and returning from a function all count as one step each. Whether `sum += i` is one step or two is a convention, so pick one & stay consistent.
+
+The only thing worth memorizing is the `for` loop. `for (int i = 0; i < n; i++)` costs **2n + 2** steps before the body even runs: the `i = 0` happens once, the `i < n` check happens n + 1 times (n times it's true, once it's false), and the `i++` happens n times. That's 1 + (n + 1) + n.
+
+```cpp
+int func1(int n) {
+  int sum = 0;                    // 1 step
+  for (int i = 0; i < n; i++) {   // 2n + 2 steps
+    sum += i;                     // 1 step, n times = n
+  }
+  return sum;                     // 1 step
+}
+// total: 1 + (2n + 2) + n + 1 = 3n + 4
+```
+
+Nest a loop inside of it and the inner loop's cost gets paid on every pass of the outer one:
+
+```cpp
+int func2(int n) {
+  int sum = 0;                      // 1 step
+  for (int i = 0; i < n; i++) {     // 2n + 2 steps
+    for (int j = 0; j < n; j++) {   // n * (2n + 2) = 2n² + 2n steps
+      sum++;                        // n * n = n² steps
+    }
+  }
+  return sum;                       // 1 step
+}
+// total: 1 + (2n + 2) + (2n² + 2n) + n² + 1 = 3n² + 4n + 4
+```
+
+Those exact numbers depend on what you decided counts as a step, and someone else's convention would land on a slightly different answer. That's fine, because the next section throws most of it away. All that survives is that `func1` grows linearly and `func2` grows quadratically.
 
 
 ## The deets
@@ -44,24 +76,159 @@ First, common orders of functions (top down, from best-worst)
 The relationship that complexity analysis is trying to create is that which tells you how an algorithm's time/space scales as input grows. In other words, when looking at an algorithm, you're measuring two main things: the time it takes for the algorithm to complete, and how much space the algorithm needs.
 
 
-## Dropping constants
+## What we can drop & ignore
 
-{/* TODO: Lecture 3 slides 25-27. 3n² + 7n + 42 down to O(n²), rules of thumb, log & power identities. */}
+During complexity analysis, you can make a couple of big leaps.
+
+### You can drop constants from equations.
+
+For example:
+$3n^2$ + $7n$ + 42 = $O(n^2)$
+
+$f(n)$ = $3n^2$ + $7n$ + 42
+
+$g(n)$ =  $O(n^2)$
+
+> g(n) is a simpler function you pick to stand in for the growth of f(n). It isn't the growth itself.
+
+You can drop constants because complexity analysis measures growth. I.e. how the cost grows as the input gets huge, and a constant factor doesn't change that growth. It only changes the starting height.
+
+Example: Say algorithm A takes 100n steps and algorithm B takes n² steps.
+
+<ConstantsCrossover client:visible />
+
+B wins at small sizes, they tie at 100, and after that A wins by a wider margin every time. No constant you put in front of n can stop n² from catching up eventually. If you changed A to 1000n, the crossover would just move to n = 1000. The shape of the curves is what decides who wins in the end.
+
+There are a couple of logistical reasons we can do this:
+- Constants depend on the several parts of the machine that are irrelevant to the goal of Big-O, which is only meant to describe the algorithm, not your hardware.
+- Constants are a moving target. One "step" might be one instruction or ten, depending on how you count. Counting can give a different answer for every counting convention, and the growth rate is the only thing they all agree on.
+- Doubling the input: With 5n, doubling the input doubles the work. With 5n², it quadruples the work. The 5 never shows up in that comparison.
+
+
+### Ignore lower order terms
+$n^2 + n + 1 = O(n^2)$
+
+$n^2 + \log n + 1 = O(n^2)$ 
+
+Lower order terms get dropped because they stop mattering. Here's $3n^2 + 7n + 42$ as n grows, and how much of the total is just the $n^2$ term:
+
+| n | $3n^2$ | $7n + 42$ | share from $3n^2$ |
+|---|---|---|---|
+| 10 | 300 | 112 | 72.8% |
+| 100 | 30,000 | 742 | 97.6% |
+| 1,000 | 3,000,000 | 7,042 | 99.8% |
+| 1,000,000 | 3,000,000,000,000 | 7,000,042 | 99.9998% |
+
+By the time n is a million, everything except the $n^2$ term is a rounding error. To figure out which term is the highest order, use the table of orders from earlier: whichever one is lower down in the table wins. So $n^2$ beats $n \log n$ beats $n$ beats $\log n$ beats $1$.
+
+### Ignore the coefficient of the highest order term
+$3n^2 + 7n + 42 = O(n^2)$ 
+
+That 3 is a constant multiplier, so it goes for the same reason as above. Just be careful about *where* the constant is. It only disappears when it's multiplied out front. If it's in an exponent or a base, it stays: $2^n$ and $3^n$ are different orders of growth, and so are $n^2$ and $n^3$.
+
+
+### Summary
+Generally, for exams, having log & power identities will be extraordinarily helpful in order to see how different complexities are actually equivalent to each other.
+
+#### Log Identities
+
+| Identity | Example |
+|---|---|
+| $\log_a(xy) = \log_a x + \log_a y$ | $\log_2(3 \cdot 4)$ |
+| $\log_a\left(\frac{x}{y}\right) = \log_a x - \log_a y$ | $\log_2(4/3)$ |
+| $\log_a(x^r) = r \log_a x$ | $\log_2 x^3$ |
+| $\log_a\left(\frac{1}{x}\right) = -\log_a x$ | $\log_2 1/3$ |
+| $\log_a x = \frac{\log x}{\log a} = \frac{\ln x}{\ln a}$ | $\log_2 1024$ |
+| $\log_a a = 1$ | |
+| $\log_a 1 = 0$ | |
+
+
+#### Power Identities
+
+| Identity | Example |
+|---|---|
+| $a^{(m+n)} = a^m \cdot a^n$ | $2^{2+3}$ |
+| $a^{(m-n)} = \frac{a^m}{a^n}$ | $2^{3-2}$ |
+| $(a^m)^n = a^{mn}$ | $(2^2)^3$ |
+| $a^{-n} = \frac{1}{a^n}$ | $2^{-4}$ |
+| $a^{-1} = \frac{1}{a}$ | |
+| $a^0 = 1$ | |
+| $a^1 = a$ | |
+
 
 
 ## Big-O, Big-Θ, and Big-Ω
 
-{/* TODO: Lecture 3 slides 23 & 31. Formal definition with c & n0; O = upper, Θ = tight, Ω = lower bound on a function. */}
+Big-O, Big-Θ, and Big-Ω are three ways to bound a function. A bound is just a simpler function that sits above, below, or right on top of yours once n is big enough.
+
+| Notation | Bound | Definition (for all $n \ge n_0$) |
+|:---:|:---|:---|
+| $f(n) = O(g(n))$ | Upper | $f(n) \le c \cdot g(n)$ |
+| $f(n) = \Omega(g(n))$ | Lower | $f(n) \ge c \cdot g(n)$ |
+| $f(n) = \Theta(g(n))$ | Tight | $c_1 \cdot g(n) \le f(n) \le c_2 \cdot g(n)$ |
+
+The $c$'s and $n_0$ are positive constants that *you* get to pick. The $c$ is the "drop constants" rule, since any multiplier gets absorbed into it, and $n_0$ is the "big enough" part, since $f(n)$ is allowed to break the rule for small inputs.
+
+Example with $f(n) = 3n^2 + 7n + 42$:
+
+- **Upper:** for $n \ge 1$, $7n \le 7n^2$ and $42 \le 42n^2$, so $f(n) \le 52n^2$. Pick $c = 52$ and $n_0 = 1$, which makes $f(n) = O(n^2)$.
+- **Lower:** $f(n) \ge 3n^2$ for every $n$, so pick $c = 3$ and $n_0 = 1$, which makes $f(n) = \Omega(n^2)$.
+- **Tight:** it's both, so $f(n) = \Theta(n^2)$.
+
+It's also *true* that $f(n) = O(n^3)$ and $f(n) = \Omega(n)$, since an upper bound only has to be above you and a lower bound only has to be below you. They're just useless statements, so by convention you give the tightest bound you can.
+
+Everyone says Big-O when they mean Big-Θ. That's fine in conversation, but on an exam, use whichever one the question actually asks for. Also, Big-O does **NOT** mean "worst case". It's a bound on a function. Which function you're bounding is a separate question, and it's the next section.
 
 
 ## Best, worst, and average case
 
-{/* TODO: Which input you get, not which bound. Linear search: found first / last / halfway. Slide 35: average case is not amortized. */}
+The bounds above describe a function, but the cost of an algorithm often depends on *which* input of size n you hand it, not just how big it is. Best, worst, and average case are about which input you got.
+
+```cpp
+int linear_search(const std::vector<int>& vec, int target) {
+  for (int i = 0; i < vec.size(); i++) {
+    if (vec[i] == target) { return i; }
+  }
+  return -1;
+}
+```
+
+| Case | Where the target is | Steps |
+|---|---|---|
+| Best | The first element | $O(1)$ |
+| Average | Around the middle | about $n/2$, so $O(n)$ |
+| Worst | The last element, or not there at all | $O(n)$ |
+
+Each case is its own function, so each one gets its own $O$, $\Omega$, and $\Theta$. The best case of linear search is $\Theta(1)$ and the worst case is $\Theta(n)$. When someone gives you a complexity with no case attached, they almost always mean worst case. The same goes for `duplicate_nested` below: best case is $O(1)$ (the first two numbers match), worst case is $O(n^2)$.
+
+Average case needs an assumption about what inputs are likely, like "the target is equally likely to be anywhere." Don't confuse it with amortized complexity, which is next.
+
+<Quiz question="Big-O means worst case." answer={false} client:visible>
+Big-O is an upper bound on a function. Worst case is a choice of which input you analyze. You can put a Big-O on the best case too: linear search's best case is O(1).
+</Quiz>
 
 
 ## Amortized complexity
 
-{/* TODO: Lecture 3 slides 34-40. Spiky costs, cell phone bill, container growth options. The description promises this one. */}
+Some operations are cheap almost every time and expensive once in a while. Amortized complexity is the cost per operation once you spread the expensive ones across the cheap ones.
+
+Think of a cell phone bill. Say it's \$50 a month, except in January you also buy a \$600 phone. The bill is spiky, but over the year you paid \$1,200 for 12 months, so it works out to \$100 a month. That \$100 is the amortized cost.
+
+The classic example is `std::vector::push_back`. Most pushes are O(1): drop the element in the next free slot. When the array is full, though, it has to allocate a bigger one and copy all n elements over, which is O(n). How much bigger decides everything:
+
+| Growth strategy | Total copying over n pushes | Amortized per push |
+|---|---|---|
+| Add 1 slot each time | about $n^2 / 2$ | $O(n)$ |
+| Add a constant $c$ slots | about $n^2 / 2c$ | $O(n)$ |
+| Double the capacity | less than $2n$ | $O(1)$ |
+
+Doubling wins because after a copy of k elements, you get k cheap pushes before the next resize. The expensive copy gets paid off by the cheap pushes that follow it, same as the phone. Adding a fixed amount doesn't work, because the copies keep getting bigger while the gap between them stays the same.
+
+<Quiz question="If push_back is amortized O(1), every single push_back takes constant time." answer={false} client:visible>
+The push that triggers a resize still costs O(n). Amortized O(1) only promises that any run of n pushes costs O(n) total, so the average per push is constant. If you need every single operation to be fast, amortized isn't enough.
+</Quiz>
+
+Amortized is a guarantee about a sequence of operations, whatever they are. Average case is about a typical input and leans on probability.
 
 
 ## Complexity analysis in action
@@ -132,4 +299,23 @@ This method also runs in O(n) time, but is just cleaner code. It's not necessari
 
 ## Measuring it for real
 
-{/* TODO: Lecture 4 slides 2-18. std::chrono timing, prediction vs experiment, perf & valgrind. */}
+Everything above is a prediction. You can check it by running the code and timing it with `std::chrono`:
+
+```cpp
+#include <chrono>
+
+auto start = std::chrono::steady_clock::now();
+duplicate_nested(vec);
+auto stop = std::chrono::steady_clock::now();
+
+auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start).count();
+```
+
+Use `steady_clock`, since it can't jump backwards the way the system clock can. Then compare against the prediction: if `duplicate_nested` is O(n²), doubling n should make it take about 4x as long. If it's O(n), about 2x. If you doubled n and the time barely moved, or went up by 8x, either your analysis or your code is wrong.
+
+A few things will ruin your measurements. Compile with optimizations on (`-O2`), but make sure you actually use the result, because the compiler is allowed to delete work that has no effect. Run it several times, since other programs on your machine add noise. Use inputs big enough to take more than a few milliseconds, or you're just timing the clock.
+
+When the numbers disagree with your prediction, two tools help you figure out why:
+
+- **`perf`** shows where your program spends its time, down to the function (`perf record`, then `perf report`).
+- **`valgrind`** has a few tools. `callgrind` counts instructions instead of seconds, so it gives the same answer every run. `massif` shows how much heap memory you're using over time, which is the space half of complexity analysis.

@@ -23,3 +23,19 @@ test('complexity: the growth figure draws nine orders, a legend click hides one,
   await fig.getByRole('button', { name: 'log scale', exact: true }).click();
   await expect(fig.locator('.recharts-yAxis-tick-labels')).toContainText('10²⁰'); /* Recharts 3 draws labels in their own layer */
 });
+
+test('complexity: the 100n vs n² figure opens on the table, and the graph tab marks where they are equal', async ({ page }) => {
+  await page.goto('/articles/complexity-analysis');
+  const fig = page.locator('[data-fig="constants-crossover"]');
+  await fig.scrollIntoViewIfNeeded();
+  await expect(page.locator('astro-island[ssr]', { has: fig })).toHaveCount(0);
+  await expect(fig.getByRole('button', { name: 'table', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await expect(fig.locator('tbody tr')).toHaveCount(4);
+  await expect(fig.locator('.recharts-line')).toHaveCount(0);
+  await fig.getByRole('button', { name: 'graph', exact: true }).click();
+  await expect(fig.locator('table')).toHaveCount(0);
+  await expect(fig.locator('.recharts-line')).toHaveCount(2);
+  await expect(fig).toContainText('equal at n = 100');
+  await fig.getByRole('button', { name: 'table', exact: true }).click();
+  await expect(fig.locator('tbody tr')).toHaveCount(4);
+});
