@@ -39,6 +39,7 @@ export function initArticles(): void {
     }
 
     btns.forEach((b) => b.setAttribute('aria-checked', String(b.dataset.view === view)));
+    current = view;
     document.documentElement.dataset.articlesView = view;   // keeps the pre-paint CSS in step
 
     if (!animate || reduce) return;
@@ -46,6 +47,18 @@ export function initArticles(): void {
       [{ opacity: 0, transform: 'translateY(4px)' }, { opacity: 1, transform: 'none' }],
       { duration: 180, easing: 'ease-out' },
     );
+  }
+
+  // Keep the address bar shareable: ?view=date|class always, and #<course> while a course is
+  // open under by class. replaceState, not location.hash, so there is no history spam and no
+  // native jump. A recipient's own saved view loses to an explicit ?view= (see boot below).
+  let current = 'date';
+  function syncUrl(): void {
+    const url = new URL(location.href);
+    url.searchParams.set('view', current);
+    const open = current === 'class' ? groups!.querySelector<HTMLDetailsElement>('details.course[open]') : null;
+    url.hash = open ? open.id : '';
+    history.replaceState(history.state, '', url);
   }
 
   let saved: string | null = null;
@@ -70,11 +83,17 @@ export function initArticles(): void {
     target!.scrollIntoView();
   }
 
+  // Opening or closing a course rewrites the hash. `toggle` doesn't bubble, so capture it.
+  groups.addEventListener('toggle', (e) => {
+    if ((e.target as Element).matches('details.course')) syncUrl();
+  }, true);
+
   btns.forEach((btn, i) => {
     btn.addEventListener('click', () => {
       const v = btn.dataset.view;
       if (!v || btn.getAttribute('aria-checked') === 'true') return;
       setView(v, true);
+      syncUrl();
       try { localStorage.setItem('articlesView', v); } catch { /* private mode */ }
     });
     // Radiogroup keys: arrows move to the other option and select it. Enter and Space are
